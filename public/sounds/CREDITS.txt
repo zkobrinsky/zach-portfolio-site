@@ -1,0 +1,8 @@
+Sounds are CC0 from BigSoundBank (https://bigsoundbank.com) unless noted, edited for this site.
+helmet-breathing.mp3: "Human, Breath, Male, Breathing In Helmet 02, Calm, Close Perspective" from Epidemic Sound. Licensed by Zach Kobrinsky, NOT CC0: do not reuse or redistribute. Trimmed to loop and lowered.
+gasp.mp3: "Breathless Man" (s1103). Trimmed and normalized.
+impact-a.mp3: "Explosion far away #2" (s1806). Pitched down and muffled.
+impact-b.mp3: "Explosion #1" (s1807). Pitched down and muffled.
+impact-c.mp3: "Thunder #2" (s3113). Trimmed and muffled.
+
+Levels are baked into these files (as quiet as they play), so they stay gentle on devices that ignore volume set from code.

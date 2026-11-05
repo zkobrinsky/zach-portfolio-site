@@ -1,0 +1,393 @@
+/* The canvas sits above the page, so the dust and the boots can draw over it. */
+.canvas {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+}
+
+.overPage {
+  pointer-events: none;
+}
+
+.parked {
+  visibility: hidden;
+}
+
+/* inside-the-helmet look for POV: dark rim, faint gold visor tint */
+.visor {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(
+      ellipse 75% 70% at 50% 48%,
+      rgb(0 0 0 / 0) 55%,
+      rgb(12 9 4 / 0.55) 80%,
+      rgb(6 4 2 / 0.96) 100%
+    ),
+    linear-gradient(rgb(201 161 74 / 0.07), rgb(201 161 74 / 0.07));
+}
+
+.controls {
+  position: fixed;
+  z-index: 3;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  padding: 8px 12px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgb(0 0 0 / 0.55);
+  border: 1px solid rgb(201 161 74 / 0.7);
+  cursor: pointer;
+}
+
+.hud {
+  position: fixed;
+  z-index: 3;
+  left: 16px;
+  bottom: 16px;
+  padding: 6px 8px;
+  font: 12px var(--font-mono);
+  color: var(--gold);
+  background: rgb(0 0 0 / 0.6);
+  border: 1px solid rgb(201 161 74 / 0.6);
+}
+
+.header {
+  position: fixed;
+  z-index: 2;
+  inset: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 32px;
+  padding: 28px 40px;
+}
+
+.name a {
+  padding: 0;
+  font: 900 44px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: auto;
+  gap: 8px 24px;
+}
+
+.nav a,
+.nav button {
+  padding: 4px 0;
+  font: 16px var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+
+.nav a:hover:not([aria-disabled="true"]),
+.nav button:hover:not([aria-disabled="true"]) {
+  border-bottom-color: var(--gold);
+}
+
+.nav a[aria-disabled="true"],
+.nav button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.nav a[aria-current="page"],
+.nav button[data-current="true"] {
+  opacity: 1;
+  color: var(--cream);
+}
+
+.nav button::after {
+  content: " \25BE";
+}
+
+.group {
+  position: relative;
+}
+
+/* padding-top bridges the gap from the label, so the mouse can reach the list without it closing */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  display: none;
+  min-width: max-content;
+  padding-top: 10px;
+}
+
+.group[data-open="true"] .dropdown {
+  display: block;
+}
+
+@media (hover: hover) and (min-width: 1281px) {
+  .group:has(button:not([aria-disabled="true"])):hover .dropdown {
+    display: block;
+  }
+}
+
+.dropdown a {
+  display: block;
+  padding: 10px 14px;
+  text-align: right;
+  background: rgb(0 0 0 / 0.85);
+}
+
+/* Web pages get a plain black bar behind the nav. */
+.navBackground {
+  position: fixed;
+  z-index: 0;
+  inset: 0 0 auto;
+  background: #000;
+}
+
+/* An ordinary web page, filling the viewport below the nav bar. */
+.page {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  overflow: auto;
+  padding: 16px;
+  text-align: center;
+  background: var(--black);
+}
+
+.page[hidden] {
+  display: none;
+}
+
+.page h2 {
+  font: 900 clamp(48px, 9vw, 120px) / 1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.page a {
+  color: var(--gold);
+}
+
+.page p {
+  margin-top: 12px;
+  font: 14px var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--cream);
+}
+
+/* Above everything, including the nav: nothing shows while the astronaut is out cold. */
+.blackout {
+  position: fixed;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: #000;
+}
+
+.eyes {
+  position: fixed;
+  z-index: 4;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.eyes svg {
+  position: absolute;
+  inset: 0;
+}
+
+.focus {
+  position: absolute;
+  inset: 0;
+}
+
+.mute {
+  padding: 8px 12px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  cursor: pointer;
+}
+
+.mute[aria-pressed="true"] {
+  color: var(--gold);
+  background: rgb(0 0 0 / 0.55);
+}
+
+.menuButton {
+  display: none;
+}
+
+/* Phones and narrow windows: one short row, with the nav items in a panel that drops down from it. */
+@media (max-width: 1280px) {
+  .header {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 10px 16px;
+  }
+
+  .name {
+    margin-right: auto;
+    white-space: nowrap;
+  }
+
+  .name a {
+    font-size: 24px;
+    letter-spacing: 0.05em;
+  }
+
+  .mute,
+  .menuButton {
+    flex: none;
+    min-height: 36px;
+    padding: 6px 8px;
+    font: 600 10px var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .menuButton {
+    display: block;
+    color: var(--gold);
+    background: rgb(0 0 0 / 0.55);
+    border: 1px solid rgb(201 161 74 / 0.7);
+    cursor: pointer;
+  }
+
+  .nav {
+    position: absolute;
+    inset: 100% 0 auto;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
+    padding: 4px 16px 12px;
+    background: rgb(0 0 0 / 0.9);
+  }
+
+  .navOpen {
+    display: flex;
+  }
+
+  .nav a {
+    display: block;
+    min-height: 44px;
+    padding: 12px 0;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  /* in the panel, dropdowns are just always-open sections with a heading */
+  .nav button {
+    width: 100%;
+    min-height: 36px;
+    font-size: 11px;
+    text-align: left;
+    color: var(--cream);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .nav button::after {
+    content: none;
+  }
+
+  .dropdown {
+    position: static;
+    display: block;
+    padding: 0 0 4px 12px;
+  }
+
+  .dropdown a {
+    background: none;
+  }
+}
+
+/* A page aboard the ship: the text floats over the live 3D cabin. */
+.shipPage {
+  z-index: 2;
+  place-content: center end;
+  padding: 24px clamp(16px, 9vw, 150px);
+  text-align: left;
+  background: none;
+  pointer-events: none;
+}
+
+.shipPage > * {
+  max-width: 28rem;
+  pointer-events: auto;
+}
+
+.shipPage h2 {
+  font-size: clamp(40px, 5vw, 72px);
+}
+
+.shipPage p {
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.9);
+}
+
+@media (max-width: 1100px) and (max-aspect-ratio: 11 / 10) {
+  .shipPage {
+    place-content: end center;
+    padding-bottom: 72px;
+    /* the text sits low, over a dark fade, so it stays readable against the suit */
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.92) 34%,
+      rgb(0 0 0 / 0) 58%
+    );
+  }
+}
+
+/* only on devices with a keyboard and mouse */
+.keysHint {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .keysHint {
+    position: fixed;
+    z-index: 3;
+    left: 50%;
+    bottom: 24px;
+    display: block;
+    transform: translateX(-50%);
+    font: 12px var(--font-mono);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+}

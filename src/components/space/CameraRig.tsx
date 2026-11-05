@@ -1,0 +1,309 @@
+"use client";
+
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import * as THREE from "three";
+import { BASE_FOV, fittedDistance, HOME_CAMERA, ORBIT_NEAR, POV_FOV, POV_NEAR } from "@/lib/space/constants";
+import { debugParams, space } from "@/lib/space/state";
+import { ASTRONAUT_HEIGHT } from "./Astronaut";
+
+const FLY_IN_SECONDS = 1.6;
+const FLY_OUT_SECONDS = 4;
+const RESET_SECONDS = 1.1;
+/** WASD in POV: top speed in scene units per second, and how quickly you drift up to speed. */
+const THRUST_SPEED = 0.9;
+const THRUST_RESPONSE = 2.5;
+/** You can't fly inside the planet. */
+const CLOSEST_TO_PLANET = 1.15;
+/** How close the camera gets to the head before the astronaut disappears. The helmet is about 0.05 across from its center. */
+const HIDE_ASTRONAUT_WITHIN = 0.1;
+/** How far the mouse can turn the astronaut's head in POV, in radians. */
+const LOOK_SIDE_RANGE = 2.4;
+const LOOK_UP_RANGE = 1.25;
+/** How quickly the view catches up with the cursor. Higher is tighter. */
+const LOOK_RESPONSE = 12;
+
+const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+const orbitPosition = space.orbitPosition;
+const orbitRotation = space.orbitRotation;
+const headPosition = new THREE.Vector3();
+const headTop = new THREE.Vector3();
+const headUp = new THREE.Vector3();
+const headForward = new THREE.Vector3();
+const lookTarget = new THREE.Vector3();
+const eye = new THREE.Vector3();
+const shoulder = new THREE.Vector3();
+const lookMatrix = new THREE.Matrix4();
+const atHelmet = new THREE.Quaternion();
+const fromEye = new THREE.Quaternion();
+const headTurn = new THREE.Quaternion();
+const headEuler = new THREE.Euler();
+const ORIGIN = new THREE.Vector3();
+const thrust = new THREE.Vector3();
+const velocity = new THREE.Vector3();
+const travelled = new THREE.Vector3();
+const headHome = new THREE.Vector3();
+const HOME_DIRECTION = HOME_CAMERA.clone().normalize();
+const HOME_ROTATION = new THREE.Quaternion().setFromRotationMatrix(
+  new THREE.Matrix4().lookAt(HOME_CAMERA, ORIGIN, new THREE.Vector3(0, 1, 0)),
+);
+const resetFrom = new THREE.Vector3();
+const resetTurn = new THREE.Quaternion();
+const resetStep = new THREE.Quaternion();
+
+/** Orbit controls by default. In POV mode this owns the camera and flies it into the astronaut's helmet. */
+export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; resetCount: number; startedOnPage: boolean }) {
+  const controls = useRef<OrbitControlsImpl>(null);
+  const flight = useRef({ mix: 0, from: 0, to: 0, startedAt: -1, inPov: false, forced: NaN });
+  const look = useRef(new THREE.Vector2());
+  const touch = useRef({ active: false, aim: new THREE.Vector2(), x: 0, y: 0 });
+  const held = useRef(new Set<string>());
+  const reset = useRef({ startedAt: -1, distance: HOME_CAMERA.length() });
+  const size = useThree((state) => state.size);
+  const camera = useThree((state) => state.camera);
+  const fitted = fittedDistance(size.width / Math.max(size.height, 1));
+  const home = useRef(fitted);
+  const fittedWidth = useRef(0);
+  const orbitPrepared = useRef(false);
+
+  // Start far enough back to fit the screen. Refit when the width changes (a phone rotating, say),
+  // but not when only the height does: mobile browsers change it whenever their address bar slides away.
+  // Layout effect, so the first frame already draws from the right distance.
+  useLayoutEffect(() => {
+    if (size.width === 0 || size.width === fittedWidth.current || space.cameraOwner === "landing" || flight.current.inPov) return;
+    fittedWidth.current = size.width;
+    home.current = fitted;
+    camera.position.setLength(fitted);
+    controls.current?.update();
+    controls.current?.saveState();
+    if (startedOnPage && !orbitPrepared.current) {
+      // opened straight on a page: act as if we'd already flown in, so going back flies out to this view
+      orbitPrepared.current = true;
+      orbitPosition.copy(camera.position);
+      orbitRotation.copy(HOME_ROTATION);
+      Object.assign(flight.current, { inPov: true, mix: 1, to: 1, startedAt: -1 });
+      if (controls.current) controls.current.enabled = false;
+    }
+  }, [size.width, fitted, camera, startedOnPage]);
+
+  useEffect(() => {
+    const f = flight.current;
+    f.forced = debugParams().povMix;
+    if ((pov ? 1 : 0) === f.to) return;
+    f.from = f.mix;
+    f.to = pov ? 1 : 0;
+    f.startedAt = performance.now();
+  }, [pov]);
+
+  // dragging a finger steers the view; it stays where you leave it
+  useEffect(() => {
+    const t = touch.current;
+    const start = (event: TouchEvent) => {
+      t.active = true;
+      t.x = event.touches[0].clientX;
+      t.y = event.touches[0].clientY;
+    };
+    const move = (event: TouchEvent) => {
+      const { clientX, clientY } = event.touches[0];
+      t.aim.x = THREE.MathUtils.clamp(t.aim.x + ((clientX - t.x) / window.innerWidth) * 2, -1, 1);
+      t.aim.y = THREE.MathUtils.clamp(t.aim.y - ((clientY - t.y) / window.innerHeight) * 2, -1, 1);
+      t.x = clientX;
+      t.y = clientY;
+    };
+    window.addEventListener("touchstart", start, { passive: true });
+    window.addEventListener("touchmove", move, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", start);
+      window.removeEventListener("touchmove", move);
+    };
+  }, []);
+
+  // WASD steers the astronaut while in POV
+  useEffect(() => {
+    const keys = held.current;
+    const press = (event: KeyboardEvent) => {
+      if ("wasd".includes(event.key.toLowerCase())) keys.add(event.key.toLowerCase());
+    };
+    const lift = (event: KeyboardEvent) => keys.delete(event.key.toLowerCase());
+    const releaseAll = () => keys.clear();
+    window.addEventListener("keydown", press);
+    window.addEventListener("keyup", lift);
+    window.addEventListener("blur", releaseAll);
+    return () => {
+      window.removeEventListener("keydown", press);
+      window.removeEventListener("keyup", lift);
+      window.removeEventListener("blur", releaseAll);
+    };
+  }, []);
+
+  useEffect(() => {
+    // the landing sequence calls this when it's done with the camera
+    space.snapToOrbit = () => {
+      const f = flight.current;
+      f.mix = 0;
+      f.to = 0;
+      f.startedAt = -1;
+    };
+    return () => {
+      space.snapToOrbit = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (resetCount === 0) return;
+    if (flight.current.inPov) {
+      // already flying out of POV: land on the opening view instead of the saved orbit position
+      orbitPosition.copy(HOME_DIRECTION).multiplyScalar(home.current);
+      orbitRotation.copy(HOME_ROTATION);
+    } else {
+      reset.current.startedAt = performance.now();
+    }
+  }, [resetCount]);
+
+  useFrame(({ camera, pointer }, delta) => {
+    const f = flight.current;
+    const perspective = camera as THREE.PerspectiveCamera;
+
+    const r = reset.current;
+    if (r.startedAt >= 0 && !f.inPov) {
+      if (controls.current?.enabled) {
+        controls.current.enabled = false;
+        r.distance = perspective.position.length();
+        resetFrom.copy(perspective.position).normalize();
+        resetTurn.setFromUnitVectors(resetFrom, HOME_DIRECTION);
+      }
+      const k = Math.min(1, (performance.now() - r.startedAt) / (RESET_SECONDS * 1000));
+      const s = ease(k);
+      resetStep.identity().slerp(resetTurn, s);
+      perspective.position
+        .copy(resetFrom)
+        .applyQuaternion(resetStep)
+        .multiplyScalar(r.distance + (home.current - r.distance) * s);
+      perspective.lookAt(ORIGIN);
+      if (k >= 1) {
+        r.startedAt = -1;
+        if (controls.current) {
+          controls.current.enabled = true;
+          controls.current.reset(); // lands exactly on the opening view and clears any leftover momentum
+        }
+      }
+    }
+
+    if (!Number.isNaN(f.forced)) f.mix = f.forced;
+    else if (f.startedAt >= 0) {
+      const seconds = f.to === 1 ? FLY_IN_SECONDS : FLY_OUT_SECONDS;
+      const k = Math.min(1, (performance.now() - f.startedAt) / (seconds * 1000));
+      f.mix = f.from + (f.to - f.from) * k;
+      if (k >= 1) f.startedAt = -1;
+    }
+
+    space.flightMix = f.mix;
+    if (space.cameraOwner === "landing") return;
+
+    if (f.mix <= 0 || !space.head) {
+      if (f.inPov) {
+        f.inPov = false;
+        travelled.set(0, 0, 0);
+        velocity.set(0, 0, 0);
+        perspective.position.copy(orbitPosition);
+        perspective.quaternion.copy(orbitRotation);
+        perspective.fov = BASE_FOV;
+        perspective.near = ORBIT_NEAR;
+        perspective.updateProjectionMatrix();
+        if (controls.current) controls.current.enabled = true;
+        if (space.astronaut) space.astronaut.visible = true;
+        if (space.visor) space.visor.style.opacity = "0";
+      }
+      return;
+    }
+
+    if (!f.inPov) {
+      f.inPov = true;
+      orbitPosition.copy(perspective.position);
+      orbitRotation.copy(perspective.quaternion);
+      if (controls.current) controls.current.enabled = false;
+      look.current.set(0, 0);
+      touch.current.aim.set(0, 0);
+      r.startedAt = -1;
+    }
+
+    const s = ease(f.mix);
+    space.head.head.getWorldPosition(headPosition);
+    space.head.top.getWorldPosition(headTop);
+    headUp.copy(headTop).sub(headPosition).normalize();
+    headForward.set(0, 0, 1).transformDirection(space.head.head.matrixWorld);
+
+    // the eye: just in front of the face, looking straight out of the helmet
+    eye.copy(headPosition).addScaledVector(headForward, ASTRONAUT_HEIGHT * 0.07);
+    lookTarget.copy(eye).add(headForward);
+    fromEye.setFromRotationMatrix(lookMatrix.lookAt(eye, lookTarget, headUp));
+    // in POV the view follows the cursor; on a touch screen, dragging steers it
+    const aim = touch.current.active ? touch.current.aim : pointer;
+    look.current.lerp(aim, 1 - Math.exp(-Math.min(delta, 0.1) * LOOK_RESPONSE));
+    fromEye.multiply(headTurn.setFromEuler(headEuler.set(look.current.y * LOOK_UP_RANGE, -look.current.x * LOOK_SIDE_RANGE, 0)));
+
+    // WASD: thrust along the view. It builds and fades gently, like drifting in zero g.
+    const keys = held.current;
+    thrust.set(Number(keys.has("d")) - Number(keys.has("a")), 0, Number(keys.has("s")) - Number(keys.has("w")));
+    if (f.mix < 1 || f.to !== 1) thrust.set(0, 0, 0);
+    if (thrust.lengthSq() > 0) thrust.normalize().applyQuaternion(fromEye).multiplyScalar(THRUST_SPEED);
+    const step = Math.min(delta, 0.1);
+    velocity.lerp(thrust, 1 - Math.exp(-step * THRUST_RESPONSE));
+    travelled.addScaledVector(velocity, step);
+    headHome.copy(eye);
+    eye.addScaledVector(travelled, s);
+    if (eye.length() < CLOSEST_TO_PLANET) {
+      eye.setLength(CLOSEST_TO_PLANET);
+      travelled.copy(eye).sub(headHome);
+      velocity.set(0, 0, 0);
+    }
+
+    // the path: orbit position, over the shoulder along the line of sight, into the helmet
+    shoulder
+      .copy(headPosition)
+      .addScaledVector(headForward, -ASTRONAUT_HEIGHT * 1.6)
+      .addScaledVector(headUp, ASTRONAUT_HEIGHT * 0.45);
+    const u = 1 - s;
+    perspective.position
+      .set(0, 0, 0)
+      .addScaledVector(orbitPosition, u * u)
+      .addScaledVector(shoulder, 2 * u * s)
+      .addScaledVector(eye, s * s);
+
+    // the view: orbit view, the back of the helmet, the astronaut's view
+    atHelmet.setFromRotationMatrix(lookMatrix.lookAt(perspective.position, headPosition, headUp));
+    if (s < 0.75) perspective.quaternion.copy(orbitRotation).slerp(atHelmet, ease(s / 0.75));
+    else perspective.quaternion.copy(atHelmet).slerp(fromEye, ease((s - 0.75) / 0.25));
+
+    perspective.fov = BASE_FOV + (POV_FOV - BASE_FOV) * s;
+    perspective.near = ORBIT_NEAR + (POV_NEAR - ORBIT_NEAR) * s;
+    perspective.updateProjectionMatrix();
+
+    // You don't see your own head. The model vanishes just before the camera would touch the helmet, so
+    // you never pass through it, and the visor darkens on the way in to cover the cut.
+    const helmetGap = lookTarget.copy(perspective.position).addScaledVector(travelled, -s).distanceTo(headPosition);
+    if (space.astronaut) space.astronaut.visible = s < 0.5 || helmetGap > HIDE_ASTRONAUT_WITHIN;
+    if (space.visor) {
+      const visor = 1 - THREE.MathUtils.smoothstep(helmetGap, HIDE_ASTRONAUT_WITHIN, HIDE_ASTRONAUT_WITHIN * 1.8);
+      space.visor.style.opacity = String(s < 0.5 ? 0 : visor);
+    }
+  }, -0.5);
+
+  return (
+    <OrbitControls
+      ref={controls}
+      makeDefault
+      target={[0, 0, 0]}
+      enablePan={false}
+      enableDamping
+      dampingFactor={0.06}
+      rotateSpeed={0.5}
+      zoomSpeed={0.6}
+      minDistance={3}
+      maxDistance={fitted * 2}
+    />
+  );
+}

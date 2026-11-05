@@ -1,0 +1,21 @@
+:root {
+  --navy: #0f1a2e;
+  --cream: #efe6d2;
+  --gold: #c9a14a;
+  --red: #c8402f;
+  --teal: #1f5c63;
+  --black: #000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--cream);
+}

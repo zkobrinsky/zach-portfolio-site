@@ -1,0 +1,83 @@
+.loader {
+  --progress: 0;
+  position: fixed;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+  padding: 16px;
+  background: radial-gradient(circle at 50% 46%, #15130f, #000 62%);
+  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+}
+
+.loader[data-done="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.emblem {
+  width: min(56vw, 260px);
+  overflow: visible;
+}
+
+.ray {
+  stroke: var(--gold);
+  stroke-width: 0.7;
+  opacity: 0.4;
+}
+
+.track {
+  fill: none;
+  stroke: rgb(201 161 74 / 0.2);
+  stroke-width: 1;
+}
+
+.progress {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--progress));
+  transition: stroke-dashoffset 0.35s ease;
+}
+
+.orbit {
+  animation: orbit 5s linear infinite;
+}
+
+.moon {
+  fill: var(--cream);
+}
+
+.planet {
+  fill: var(--gold);
+}
+
+.ring {
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 1.4;
+}
+
+.label {
+  font: 12px var(--font-mono);
+  letter-spacing: 0.28em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit {
+    animation: none;
+  }
+}

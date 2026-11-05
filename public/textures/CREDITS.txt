@@ -1,0 +1,2 @@
+moon-color.jpg and moon-height.jpg: NASA Scientific Visualization Studio, CGI Moon Kit (https://svs.gsfc.nasa.gov/4720).
+Lunar Reconnaissance Orbiter data. NASA imagery, public domain.
