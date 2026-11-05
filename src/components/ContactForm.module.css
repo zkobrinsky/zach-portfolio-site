@@ -1,0 +1,58 @@
+.form {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 30rem);
+  margin-top: 24px;
+  text-align: left;
+}
+
+.form label {
+  display: grid;
+  gap: 6px;
+  font: 12px var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font: 16px var(--font-mono);
+  color: var(--cream);
+  background: rgb(0 0 0 / 0.35);
+  border: 1px solid rgb(201 161 74 / 0.6);
+  border-radius: 0;
+  resize: vertical;
+}
+
+.form input:focus-visible,
+.form textarea:focus-visible,
+.form button:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+}
+
+.form button {
+  justify-self: start;
+  padding: 10px 22px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  cursor: pointer;
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* moved off screen, not display: none, which some bots check for */
+.trap {
+  position: absolute;
+  left: -10000px;
+}
