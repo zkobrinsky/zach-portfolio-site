@@ -1,5 +1,6 @@
 "use client";
 
+import { hostedAsset } from "@/lib/assets";
 import { useEffect, useRef } from "react";
 
 // Quietness is baked into the audio file, because iPhones ignore volume set from code.
@@ -19,7 +20,7 @@ export function useBreathing(active: boolean, muted: boolean, cut: boolean) {
 
   useEffect(() => {
     if (active && !audio.current) {
-      audio.current = new Audio("/sounds/helmet-breathing.mp3");
+      audio.current = new Audio(hostedAsset("/sounds/helmet-breathing.mp3"));
       audio.current.loop = true;
       audio.current.volume = 0;
       audio.current.muted = muted;
