@@ -161,6 +161,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
       <div className={`${styles.canvas} ${showPage ? styles.overPage : ""} ${onPage && !shipPage ? styles.parked : ""}`}>
         <SpaceCanvas
           pov={pov || !inOrbit}
+          steer={pov && inOrbit}
           resetCount={resetCount}
           destination={destination}
           startedOnPage={startedOnPage}
@@ -205,7 +206,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
-      {inOrbit && pov && <p className={styles.keysHint}>W A S D to fly</p>}
+      {inOrbit && pov && <p className={styles.keysHint}>Mouse to look · W A S D to fly · Esc for cursor</p>}
       {inOrbit && (
         <div className={styles.controls}>
           <button

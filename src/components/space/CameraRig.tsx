@@ -19,11 +19,13 @@ const THRUST_RESPONSE = 2.5;
 const CLOSEST_TO_PLANET = 1.15;
 /** How close the camera gets to the head before the astronaut disappears. The helmet is about 0.05 across from its center. */
 const HIDE_ASTRONAUT_WITHIN = 0.1;
-/** How far the mouse can turn the astronaut's head in POV, in radians. */
-const LOOK_SIDE_RANGE = 2.4;
-const LOOK_UP_RANGE = 1.25;
-/** How quickly the view catches up with the cursor. Higher is tighter. */
-const LOOK_RESPONSE = 12;
+const MOUSE_SENSITIVITY = 0.0022;
+/** A full drag across the screen turns this far, in radians. */
+const TOUCH_TURN = 3.2;
+/** You can look almost straight up and down, and all the way around. */
+const MAX_PITCH = 1.5;
+/** How tightly the view tracks your input. Higher is snappier. */
+const LOOK_RESPONSE = 30;
 
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
@@ -40,7 +42,7 @@ const lookMatrix = new THREE.Matrix4();
 const atHelmet = new THREE.Quaternion();
 const fromEye = new THREE.Quaternion();
 const headTurn = new THREE.Quaternion();
-const headEuler = new THREE.Euler();
+const headEuler = new THREE.Euler(0, 0, 0, "YXZ"); // turn first, then tilt, so the horizon stays level
 const ORIGIN = new THREE.Vector3();
 const thrust = new THREE.Vector3();
 const velocity = new THREE.Vector3();
@@ -55,11 +57,21 @@ const resetTurn = new THREE.Quaternion();
 const resetStep = new THREE.Quaternion();
 
 /** Orbit controls by default. In POV mode this owns the camera and flies it into the astronaut's helmet. */
-export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; resetCount: number; startedOnPage: boolean }) {
+function lockCursor(canvas: HTMLCanvasElement) {
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  Promise.resolve(canvas.requestPointerLock()).catch(() => {});
+}
+
+type Props = { pov: boolean; steer: boolean; resetCount: number; startedOnPage: boolean };
+
+export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
+  const gl = useThree((state) => state.gl);
+  const steerRef = useRef(false);
+
   const controls = useRef<OrbitControlsImpl>(null);
   const flight = useRef({ mix: 0, from: 0, to: 0, startedAt: -1, inPov: false, forced: NaN });
   const look = useRef(new THREE.Vector2());
-  const touch = useRef({ active: false, aim: new THREE.Vector2(), x: 0, y: 0 });
+  const aim = useRef(new THREE.Vector2());
   const held = useRef(new Set<string>());
   const reset = useRef({ startedAt: -1, distance: HOME_CAMERA.length() });
   const size = useThree((state) => state.size);
@@ -98,28 +110,54 @@ export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; re
     f.startedAt = performance.now();
   }, [pov]);
 
-  // dragging a finger steers the view; it stays where you leave it
+  // Game-style look: the cursor locks to the view, and moving the mouse turns it. A finger drag does the same.
+  // Input only counts once the fly-in has completely finished.
   useEffect(() => {
-    const t = touch.current;
-    const start = (event: TouchEvent) => {
-      t.active = true;
-      t.x = event.touches[0].clientX;
-      t.y = event.touches[0].clientY;
+    const canvas = gl.domElement;
+    const f = flight.current;
+    const ready = () => steerRef.current && f.mix >= 1 && f.to === 1 && f.startedAt < 0;
+    const turn = (yaw: number, pitch: number) => {
+      if (!ready()) return;
+      const a = aim.current;
+      a.x += yaw;
+      a.y = THREE.MathUtils.clamp(a.y + pitch, -MAX_PITCH, MAX_PITCH);
     };
-    const move = (event: TouchEvent) => {
+    const onMouse = (event: MouseEvent) => {
+      if (document.pointerLockElement === canvas) turn(-event.movementX * MOUSE_SENSITIVITY, -event.movementY * MOUSE_SENSITIVITY);
+    };
+    // Esc frees the cursor; clicking the scene takes it back
+    const onClick = () => {
+      if (steerRef.current && document.pointerLockElement !== canvas) lockCursor(canvas);
+    };
+    let lastX = 0, lastY = 0;
+    const onTouchStart = (event: TouchEvent) => {
+      lastX = event.touches[0].clientX;
+      lastY = event.touches[0].clientY;
+    };
+    const onTouchMove = (event: TouchEvent) => {
       const { clientX, clientY } = event.touches[0];
-      t.aim.x = THREE.MathUtils.clamp(t.aim.x + ((clientX - t.x) / window.innerWidth) * 2, -1, 1);
-      t.aim.y = THREE.MathUtils.clamp(t.aim.y - ((clientY - t.y) / window.innerHeight) * 2, -1, 1);
-      t.x = clientX;
-      t.y = clientY;
+      turn(((lastX - clientX) / window.innerWidth) * TOUCH_TURN, ((lastY - clientY) / window.innerWidth) * TOUCH_TURN);
+      lastX = clientX;
+      lastY = clientY;
     };
-    window.addEventListener("touchstart", start, { passive: true });
-    window.addEventListener("touchmove", move, { passive: true });
+    document.addEventListener("mousemove", onMouse);
+    canvas.addEventListener("click", onClick);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
     return () => {
-      window.removeEventListener("touchstart", start);
-      window.removeEventListener("touchmove", move);
+      document.removeEventListener("mousemove", onMouse);
+      canvas.removeEventListener("click", onClick);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
     };
-  }, []);
+  }, [gl]);
+
+  // the click that enters POV is what lets the browser lock the cursor, so it locks now and takes effect after the flight
+  useEffect(() => {
+    steerRef.current = steer;
+    if (steer) lockCursor(gl.domElement);
+    else if (document.pointerLockElement === gl.domElement) document.exitPointerLock();
+  }, [steer, gl]);
 
   // WASD steers the astronaut while in POV
   useEffect(() => {
@@ -163,7 +201,7 @@ export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; re
     }
   }, [resetCount]);
 
-  useFrame(({ camera, pointer }, delta) => {
+  useFrame(({ camera }, delta) => {
     const f = flight.current;
     const perspective = camera as THREE.PerspectiveCamera;
 
@@ -226,7 +264,7 @@ export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; re
       orbitRotation.copy(perspective.quaternion);
       if (controls.current) controls.current.enabled = false;
       look.current.set(0, 0);
-      touch.current.aim.set(0, 0);
+      aim.current.set(0, 0);
       r.startedAt = -1;
     }
 
@@ -240,10 +278,8 @@ export function CameraRig({ pov, resetCount, startedOnPage }: { pov: boolean; re
     eye.copy(headPosition).addScaledVector(headForward, ASTRONAUT_HEIGHT * 0.07);
     lookTarget.copy(eye).add(headForward);
     fromEye.setFromRotationMatrix(lookMatrix.lookAt(eye, lookTarget, headUp));
-    // in POV the view follows the cursor; on a touch screen, dragging steers it
-    const aim = touch.current.active ? touch.current.aim : pointer;
-    look.current.lerp(aim, 1 - Math.exp(-Math.min(delta, 0.1) * LOOK_RESPONSE));
-    fromEye.multiply(headTurn.setFromEuler(headEuler.set(look.current.y * LOOK_UP_RANGE, -look.current.x * LOOK_SIDE_RANGE, 0)));
+    look.current.lerp(aim.current, 1 - Math.exp(-Math.min(delta, 0.1) * LOOK_RESPONSE));
+    fromEye.multiply(headTurn.setFromEuler(headEuler.set(look.current.y, look.current.x, 0)));
 
     // WASD: thrust along the view. It builds and fades gently, like drifting in zero g.
     const keys = held.current;

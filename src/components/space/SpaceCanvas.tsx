@@ -84,6 +84,7 @@ function DebugHud() {
 
 type Props = LandingEvents & {
   pov: boolean;
+  steer: boolean;
   resetCount: number;
   destination: string | null;
   startedOnPage: boolean;
@@ -92,7 +93,7 @@ type Props = LandingEvents & {
   onReady: () => void;
 };
 
-export default function SpaceCanvas({ pov, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
+export default function SpaceCanvas({ pov, steer, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
   return (
     <Canvas
       flat
@@ -116,7 +117,7 @@ export default function SpaceCanvas({ pov, resetCount, destination, startedOnPag
       </World>
       <Astronaut helmetOff={helmetOff} preloadHead={destination === "about"} />
       <ShipInterior />
-      <CameraRig pov={pov} resetCount={resetCount} startedOnPage={startedOnPage} />
+      <CameraRig pov={pov} steer={steer} resetCount={resetCount} startedOnPage={startedOnPage} />
       <LandingSequence
         destination={destination}
         startedOnPage={startedOnPage}
