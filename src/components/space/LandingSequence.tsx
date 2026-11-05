@@ -94,8 +94,8 @@ function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, 
   astronaut.position.set(0, Math.sin(t * 0.5) * 0.008, 0);
   astronaut.rotation.set(0.04 * Math.sin(t * 0.3), 0.3 + 0.08 * Math.sin(t * 0.2), 0.03 * Math.sin(t * 0.25));
   // a close crop on the head and chest: to the left of the text on wide screens, above it on narrow ones
-  camera.position.set(wide ? 0.21 : 0, 0.17, wide ? 0.62 : 0.72);
-  camera.lookAt(wide ? 0.21 : 0, wide ? 0.15 : 0.1, 0);
+  camera.position.set(wide ? 0.13 : 0, 0.17, wide ? 0.62 : 0.72);
+  camera.lookAt(wide ? 0.13 : 0, wide ? 0.15 : 0.1, 0);
 }
 
 function frameBoots(astronaut: THREE.Object3D, scale: number) {

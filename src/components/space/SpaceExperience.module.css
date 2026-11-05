@@ -170,7 +170,8 @@
   z-index: 0;
   inset: 0;
   display: grid;
-  place-content: center;
+  /* "safe" keeps the top reachable when a page is taller than the screen */
+  place-content: safe center;
   overflow: auto;
   padding: 16px;
   text-align: center;
@@ -336,10 +337,12 @@
 /* A page aboard the ship: the text floats over the live 3D cabin. */
 .shipPage {
   z-index: 2;
-  place-content: center end;
-  padding: 24px clamp(16px, 9vw, 150px);
+  place-content: center start;
+  /* starts just past the astronaut, wherever the screen edge is */
+  padding: 24px 16px 24px 54vw;
   text-align: left;
-  background: none;
+  /* a soft shadow behind the text, so the cabin lights can't cut through it */
+  background: radial-gradient(ellipse 36vw 56% at 71% 50%, rgb(0 0 0 / 0.86) 55%, rgb(0 0 0 / 0) 100%);
   pointer-events: none;
 }
 
@@ -361,7 +364,8 @@
 @media (max-width: 1100px) and (max-aspect-ratio: 11 / 10) {
   .shipPage {
     place-content: end center;
-    padding-bottom: 72px;
+    padding: 24px 16px 72px;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.92) 46%, rgb(0 0 0 / 0) 62%);
     /* the text sits low, over a dark fade, so it stays readable against the suit */
     background: linear-gradient(
       to top,
