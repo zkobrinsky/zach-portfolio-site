@@ -30,6 +30,7 @@
     "@types/three": "^0.170.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "lil-gui": "0.21.0",
     "typescript": "^5",
     "wrangler": "4.158.0"
   }

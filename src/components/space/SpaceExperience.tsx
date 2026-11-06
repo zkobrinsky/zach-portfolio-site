@@ -8,6 +8,7 @@ import { debugParams, space } from "@/lib/space/state";
 import { EyeOpening } from "./EyeOpening";
 import { Header } from "./Header";
 import { Joystick } from "./Joystick";
+import { ShipGui } from "./ShipGui";
 import { SpaceLoader } from "./SpaceLoader";
 import { SilentContext } from "@/lib/audio/SilentContext";
 import { useBreathing } from "./useBreathing";
@@ -208,6 +209,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
+      {process.env.NODE_ENV === "development" && <ShipGui />}
       {inOrbit && pov && (
         <>
           <Joystick label="Move" side="left" />

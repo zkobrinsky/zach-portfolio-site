@@ -2,6 +2,7 @@ export type Photo = { src: string; width: number; height: number; alt: string; t
 
 /** Zach's science photography, in display order. */
 export const PHOTOS: Photo[] = [
+  { src: "/photos/stink-bug.jpg", width: 2000, height: 2500, alt: "Brown marmorated stink bug face", title: "Brown Marmorated Stink Bug Face", caption: "Halyomorpha halys, collected from Grand Army Plaza, Brooklyn." },
   { src: "/photos/00.jpg", width: 2000, height: 2000, alt: "Draparnaud's glass snail", title: "Draparnaud's glass snail", caption: "Oxychilus draparnaudi, 5mm. Brooklyn, NY." },
   { src: "/photos/01.jpg", width: 2000, height: 2000, alt: "Millipede, order Julida", title: "Millipede, order Julida", caption: "~2.5cm. Found in a rotten log in Park Slope, Brooklyn." },
   { src: "/photos/02.jpg", width: 2000, height: 2000, alt: "Polychaete epitoke", title: "Polychaete epitoke", caption: "Epitokes — An evolutionary trick to avoid predation where marine worms’ sex organs grow heads and eyes and swim to the surface to copulate while the original worm stays safely down below. 7mm. From a plankton sample in Battery Park, NY." },

@@ -1,0 +1,8 @@
+/* Phones: the text sits over the suit, so the block carries a fade that always starts just above it. */
+@media (max-width: 1100px) and (max-aspect-ratio: 11 / 10) {
+  .text.text {
+    max-width: none;
+    padding: 72px 16px 72px;
+    background: linear-gradient(to bottom, rgb(0 0 0 / 0), rgb(0 0 0 / 0.9) 64px);
+  }
+}

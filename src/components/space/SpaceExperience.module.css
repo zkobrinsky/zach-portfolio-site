@@ -394,14 +394,8 @@
 @media (max-width: 1100px) and (max-aspect-ratio: 11 / 10) {
   .shipPage {
     place-content: end center;
-    padding: 24px 16px 72px;
-    background: linear-gradient(to top, rgb(0 0 0 / 0.92) 46%, rgb(0 0 0 / 0) 62%);
-    /* the text sits low, over a dark fade, so it stays readable against the suit */
-    background: linear-gradient(
-      to top,
-      rgb(0 0 0 / 0.92) 34%,
-      rgb(0 0 0 / 0) 58%
-    );
+    padding: 24px 0 0;
+    background: none; /* the text block brings its own fade, since its height varies by device */
   }
 }
 
