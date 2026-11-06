@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // cacheComponents stays off: with it on, every page hangs on Cloudflare Workers
   allowedDevOrigins: ["*.ngrok-free.app"],
 };
 

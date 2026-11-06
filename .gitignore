@@ -46,3 +46,8 @@ next-env.d.ts
 
 # 121 MB of survey images: hosted separately, like the licensed audio
 /public/sketches/
+
+# cloudflare
+/.open-next/
+/.wrangler/
+.dev.vars
