@@ -130,7 +130,7 @@ const MOON_FRAGMENT = /* glsl */ `
     // the moon's bulk shadows its own night side, whatever the local slope says
     float light = max(dot(n, L), 0.0) * smoothstep(-0.03, 0.08, dot(dir, L));
     // a little light reflected off the big planet, so the night side is dim instead of pure black
-    vec3 c = albedo * (light * vSun * 1.5 + vec3(0.075, 0.065, 0.05));
+    vec3 c = albedo * (light * vSun * 1.5 + vec3(0.095, 0.082, 0.063));
 
     // an atmosphere shows as a soft sunlit rim
     float edge = 1.0 - max(dot(dir, normalize(vCamL - vObj)), 0.0);

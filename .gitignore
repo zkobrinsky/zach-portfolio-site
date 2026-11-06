@@ -43,3 +43,6 @@ next-env.d.ts
 
 # licensed audio: not ours to redistribute, so it is hosted separately
 /public/sounds/helmet-breathing.mp3
+
+# 121 MB of survey images: hosted separately, like the licensed audio
+/public/sketches/

@@ -1,0 +1,97 @@
+.resume {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+  padding: 32px 0 72px;
+  font: 14px/1.7 var(--font-mono);
+  text-align: left;
+  color: var(--cream);
+}
+
+.resume.resume h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.resume.resume p {
+  font: inherit;
+  letter-spacing: 0.02em;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.links a {
+  color: var(--gold);
+}
+
+.resume h3 {
+  margin: 36px 0 10px;
+  padding-bottom: 6px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgb(201 161 74 / 0.4);
+}
+
+.skills {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.skills dt {
+  font-weight: 700;
+}
+
+.skills dd {
+  margin: 0;
+}
+
+.job {
+  margin-top: 22px;
+}
+
+.job header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  justify-content: space-between;
+}
+
+.job h4 {
+  margin: 0;
+  font: 700 15px/1.6 var(--font-mono);
+}
+
+.job em {
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+.job time {
+  color: var(--gold);
+}
+
+.resume ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.education.education {
+  padding: 0;
+  list-style: none;
+}
+
+.education li + li {
+  margin-top: 8px;
+}
+
+.education strong {
+  display: block;
+}

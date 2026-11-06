@@ -1,0 +1,67 @@
+.project {
+  width: min(100%, 42rem);
+  padding: 32px 0;
+  text-align: left;
+}
+
+.backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+}
+
+.backdrop img {
+  object-fit: cover;
+}
+
+.backdrop::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, rgb(4 6 12 / 0.96) 40%, rgb(4 6 12 / 0.55));
+}
+
+@media (max-width: 800px) {
+  .project {
+    padding-bottom: 72px; /* clears the Back to Orbit button */
+  }
+
+  .backdrop::after {
+    background: rgb(4 6 12 / 0.88);
+  }
+}
+
+.project.project h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.project.project p,
+.project li {
+  font: 15px/1.7 var(--font-mono);
+  color: var(--cream);
+}
+
+.project h3 {
+  margin: 28px 0 10px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.project ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.project.project a {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 12px 22px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+}

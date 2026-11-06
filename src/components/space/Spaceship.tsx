@@ -22,7 +22,7 @@ function hardLighting(shader: { fragmentShader: string }) {
       "#include <lights_fragment_begin>",
       THREE.ShaderChunk.lights_fragment_begin.replace(
         "irradiance += getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal );",
-        "irradiance += vec3(0.05, 0.043, 0.033);",
+        "irradiance += vec3(0.07, 0.06, 0.046);",
       ),
     )
     .replace("#include <lights_fragment_maps>", "") // no reflected environment light either

@@ -8,7 +8,7 @@
   slowly choked. Here a small fixed set of voices is built once and hums silently forever. Playing a note
   just turns one voice up and back down, so nothing is ever created or thrown away.
 */
-const CHORD_MIDI = [47, 52, 56, 59, 63, 66, 68, 71, 73, 76, 80, 88];
+export const CHORD_MIDI = [47, 52, 56, 59, 63, 66, 68, 71, 73, 76, 80, 88];
 const VOICES = 8;
 const MASTER_VOLUME = 0.11;
 /** Inside the helmet the chimes drop to a faint trace of this share of their volume. */
@@ -25,9 +25,9 @@ const RING_LEVEL = 0.2;
 const RELEASE_AT = 2.5;
 const RELEASE = 1;
 
-const midiToFrequency = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
+export const midiToFrequency = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
 const randomBetween = (low: number, high: number) => low + Math.random() * (high - low);
-const randomNote = (highestIndex: number) => CHORD_MIDI[1 + Math.floor(Math.random() * highestIndex)];
+export const randomNote = (highestIndex: number) => CHORD_MIDI[1 + Math.floor(Math.random() * highestIndex)];
 
 /** A reverb "room", made from a burst of noise that dies away. */
 function reverbImpulse(context: AudioContext) {

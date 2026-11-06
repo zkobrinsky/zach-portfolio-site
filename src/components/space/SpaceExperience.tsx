@@ -8,6 +8,7 @@ import { debugParams, space } from "@/lib/space/state";
 import { EyeOpening } from "./EyeOpening";
 import { Header } from "./Header";
 import { SpaceLoader } from "./SpaceLoader";
+import { SilentContext } from "@/lib/audio/SilentContext";
 import { useBreathing } from "./useBreathing";
 import { useWindChimes } from "./useWindChimes";
 import styles from "./SpaceExperience.module.css";
@@ -178,7 +179,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
       {showPage && <div className={styles.navBackground} style={{ height: navHeight, zIndex: shipPage ? 2 : undefined }} />}
       {/* always rendered, because the route's content has to exist even while it's hidden */}
       <article className={`${styles.page} ${shipPage ? styles.shipPage : ""}`} style={{ top: navHeight }} hidden={!showPage}>
-        {children}
+        <SilentContext value={silent || !showPage}>{children}</SilentContext>
       </article>
 
       <Header

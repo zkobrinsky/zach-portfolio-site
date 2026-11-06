@@ -8,6 +8,8 @@ export const SUN_PERIOD = 720;
 const WARP = -0.75;
 /** Where the sun starts: already near the planet, so the first eclipse begins about half a minute after load. */
 const PHI0 = 0.9;
+/** Tilts the sun's path from upper left to lower right. It still crosses directly behind the planet, so the eclipse stays. */
+const PATH_TILT = 0.3;
 
 /**
  * The sun is drawn this far from the camera, along the light direction, and scaled to match,
@@ -29,6 +31,6 @@ export function sunDirection(t: number, out: THREE.Vector3) {
     .set(0, 0, 0)
     .addScaledVector(VIEW_RIGHT, -Math.cos(theta) * ORBIT_RADIUS)
     .addScaledVector(VIEW_BACK, Math.sin(theta) * ORBIT_RADIUS)
-    .addScaledVector(VIEW_UP, 6 * (1 - Math.sin(theta)))
+    .addScaledVector(VIEW_UP, 6 * (1 - Math.sin(theta)) + PATH_TILT * Math.cos(theta) * ORBIT_RADIUS)
     .normalize();
 }

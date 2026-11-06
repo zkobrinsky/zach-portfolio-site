@@ -45,6 +45,7 @@
   color: var(--cream);
   background: rgb(0 0 0 / 0.95);
   border: 0;
+  touch-action: pan-y pinch-zoom; /* sideways drags are ours, for swiping */
 }
 
 .viewer::backdrop {
@@ -53,7 +54,7 @@
 
 .viewer figure {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) 8rem;
   justify-items: center;
   gap: 14px;
   height: 100%;
@@ -62,16 +63,24 @@
   pointer-events: none;
 }
 
-.viewer img {
-  width: auto;
-  max-width: 100%;
+.stage {
+  position: relative;
+  width: 100%;
   height: 100%;
+}
+
+.stage img {
   object-fit: contain;
-  pointer-events: auto;
+  visibility: hidden;
+}
+
+.stage img[data-current="true"] {
+  visibility: visible;
 }
 
 .viewer figcaption {
   max-width: 44rem;
+  overflow: auto;
   font: 14px/1.6 var(--font-mono);
   text-align: center;
   pointer-events: auto;
@@ -126,6 +135,7 @@
   }
 
   .viewer figure {
+    grid-template-rows: minmax(0, 1fr) 12rem;
     padding: 56px 12px 72px;
   }
 
