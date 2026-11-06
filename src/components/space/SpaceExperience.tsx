@@ -7,6 +7,7 @@ import { MOONS } from "@/lib/space/moons";
 import { debugParams, space } from "@/lib/space/state";
 import { EyeOpening } from "./EyeOpening";
 import { Header } from "./Header";
+import { Joystick } from "./Joystick";
 import { SpaceLoader } from "./SpaceLoader";
 import { SilentContext } from "@/lib/audio/SilentContext";
 import { useBreathing } from "./useBreathing";
@@ -207,6 +208,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
+      {inOrbit && pov && <Joystick />}
       {inOrbit && pov && <p className={styles.keysHint}>Mouse to look · W A S D to fly · Esc for cursor</p>}
       {inOrbit && (
         <div className={styles.controls}>

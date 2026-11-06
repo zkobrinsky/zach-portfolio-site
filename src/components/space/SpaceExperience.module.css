@@ -143,7 +143,7 @@
   display: block;
 }
 
-@media (hover: hover) and (min-width: 1281px) {
+@media (hover: hover) and (min-width: 1401px) {
   .group:has(button:not([aria-disabled="true"])):hover .dropdown {
     display: block;
   }
@@ -248,7 +248,7 @@
 }
 
 /* Phones and narrow windows: one short row, with the nav items in a panel that drops down from it. */
-@media (max-width: 1280px) {
+@media (max-width: 1400px) {
   .header {
     flex-wrap: nowrap;
     gap: 8px;

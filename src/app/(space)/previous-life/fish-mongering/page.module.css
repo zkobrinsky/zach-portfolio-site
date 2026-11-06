@@ -1,0 +1,67 @@
+.story {
+  width: min(100%, 68rem);
+  margin-inline: auto;
+  padding: 16px 0 72px;
+}
+
+.story.story h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+/* column widths follow each photo's shape, so all three come out the same height */
+.photos {
+  display: grid;
+  grid-template-columns: 4fr 3fr 3fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.photos figure {
+  margin: 0;
+}
+
+.photos img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.photos figcaption {
+  margin-top: 12px;
+  font: 14px/1.6 var(--font-mono);
+  color: var(--cream);
+}
+
+/* a 4:3 photo beside a 16:9 video, so these two also match in height */
+.market {
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.market figure {
+  margin: 0;
+}
+
+.market img,
+.market video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+.market figcaption {
+  margin-top: 12px;
+  font: 14px/1.6 var(--font-mono);
+  color: var(--cream);
+}
+
+@media (max-width: 800px) {
+  .photos,
+  .market {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

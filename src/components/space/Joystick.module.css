@@ -1,0 +1,30 @@
+.joystick {
+  display: none;
+}
+
+/* touch screens only: a mouse and keyboard already have W A S D */
+@media (pointer: coarse) {
+  .joystick {
+    position: fixed;
+    z-index: 3;
+    left: 24px;
+    bottom: 72px; /* above the Reset View and Back to Orbit buttons */
+    display: grid;
+    place-items: center;
+    width: 128px;
+    height: 128px;
+    background: rgb(0 0 0 / 0.35);
+    border: 1px solid rgb(201 161 74 / 0.7);
+    border-radius: 50%;
+    touch-action: none;
+    user-select: none;
+  }
+}
+
+.knob {
+  width: 52px;
+  height: 52px;
+  background: rgb(201 161 74 / 0.75);
+  border-radius: 50%;
+  pointer-events: none;
+}

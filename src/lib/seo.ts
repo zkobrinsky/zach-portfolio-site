@@ -29,9 +29,26 @@ export const PAGES = {
       "Resume of Zach Kobrinsky, Senior Frontend Engineer: work at Kargo, StoragePug, and Buzzfeed / Complex Networks, plus technical skills and education.",
   },
   "/contact": { title: "Contact", description: "Get in touch with Zach Kobrinsky." },
+  "/publications": {
+    title: "Publications",
+    description:
+      "Publications, exhibits, video, and talks by Zach Kobrinsky, including National Geographic magazine and the Smithsonian.",
+  },
   "/previous-life/photography": {
     title: "Photography",
     description: "Photography by Zach Kobrinsky, a former National Geographic contributing photographer.",
+  },
+  "/previous-life/video": {
+    title: "Video",
+    description: "Short films and promotional videos by Zach Kobrinsky, from slugs and beetles to reef science.",
+  },
+  "/previous-life/newspaper-editor": {
+    title: "Newspaper Editor",
+    description: "Zach Kobrinsky was the editor in chief and photo editor of the High Plains Reader.",
+  },
+  "/previous-life/fish-mongering": {
+    title: "Fish Mongering",
+    description: "Before frontend engineering, Zach Kobrinsky was a fishmonger.",
   },
   "/projects/cards-with-friends": {
     title: "Cards with Friends",

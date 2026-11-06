@@ -94,6 +94,24 @@ export const MOONS: MoonSpec[] = [
     seed: 2.3,
   },
   {
+    id: "previous-life/video",
+    label: "Video",
+    position: at(-1.4, 1.95, 0.4),
+    radius: 0.022,
+    tint: "#ffffff",
+    world: "basalt",
+    seed: 18.3,
+  },
+  {
+    id: "previous-life/newspaper-editor",
+    label: "Newspaper Editor",
+    position: at(-3.4, -0.25, 0.2),
+    radius: 0.02,
+    tint: "#ffffff",
+    world: "haze",
+    seed: 21.7,
+  },
+  {
     id: "previous-life/fish-mongering",
     label: "Fish Mongering",
     position: at(-3.0, -1.1, 0.5),
@@ -179,7 +197,7 @@ export const NAV: NavItem[] = [
   },
   {
     label: "Previous Life",
-    items: ["previous-life/photography", "previous-life/fish-mongering"].map(
+    items: ["previous-life/photography", "previous-life/video", "previous-life/newspaper-editor", "previous-life/fish-mongering"].map(
       moon,
     ),
   },

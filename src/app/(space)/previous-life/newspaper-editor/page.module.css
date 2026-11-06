@@ -1,0 +1,13 @@
+.story {
+  width: min(100%, 38rem);
+  margin-inline: auto;
+}
+
+.story.story p {
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.story a {
+  color: var(--gold);
+}

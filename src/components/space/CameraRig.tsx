@@ -129,26 +129,41 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     const onClick = () => {
       if (steerRef.current && document.pointerLockElement !== canvas) lockCursor(canvas);
     };
+    // Looking follows one particular finger, so a thumb on the joystick can fly at the same time.
+    let lookFinger: number | null = null;
     let lastX = 0, lastY = 0;
     const onTouchStart = (event: TouchEvent) => {
-      lastX = event.touches[0].clientX;
-      lastY = event.touches[0].clientY;
+      if (lookFinger !== null) return;
+      const touch = [...event.touches].find((item) => !(item.target as Element).closest?.("[data-joystick]"));
+      if (!touch) return;
+      lookFinger = touch.identifier;
+      lastX = touch.clientX;
+      lastY = touch.clientY;
     };
     const onTouchMove = (event: TouchEvent) => {
-      const { clientX, clientY } = event.touches[0];
+      const touch = [...event.touches].find((item) => item.identifier === lookFinger);
+      if (!touch) return;
+      const { clientX, clientY } = touch;
       turn(((lastX - clientX) / window.innerWidth) * TOUCH_TURN, ((lastY - clientY) / window.innerWidth) * TOUCH_TURN);
       lastX = clientX;
       lastY = clientY;
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      if (![...event.touches].some((item) => item.identifier === lookFinger)) lookFinger = null;
     };
     document.addEventListener("mousemove", onMouse);
     canvas.addEventListener("click", onClick);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
       document.removeEventListener("mousemove", onMouse);
       canvas.removeEventListener("click", onClick);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
     };
   }, [gl]);
 
@@ -281,11 +296,15 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     look.current.lerp(aim.current, 1 - Math.exp(-Math.min(delta, 0.1) * LOOK_RESPONSE));
     fromEye.multiply(headTurn.setFromEuler(headEuler.set(look.current.y, look.current.x, 0)));
 
-    // WASD: thrust along the view. It builds and fades gently, like drifting in zero g.
+    // WASD or the joystick: thrust along the view. It builds and fades gently, like drifting in zero g.
     const keys = held.current;
-    thrust.set(Number(keys.has("d")) - Number(keys.has("a")), 0, Number(keys.has("s")) - Number(keys.has("w")));
+    thrust.set(
+      Number(keys.has("d")) - Number(keys.has("a")) + space.stick.x,
+      0,
+      Number(keys.has("s")) - Number(keys.has("w")) + space.stick.y,
+    );
     if (f.mix < 1 || f.to !== 1) thrust.set(0, 0, 0);
-    if (thrust.lengthSq() > 0) thrust.normalize().applyQuaternion(fromEye).multiplyScalar(THRUST_SPEED);
+    thrust.clampLength(0, 1).applyQuaternion(fromEye).multiplyScalar(THRUST_SPEED);
     const step = Math.min(delta, 0.1);
     velocity.lerp(thrust, 1 - Math.exp(-step * THRUST_RESPONSE));
     travelled.addScaledVector(velocity, step);

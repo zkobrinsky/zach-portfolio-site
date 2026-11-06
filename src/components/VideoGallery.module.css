@@ -1,0 +1,151 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px 14px;
+  width: min(94vw, 1300px);
+  margin: 0 0 72px; /* clears the Back to Orbit button */
+  padding: 0;
+  list-style: none;
+}
+
+.grid button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--cream);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.thumbnail {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+
+.thumbnail img {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.grid button:hover img,
+.grid button:focus-visible img {
+  transform: scale(1.04);
+}
+
+.grid button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.title {
+  display: block;
+  margin-top: 8px;
+  font: 14px/1.4 var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+  color: var(--cream);
+  background: rgb(0 0 0 / 0.95);
+  border: 0;
+}
+
+.viewer::backdrop {
+  background: #000;
+}
+
+.viewer figure {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 8rem;
+  justify-items: center;
+  gap: 14px;
+  height: 100%;
+  margin: 0;
+  padding: 24px 72px;
+}
+
+.viewer iframe,
+.viewer video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none; /* the dialog focuses the player when it opens */
+}
+
+.viewer figcaption {
+  max-width: 44rem;
+  overflow: auto;
+  font: 14px/1.6 var(--font-mono);
+  text-align: center;
+}
+
+.viewer strong {
+  display: block;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.previous,
+.next,
+.close {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  font: 32px/1 var(--font-mono);
+  color: var(--cream);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.previous {
+  left: 12px;
+  top: calc(50% - 24px);
+}
+
+.next {
+  right: 12px;
+  top: calc(50% - 24px);
+}
+
+.close {
+  right: 12px;
+  top: 12px;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer figure {
+    grid-template-rows: minmax(0, 1fr) 12rem;
+    padding: 56px 12px 72px;
+  }
+
+  .previous,
+  .next {
+    top: auto;
+    bottom: 12px;
+  }
+}

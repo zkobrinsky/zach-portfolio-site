@@ -33,6 +33,8 @@ export const space = {
   /** The black screen after a hard landing. */
   blackout: null as HTMLElement | null,
   hud: null as HTMLElement | null,
+  /** The touch joystick in POV. Right and down are positive, each -1 to 1. */
+  stick: { x: 0, y: 0 },
 };
 
 /** Debug URL params: ?t=<seconds>, ?pov=<0..1>, ?debug, ?impact=<a|b|c>, ?helmet=off */

@@ -1,0 +1,56 @@
+.publications {
+  width: min(100%, 46rem);
+  margin-inline: auto;
+  padding: 32px 0 72px;
+  font: 14px/1.7 var(--font-mono);
+  text-align: left;
+  color: var(--cream);
+}
+
+.publications.publications h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.publications h3 {
+  margin: 32px 0 10px;
+  padding-bottom: 6px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgb(201 161 74 / 0.4);
+}
+
+.publications ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.publications li + li {
+  margin-top: 12px;
+}
+
+.publications strong {
+  display: block;
+  font-weight: 700;
+}
+
+.publications a {
+  color: var(--gold);
+}
+
+.publications figure {
+  max-width: 12rem;
+  margin: 14px 0 0;
+}
+
+.publications img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.publications figcaption {
+  margin-top: 8px;
+}
