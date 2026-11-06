@@ -30,11 +30,14 @@ export function Header({ pageId, inOrbit, landed, muted, onToggleMute, onGoTo, o
   const nav = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  /** After a click, a dropdown stays shut until the mouse leaves, or hovering would hold it open. */
+  const [hoverClosed, setHoverClosed] = useState(false);
   const navEnabled = inOrbit || landed;
 
   const closeMenus = () => {
     setMenuOpen(false);
     setOpenDropdown(null);
+    setHoverClosed(true);
   };
 
   useEffect(() => {
@@ -111,6 +114,8 @@ export function Header({ pageId, inOrbit, landed, muted, onToggleMute, onGoTo, o
               key={item.label}
               className={styles.group}
               data-open={openDropdown === item.label}
+              data-hover-closed={hoverClosed}
+              onPointerLeave={() => setHoverClosed(false)}
               onBlur={(event) => {
                 if (!event.currentTarget.contains(event.relatedTarget)) setOpenDropdown(null);
               }}

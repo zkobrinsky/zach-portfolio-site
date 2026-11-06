@@ -48,7 +48,7 @@ export const PAGES = {
   },
   "/previous-life/fish-mongering": {
     title: "Fish Mongering",
-    description: "Before frontend engineering, Zach Kobrinsky was a fishmonger.",
+    description: "Before frontend engineering, Zach Kobrinsky was a fishmonger for Blue Moon Fish in New York City.",
   },
   "/projects/cards-with-friends": {
     title: "Cards with Friends",
@@ -62,6 +62,14 @@ export const PAGES = {
   "/projects/baby-kick-sensor": {
     title: "Baby Kick Sensor",
     description: "An interactive p5.js visualization of baby kicks, made by Zach Kobrinsky in grad school.",
+  },
+  "/projects/martian-weather-service": {
+    title: "Martian Weather Service",
+    description: "A Ruby command line app comparing the weather on Mars with the weather where you are, built by Zach Kobrinsky at Flatiron School.",
+  },
+  "/projects/storagepug": {
+    title: "StoragePug",
+    description: "An interactive 3D application and 2D canvas tool built with Three.js and WebGL by Zach Kobrinsky. Still under NDA.",
   },
   "/projects/kaleidoscope-maker": {
     title: "Kaleidoscope Maker",

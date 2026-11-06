@@ -8,6 +8,13 @@
   font-size: clamp(38px, 6vw, 72px);
 }
 
+.story.story p {
+  max-width: 44rem;
+  margin: 12px auto 0;
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
 /* column widths follow each photo's shape, so all three come out the same height */
 .photos {
   display: grid;

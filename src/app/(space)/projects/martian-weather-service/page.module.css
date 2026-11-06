@@ -1,0 +1,36 @@
+.project {
+  width: min(100%, 42rem);
+  margin-inline: auto;
+  padding: 32px 0 72px;
+  text-align: left;
+}
+
+.project.project h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.project.project p,
+.project li {
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+  color: var(--cream);
+}
+
+.project h3 {
+  margin: 28px 0 10px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.project ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.project.project .note {
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.75;
+}

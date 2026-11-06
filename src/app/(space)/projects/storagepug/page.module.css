@@ -1,0 +1,71 @@
+.project {
+  --pug-purple: #9d62c7; /* the lighter of StoragePug's two brand purples, which reads on black */
+  width: min(100%, 42rem);
+  margin-inline: auto;
+  padding: 32px 0 72px;
+  text-align: left;
+}
+
+.project.project h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.project.project p,
+.project li {
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+  color: var(--cream);
+}
+
+.project h3 {
+  margin: 28px 0 10px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pug-purple);
+}
+
+.project ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.locked {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin-top: 16px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--pug-purple);
+  user-select: none;
+}
+
+.locked img {
+  object-fit: cover;
+}
+
+.lockedLabel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+
+.lockIcon {
+  display: grid;
+  color: var(--cream);
+}
+
+.logo {
+  display: block;
+  width: min(100%, 26rem);
+  height: auto;
+  margin-bottom: 20px;
+}

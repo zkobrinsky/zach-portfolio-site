@@ -8,6 +8,11 @@ export default function FishMongeringPage() {
   return (
     <div className={styles.story}>
       <h2>Fish Mongering</h2>
+      <p>
+        My first job when I moved to New York was as a fishmonger for Blue Moon Fish, the only fisherman who brought his catch
+        straight to the greenmarkets. It was the best fish in New York City, and we supplied a lot of Michelin-rated
+        restaurants and chefs.
+      </p>
       <div className={styles.photos}>
         <figure>
           <Image

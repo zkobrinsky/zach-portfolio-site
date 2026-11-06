@@ -147,7 +147,7 @@
 }
 
 @media (hover: hover) and (min-width: 1401px) {
-  .group:has(button:not([aria-disabled="true"])):hover .dropdown {
+  .group:not([data-hover-closed="true"]):has(button:not([aria-disabled="true"])):hover .dropdown {
     display: block;
   }
 }
@@ -304,6 +304,7 @@
   /* above the Back to Orbit button while it's open; the blackout stays above this, being later in the page */
   .header:has(.navOpen) {
     z-index: 4;
+    background: #000;
   }
 
   .navOpen {

@@ -49,7 +49,7 @@ export const MOONS: MoonSpec[] = [
   },
   {
     id: "projects/kargo",
-    label: "Kargo",
+    label: "Kargo Flourishes",
     position: at(3.0, -0.45, 0.5),
     radius: 0.05,
     tint: "#ffffff",
@@ -58,7 +58,7 @@ export const MOONS: MoonSpec[] = [
   },
   {
     id: "projects/storagepug",
-    label: "StoragePug",
+    label: "StoragePug (coming soon...)",
     position: at(2.2, -1.5, -0.3),
     radius: 0.02,
     tint: "#ffffff",
@@ -148,6 +148,15 @@ export const MOONS: MoonSpec[] = [
     seed: 14.2,
   },
   {
+    id: "projects/martian-weather-service",
+    label: "Martian Weather Service",
+    position: at(3.15, -1.05, 0.3),
+    radius: 0.024,
+    tint: "#ffffff",
+    world: "rust",
+    seed: 24.6,
+  },
+  {
     id: "projects/kaleidoscope-maker",
     label: "Kaleidoscope Maker",
     position: at(-2.1, -2.0, 0.3),
@@ -188,11 +197,12 @@ export const NAV: NavItem[] = [
     items: [
       "projects/cards-with-friends",
       "projects/kargo",
-      "projects/storagepug",
       "projects/complex",
       "projects/expanding-universe",
       "projects/baby-kick-sensor",
       "projects/kaleidoscope-maker",
+      "projects/martian-weather-service",
+      "projects/storagepug",
     ].map(moon),
   },
   {

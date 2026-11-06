@@ -1,0 +1,8 @@
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 16px;
+  background: #000;
+  border: 0;
+}
