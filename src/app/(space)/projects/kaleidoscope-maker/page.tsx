@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { ProjectEmbed } from "@/components/ProjectEmbed";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Kaleidoscope Maker | Zach Kobrinsky" };
+export const metadata = pageMetadata("/projects/kaleidoscope-maker");
 
 export default function KaleidoscopeMakerPage() {
   return (

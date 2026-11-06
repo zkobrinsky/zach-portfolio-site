@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { ProjectSketch } from "@/components/ProjectSketch";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "The Expanding Universe | Zach Kobrinsky" };
+export const metadata = pageMetadata("/projects/expanding-universe");
 
 export default function ExpandingUniversePage() {
   return (

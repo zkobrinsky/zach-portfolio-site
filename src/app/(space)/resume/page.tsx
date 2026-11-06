@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Resume | Zach Kobrinsky" };
+export const metadata = pageMetadata("/resume");
 
 const SKILLS = [
   ["Frontend", "TypeScript · JavaScript · HTML/CSS · Vue.js · Nuxt.js · React · Next.js · Angular · Tailwind · Bootstrap · SASS"],

@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { draftMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Kargo | Zach Kobrinsky" };
+export const metadata = draftMetadata("Kargo");
 
 export default function KargoPage() {
   return (

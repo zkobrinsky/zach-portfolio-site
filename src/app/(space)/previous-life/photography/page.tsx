@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
 import { PhotoGallery } from "@/components/PhotoGallery";
 import { PHOTOS } from "@/lib/photos";
 import styles from "./page.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Photography | Zach Kobrinsky" };
+export const metadata = pageMetadata("/previous-life/photography");
 
 export default function PhotographyPage() {
   return (

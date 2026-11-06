@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { ProjectSketch } from "@/components/ProjectSketch";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Baby Kick Sensor | Zach Kobrinsky" };
+export const metadata = pageMetadata("/projects/baby-kick-sensor");
 
 export default function BabyKickSensorPage() {
   return (

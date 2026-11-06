@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Cards with Friends | Zach Kobrinsky" };
+export const metadata = pageMetadata("/projects/cards-with-friends");
 
 export default function CardsWithFriendsPage() {
   return (

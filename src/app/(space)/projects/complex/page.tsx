@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { draftMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Complex | Zach Kobrinsky" };
+export const metadata = draftMetadata("Complex");
 
 export default function ComplexPage() {
   return (

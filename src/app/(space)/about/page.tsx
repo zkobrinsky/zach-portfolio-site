@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "About | Zach Kobrinsky" };
+export const metadata = pageMetadata("/about");
 
 export default function AboutPage() {
   return (

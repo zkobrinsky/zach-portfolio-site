@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { draftMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "StoragePug | Zach Kobrinsky" };
+export const metadata = draftMetadata("StoragePug");
 
 export default function StoragepugPage() {
   return (
