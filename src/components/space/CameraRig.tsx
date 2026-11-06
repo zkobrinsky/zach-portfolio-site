@@ -26,6 +26,8 @@ const TOUCH_TURN = 3.2;
 const MAX_PITCH = 1.5;
 /** How tightly the view tracks your input. Higher is snappier. */
 const LOOK_RESPONSE = 30;
+/** How fast the Look joystick turns the view at full push, in radians per second. */
+const LOOK_STICK_SPEED = 1.8;
 
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
@@ -293,15 +295,22 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     eye.copy(headPosition).addScaledVector(headForward, ASTRONAUT_HEIGHT * 0.07);
     lookTarget.copy(eye).add(headForward);
     fromEye.setFromRotationMatrix(lookMatrix.lookAt(eye, lookTarget, headUp));
+    // Swiping moves the view by how far you drag; the Look joystick keeps turning for as long as it's held.
+    if (f.mix >= 1 && f.to === 1) {
+      const turn = LOOK_STICK_SPEED * Math.min(delta, 0.1);
+      const a = aim.current;
+      a.x -= space.lookStick.x * turn;
+      a.y = THREE.MathUtils.clamp(a.y - space.lookStick.y * turn, -MAX_PITCH, MAX_PITCH);
+    }
     look.current.lerp(aim.current, 1 - Math.exp(-Math.min(delta, 0.1) * LOOK_RESPONSE));
     fromEye.multiply(headTurn.setFromEuler(headEuler.set(look.current.y, look.current.x, 0)));
 
     // WASD or the joystick: thrust along the view. It builds and fades gently, like drifting in zero g.
     const keys = held.current;
     thrust.set(
-      Number(keys.has("d")) - Number(keys.has("a")) + space.stick.x,
+      Number(keys.has("d")) - Number(keys.has("a")) + space.moveStick.x,
       0,
-      Number(keys.has("s")) - Number(keys.has("w")) + space.stick.y,
+      Number(keys.has("s")) - Number(keys.has("w")) + space.moveStick.y,
     );
     if (f.mix < 1 || f.to !== 1) thrust.set(0, 0, 0);
     thrust.clampLength(0, 1).applyQuaternion(fromEye).multiplyScalar(THRUST_SPEED);

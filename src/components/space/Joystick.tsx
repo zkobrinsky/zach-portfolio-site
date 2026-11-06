@@ -6,30 +6,32 @@ import styles from "./Joystick.module.css";
 
 /** How far the knob travels from center, in pixels. */
 const REACH = 44;
-/** A resting thumb shouldn't drift the astronaut. */
+/** A resting thumb shouldn't drift the view. */
 const DEAD_ZONE = 0.12;
 
-/** Touch control for flying in POV: the same thrust as W A S D, scaled by how far the knob is pushed. */
-export function Joystick() {
+type Props = { label: "Move" | "Look"; side: "left" | "right" };
+
+/** Touch control in POV. Move is the same thrust as W A S D; Look turns the view. Both scale with how far they're pushed. */
+export function Joystick({ label, side }: Props) {
   const knob = useRef<HTMLDivElement>(null);
+  const stick = () => (label === "Move" ? space.moveStick : space.lookStick);
+  const setStick = (x: number, y: number) => Object.assign(stick(), { x, y });
 
   const moveKnob = (x: number, y: number) => {
     if (knob.current) knob.current.style.transform = `translate(${x}px, ${y}px)`;
   };
 
   const release = () => {
-    space.stick.x = 0;
-    space.stick.y = 0;
+    setStick(0, 0);
     moveKnob(0, 0);
   };
 
-  // leaving POV mid-push shouldn't leave the astronaut drifting
+  // leaving POV mid-push shouldn't leave the view drifting
   useEffect(
     () => () => {
-      space.stick.x = 0;
-      space.stick.y = 0;
+      Object.assign(label === "Move" ? space.moveStick : space.lookStick, { x: 0, y: 0 });
     },
-    [],
+    [label],
   );
 
   const push = (event: PointerEvent<HTMLDivElement>) => {
@@ -38,15 +40,16 @@ export function Joystick() {
     const y = event.clientY - (base.top + base.height / 2);
     const scale = Math.min(1, REACH / (Math.hypot(x, y) || 1));
     moveKnob(x * scale, y * scale);
-    const amount = Math.hypot(x, y) * scale / REACH;
-    space.stick.x = amount < DEAD_ZONE ? 0 : (x * scale) / REACH;
-    space.stick.y = amount < DEAD_ZONE ? 0 : (y * scale) / REACH;
+    const amount = (Math.hypot(x, y) * scale) / REACH;
+    if (amount < DEAD_ZONE) setStick(0, 0);
+    else setStick((x * scale) / REACH, (y * scale) / REACH);
   };
 
   return (
     <div
       className={styles.joystick}
       data-joystick
+      data-side={side}
       aria-hidden
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -58,6 +61,7 @@ export function Joystick() {
       onPointerUp={release}
       onPointerCancel={release}
     >
+      <span className={styles.label}>{label}</span>
       <div ref={knob} className={styles.knob} />
     </div>
   );

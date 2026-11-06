@@ -104,9 +104,12 @@
   cursor: pointer;
 }
 
-.nav a:hover:not([aria-disabled="true"]),
-.nav button:hover:not([aria-disabled="true"]) {
-  border-bottom-color: var(--gold);
+/* hover only where there's a real pointer, or a tapped item keeps its underline */
+@media (hover: hover) {
+  .nav a:hover:not([aria-disabled="true"]),
+  .nav button:hover:not([aria-disabled="true"]) {
+    border-bottom-color: var(--gold);
+  }
 }
 
 .nav a[aria-disabled="true"],
@@ -288,12 +291,19 @@
     inset: 100% 0 auto;
     display: none;
     flex-direction: column;
+    flex-wrap: nowrap; /* short screens scroll, rather than wrapping into a second column */
     gap: 0;
     margin: 0;
     max-height: calc(100dvh - 60px);
+    overflow-x: hidden;
     overflow-y: auto;
     padding: 4px 16px 12px;
-    background: rgb(0 0 0 / 0.9);
+    background: #000;
+  }
+
+  /* above the Back to Orbit button while it's open; the blackout stays above this, being later in the page */
+  .header:has(.navOpen) {
+    z-index: 4;
   }
 
   .navOpen {
@@ -308,29 +318,48 @@
     text-align: left;
   }
 
-  /* in the panel, dropdowns are just always-open sections with a heading */
+  .nav > * {
+    flex: none;
+  }
+
+  /* in the panel, a folder looks like the links around it, and opens in place */
   .nav button {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    min-height: 36px;
-    font-size: 11px;
+    min-height: 44px;
+    padding: 12px 0;
+    font-size: 14px;
     text-align: left;
-    color: var(--cream);
-    opacity: 0.7;
-    pointer-events: none;
   }
 
   .nav button::after {
-    content: none;
+    transition: transform 0.2s ease;
+  }
+
+  .group[data-open="true"] button::after {
+    transform: rotate(180deg);
   }
 
   .dropdown {
     position: static;
-    display: block;
-    padding: 0 0 4px 12px;
+    padding: 0 0 4px 16px;
   }
 
   .dropdown a {
     background: none;
+  }
+
+  .dropdown a {
+    background: none;
+  }
+}
+
+/* The smallest phones: the name gives up some width so Sound On still fits. */
+@media (max-width: 360px) {
+  .name a {
+    font-size: 19px;
+    letter-spacing: 0.03em;
   }
 }
 

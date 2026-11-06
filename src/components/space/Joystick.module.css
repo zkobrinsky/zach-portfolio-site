@@ -7,7 +7,6 @@
   .joystick {
     position: fixed;
     z-index: 3;
-    left: 24px;
     bottom: 72px; /* above the Reset View and Back to Orbit buttons */
     display: grid;
     place-items: center;
@@ -19,6 +18,27 @@
     touch-action: none;
     user-select: none;
   }
+}
+
+.joystick[data-side="left"] {
+  left: 24px;
+}
+
+.joystick[data-side="right"] {
+  right: 24px;
+}
+
+.label {
+  position: absolute;
+  top: -26px;
+  left: 0;
+  width: 100%;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--gold);
+  pointer-events: none;
 }
 
 .knob {

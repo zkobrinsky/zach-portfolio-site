@@ -5,7 +5,10 @@ import { followHost, type Sketch, toggleFullscreen } from "./sketch";
   ripple across the screen and rang a chord. The sensor came in over a serial port, so here a click stands in for it.
 */
 const MAX_RIPPLES = 10;
+/** Everything here is soft, so extra pixels add nothing. Matching a phone's 3x screen dropped it from 60 to 17 fps. */
+const PIXEL_DENSITY = 1;
 const RINGS = 5;
+const RING_GAP = 0.1;
 const TOP_COLOR = "rgb(40, 100, 200)";
 const BOTTOM_COLOR = "rgb(80, 160, 255)";
 
@@ -16,8 +19,10 @@ const babyKick: Sketch = (context) => (p) => {
   const ripples: Ripple[] = [];
   let pointer: { x: number; y: number } | null = null;
 
+  const paint = () => p.drawingContext as CanvasRenderingContext2D;
+
   const kick = (x: number, y: number) => {
-    const [r, g, b] = [p.random(30, 240), p.random(30, 240), p.random(30, 240)];
+    const [r, g, b] = [p.random(30, 240), p.random(30, 240), p.random(30, 240)].map(Math.round);
     ripples.push({ x, y, r, g, b, outerDiameter: 0 });
     if (ripples.length > MAX_RIPPLES) ripples.shift();
     audio.unlock();
@@ -25,38 +30,53 @@ const babyKick: Sketch = (context) => (p) => {
   };
 
   const drawBackground = () => {
-    const canvas = p.drawingContext as CanvasRenderingContext2D;
+    const canvas = paint();
     const gradient = canvas.createLinearGradient(0, 0, 0, p.height);
     gradient.addColorStop(0, TOP_COLOR);
     gradient.addColorStop(1, BOTTOM_COLOR);
-    canvas.save();
     canvas.fillStyle = gradient;
     canvas.fillRect(0, 0, p.width, p.height);
-    canvas.restore();
   };
 
   const drawPointer = () => {
     if (!pointer) return;
-    p.strokeWeight(p.height * 0.005);
-    p.stroke(255, 255, 255, 128);
-    p.fill(255);
-    p.circle(pointer.x, pointer.y, p.height * 0.015);
+    const canvas = paint();
+    canvas.lineWidth = p.height * 0.005;
+    canvas.strokeStyle = "rgb(255 255 255 / 0.5)";
+    canvas.fillStyle = "#fff";
+    canvas.beginPath();
+    canvas.arc(pointer.x, pointer.y, p.height * 0.0075, 0, Math.PI * 2);
+    canvas.fill();
+    canvas.stroke();
   };
 
+  // Straight to the canvas: p5's fill() and stroke() build a new color object on every call, up to 100 a frame.
   const drawRipple = ({ x, y, r, g, b, outerDiameter }: Ripple) => {
+    const canvas = paint();
+    canvas.lineWidth = p.height * 0.03;
     for (let ring = 0; ring < RINGS; ring++) {
-      const diameter = outerDiameter - p.height * 0.1 * ring;
+      const diameter = outerDiameter - p.height * RING_GAP * ring;
       if (diameter <= 0) continue;
       // the fill fades out as it grows, and past that point the outline fades in
-      const fade = p.map(diameter, 0, p.height * 0.5, 240, 0);
-      p.strokeWeight(p.height * 0.03);
-      p.stroke(r, g, b, -fade * 0.2);
-      p.fill(r, g, b, fade);
-      p.circle(x, y, diameter);
+      const fade = 240 * (1 - diameter / (p.height * 0.5));
+      canvas.beginPath();
+      canvas.arc(x, y, diameter / 2, 0, Math.PI * 2);
+      if (fade > 0) {
+        canvas.fillStyle = `rgb(${r} ${g} ${b} / ${Math.min(fade / 255, 1)})`;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = `rgb(${r} ${g} ${b} / ${Math.min((-fade * 0.2) / 255, 1)})`;
+        canvas.stroke();
+      }
     }
   };
 
+  /** True once even the innermost ring has grown past every corner of the screen. */
+  const isOffScreen = ({ outerDiameter }: Ripple) =>
+    (outerDiameter - p.height * RING_GAP * (RINGS - 1)) / 2 > Math.hypot(p.width, p.height) + p.height * 0.03;
+
   p.setup = () => {
+    p.pixelDensity(PIXEL_DENSITY);
     const canvas = p.createCanvas(Math.max(host.clientWidth, 1), Math.max(host.clientHeight, 1)).elt as HTMLCanvasElement;
     p.noCursor();
     followHost(context, (width, height) => {
@@ -84,6 +104,7 @@ const babyKick: Sketch = (context) => (p) => {
       drawRipple(ripple);
       ripple.outerDiameter += p.height * 0.0062;
     }
+    while (ripples.length > 0 && isOffScreen(ripples[0])) ripples.shift();
   };
 
   p.keyPressed = (event?: object) => {

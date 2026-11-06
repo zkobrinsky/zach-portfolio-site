@@ -208,7 +208,12 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
-      {inOrbit && pov && <Joystick />}
+      {inOrbit && pov && (
+        <>
+          <Joystick label="Move" side="left" />
+          <Joystick label="Look" side="right" />
+        </>
+      )}
       {inOrbit && pov && <p className={styles.keysHint}>Mouse to look · W A S D to fly · Esc for cursor</p>}
       {inOrbit && (
         <div className={styles.controls}>
