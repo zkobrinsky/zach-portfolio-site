@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useTexture } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { MOON_WORLDS, MOONS, type MoonSpec } from "@/lib/space/moons";
+import { driftMoons, MOON_WORLDS, MOONS, type MoonSpec } from "@/lib/space/moons";
+import { space } from "@/lib/space/state";
 import { NOISE_GLSL, SUN_VARYINGS_GLSL, SUN_VERTEX_GLSL } from "./shaders";
 
 /*
@@ -14,6 +15,8 @@ import { NOISE_GLSL, SUN_VARYINGS_GLSL, SUN_VERTEX_GLSL } from "./shaders";
 */
 /** Turns the familiar side of the Moon, with its dark seas, toward the opening view. */
 const NEAR_SIDE_TOWARD_US = new THREE.Euler(0, -Math.PI / 2, 0);
+/** A slow turn on each moon's own axis, in radians per second. */
+const SPIN_SPEED = 0.01;
 
 const MOON_VERTEX = /* glsl */ `
   #include <common>
@@ -213,8 +216,15 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
     [spec],
   );
 
+  const mesh = useRef<THREE.Mesh>(null);
+  useFrame(() => {
+    if (!mesh.current) return;
+    mesh.current.position.copy(spec.position);
+    mesh.current.rotation.y = NEAR_SIDE_TOWARD_US.y + drift.seconds * SPIN_SPEED * (spec.seed % 2 < 1 ? 1 : -1);
+  });
+
   return (
-    <mesh position={spec.position} rotation={NEAR_SIDE_TOWARD_US}>
+    <mesh ref={mesh} position={spec.position} rotation={NEAR_SIDE_TOWARD_US}>
       <sphereGeometry args={[spec.radius, 192, 128]} />
       <shaderMaterial
         lights
@@ -229,7 +239,16 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
   );
 }
 
+/** How far the moons have drifted. It only runs in orbit: during a trip a moon holds still, so the landing hits it exactly. */
+const drift = { seconds: 0 };
+
 export function Moons() {
+  useFrame((_, delta) => {
+    if (space.cameraOwner === "landing") return;
+    drift.seconds += Math.min(delta, 0.1);
+    driftMoons(drift.seconds);
+  }, -1);
+
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   const [color, height] = useTexture(["/textures/moon-color.jpg", "/textures/moon-height.jpg"], (textures) => {
     const [colorMap, heightMap] = textures as THREE.Texture[];

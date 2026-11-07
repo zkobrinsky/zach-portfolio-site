@@ -185,6 +185,34 @@ export const MOONS: MoonSpec[] = [
   },
 ];
 
+/** Where each moon sits in the composed opening view. `position` drifts around it; this never moves. */
+const HOMES = new Map(MOONS.map((moon) => [moon.id, moon.position.clone()]));
+
+/** Each moon slowly loops around its home spot, far enough to feel alive without breaking up the composition. */
+const DRIFT_RADIUS = 0.12;
+const DRIFT_PERIOD_MIN = 100;
+const DRIFT_PERIOD_MAX = 160;
+
+/** Moves every moon's `position` along its drift, `seconds` into it. Updates in place, so anything holding a moon sees it move. */
+export function driftMoons(seconds: number) {
+  for (const moon of MOONS) {
+    const home = HOMES.get(moon.id);
+    if (moon.ship || !home) continue;
+    // the seed gives each moon its own speed and starting point
+    const period = DRIFT_PERIOD_MIN + ((moon.seed * 7.31) % 1) * (DRIFT_PERIOD_MAX - DRIFT_PERIOD_MIN);
+    const angle = (seconds / period) * Math.PI * 2;
+    // a loop that starts and ends at home, so a moon is exactly where it was composed at the start of a visit
+    const across = Math.sin(angle) * DRIFT_RADIUS;
+    const along = (1 - Math.cos(angle)) * DRIFT_RADIUS;
+    const heading = moon.seed; // which way round each loop sits
+    moon.position
+      .copy(home)
+      .addScaledVector(VIEW_RIGHT, across * Math.cos(heading) - along * Math.sin(heading))
+      .addScaledVector(VIEW_BACK, across * Math.sin(heading) + along * Math.cos(heading))
+      .addScaledVector(VIEW_UP, Math.sin(angle * 0.7) * DRIFT_RADIUS * 0.35);
+  }
+}
+
 export type NavItem = { label: string; items: MoonSpec[] } | MoonSpec;
 
 const moon = (id: string) => MOONS.find((spec) => spec.id === id)!;

@@ -7,8 +7,9 @@ export const metadata = pageMetadata("/projects/storagepug");
 export default function StoragepugPage() {
   return (
     <div className={styles.project}>
-      <Image className={styles.logo} src="/projects/storagepug-logo.svg" alt="" width={193} height={39} unoptimized />
-      <h2>StoragePug</h2>
+      <h2>
+        <Image className={styles.logo} src="/projects/storagepug-logo.svg" alt="StoragePug" width={193} height={39} unoptimized />
+      </h2>
       <p>
         I made a really cool interactive 3D and 2D experience for StoragePug that’s still under NDA. It’s super rad, and
         you’ll just have to wait to see it. Check back next time to see if the NDA’s been lifted...

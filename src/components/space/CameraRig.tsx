@@ -7,6 +7,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
 import { BASE_FOV, fittedDistance, HOME_CAMERA, ORBIT_NEAR, POV_FOV, POV_NEAR } from "@/lib/space/constants";
 import { debugParams, space } from "@/lib/space/state";
+import { MOONS } from "@/lib/space/moons";
 import { ASTRONAUT_HEIGHT } from "./Astronaut";
 
 const FLY_IN_SECONDS = 1.6;
@@ -17,6 +18,9 @@ const THRUST_SPEED = 0.9;
 const THRUST_RESPONSE = 2.5;
 /** You can't fly inside the planet. */
 const CLOSEST_TO_PLANET = 1.15;
+/** Or through a moon: the closest you get to one, in moon radii, leaving room for its mountains. */
+const CLOSEST_TO_MOON = 1.25;
+const SOLID_MOONS = MOONS.filter((moon) => !moon.ship);
 /** How close the camera gets to the head before the astronaut disappears. The helmet is about 0.05 across from its center. */
 const HIDE_ASTRONAUT_WITHIN = 0.1;
 const MOUSE_SENSITIVITY = 0.0022;
@@ -28,6 +32,8 @@ const MAX_PITCH = 1.5;
 const LOOK_RESPONSE = 30;
 /** How fast the Look joystick turns the view at full push, in radians per second. */
 const LOOK_STICK_SPEED = 1.8;
+/** Panning (right-drag, or two fingers) can move the view's center this far from the planet, past the outer moons. */
+const MAX_PAN = 2.5;
 
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
@@ -57,6 +63,10 @@ const HOME_ROTATION = new THREE.Quaternion().setFromRotationMatrix(
 const resetFrom = new THREE.Vector3();
 const resetTurn = new THREE.Quaternion();
 const resetStep = new THREE.Quaternion();
+const resetTarget = new THREE.Vector3();
+const target = new THREE.Vector3();
+const overshoot = new THREE.Vector3();
+const awayFromMoon = new THREE.Vector3();
 
 /** Orbit controls by default. In POV mode this owns the camera and flies it into the astronaut's helmet. */
 function lockCursor(canvas: HTMLCanvasElement) {
@@ -90,6 +100,8 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     if (size.width === 0 || size.width === fittedWidth.current || space.cameraOwner === "landing" || flight.current.inPov) return;
     fittedWidth.current = size.width;
     home.current = fitted;
+    // refit around the planet, and save that as the view to reset to, even if panning had moved the center
+    controls.current?.target.set(0, 0, 0);
     camera.position.setLength(fitted);
     controls.current?.update();
     controls.current?.saveState();
@@ -226,18 +238,23 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     if (r.startedAt >= 0 && !f.inPov) {
       if (controls.current?.enabled) {
         controls.current.enabled = false;
-        r.distance = perspective.position.length();
-        resetFrom.copy(perspective.position).normalize();
+        // measured around wherever panning left the view's center, which glides back to the planet
+        resetTarget.copy(controls.current.target);
+        resetFrom.copy(perspective.position).sub(resetTarget);
+        r.distance = resetFrom.length();
+        resetFrom.normalize();
         resetTurn.setFromUnitVectors(resetFrom, HOME_DIRECTION);
       }
       const k = Math.min(1, (performance.now() - r.startedAt) / (RESET_SECONDS * 1000));
       const s = ease(k);
       resetStep.identity().slerp(resetTurn, s);
+      target.copy(resetTarget).multiplyScalar(1 - s);
       perspective.position
         .copy(resetFrom)
         .applyQuaternion(resetStep)
-        .multiplyScalar(r.distance + (home.current - r.distance) * s);
-      perspective.lookAt(ORIGIN);
+        .multiplyScalar(r.distance + (home.current - r.distance) * s)
+        .add(target);
+      perspective.lookAt(target);
       if (k >= 1) {
         r.startedAt = -1;
         if (controls.current) {
@@ -324,6 +341,18 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
       travelled.copy(eye).sub(headHome);
       velocity.set(0, 0, 0);
     }
+    // bump into moons: stop at the surface, but keep any sideways drift so you slide around them
+    for (const moon of SOLID_MOONS) {
+      const closest = moon.radius * CLOSEST_TO_MOON;
+      awayFromMoon.copy(eye).sub(moon.position);
+      const distance = awayFromMoon.length();
+      if (distance >= closest) continue;
+      awayFromMoon.divideScalar(distance || 1);
+      eye.copy(moon.position).addScaledVector(awayFromMoon, closest);
+      travelled.copy(eye).sub(headHome);
+      const inward = velocity.dot(awayFromMoon);
+      if (inward < 0) velocity.addScaledVector(awayFromMoon, -inward);
+    }
 
     // the path: orbit position, over the shoulder along the line of sight, into the helmet
     shoulder
@@ -356,12 +385,21 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     }
   }, -0.5);
 
+  // panning moves the camera and its center together, so pull both back when the center strays too far
+  const keepPanNearby = () => {
+    const c = controls.current;
+    if (!c || c.target.length() <= MAX_PAN) return;
+    overshoot.copy(c.target).sub(target.copy(c.target).setLength(MAX_PAN));
+    c.target.sub(overshoot);
+    c.object.position.sub(overshoot);
+  };
+
   return (
     <OrbitControls
       ref={controls}
       makeDefault
       target={[0, 0, 0]}
-      enablePan={false}
+      onChange={keepPanNearby}
       enableDamping
       dampingFactor={0.06}
       rotateSpeed={0.5}

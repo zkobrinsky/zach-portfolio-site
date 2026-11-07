@@ -23,6 +23,8 @@ const MUTE_KEY = "muted";
 const BLACKOUT_MS = 1500;
 /** Switching between pages: a quick dip to black. Stands in for the Star Trek teleport. */
 const PAGE_SWITCH_MS = 220;
+/** How long a page switch waits for the new page before uncovering the screen anyway. */
+const SWITCH_GIVE_UP_MS = 4000;
 
 /**
  * orbit: free to look around. travel: on the way to a moon. blackout: knocked out by the landing.
@@ -127,21 +129,42 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [pageId, stage, goHome, goTo]);
 
+  // Switching pages fades through black. The fade back only starts once the new page has really arrived:
+  // a slow route used to fade back early and flash the old page, like the ship interior behind About.
+  const switchingTo = useRef<string | null>(null);
+  const revealPage = useCallback(() => {
+    const screen = space.blackout;
+    switchingTo.current = null;
+    if (!screen) return;
+    screen.style.opacity = "0";
+    setTimeout(() => {
+      screen.style.transition = "";
+    }, PAGE_SWITCH_MS);
+  }, []);
+
   const switchPage = useCallback((id: string) => {
     const screen = space.blackout;
     if (!screen) return router.push(`/${id}`, { scroll: false });
     screen.style.transition = `opacity ${PAGE_SWITCH_MS}ms`;
     screen.style.opacity = "1";
+    switchingTo.current = `/${id}`;
     setTimeout(() => {
       router.push(`/${id}`, { scroll: false });
+      // never leave the screen black if the navigation goes nowhere
       setTimeout(() => {
-        screen.style.opacity = "0";
-        setTimeout(() => {
-          screen.style.transition = "";
-        }, PAGE_SWITCH_MS);
-      }, PAGE_SWITCH_MS);
+        if (switchingTo.current === `/${id}`) revealPage();
+      }, SWITCH_GIVE_UP_MS);
     }, PAGE_SWITCH_MS);
-  }, [router]);
+  }, [router, revealPage]);
+
+  useEffect(() => {
+    if (switchingTo.current !== pathname) return;
+    // give the new page and the canvas a frame to draw before uncovering them
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(revealPage);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, revealPage]);
 
   const onImpact = useCallback(() => {
     thud.current?.play().catch(() => {});

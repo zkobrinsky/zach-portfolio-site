@@ -55,6 +55,14 @@ const CAMERA_ABOVE_FEET = 0.34;
 const CAMERA_AHEAD_OF_FEET = 0.2;
 const LOOK_AHEAD_OF_FEET = 0.075;
 const SOLE_BELOW_FOOT_BONE = 0.035;
+/**
+ * Looking down, the camera leaves the helmet and swings out in front of the chest on its way to the boots, in
+ * astronaut heights. A straight line from the eye to the boots runs through the neck and chest, and with the
+ * body still drifting it sometimes cut right through them, so you saw inside your own suit.
+ */
+const LOOK_DOWN_SWING_OUT = 0.4;
+/** How far along the look-down (eased) before the body appears: by then the swing has cleared the chest. */
+const LOOK_DOWN_REVEAL = 0.3;
 
 type Phase = "idle" | "flyIn" | "lookDown" | "dive" | "impact" | "approach" | "boarded" | "landed" | "leave" | "climb";
 
@@ -83,19 +91,55 @@ const scratch = new THREE.Vector3();
 const scratchRotation = new THREE.Quaternion();
 
 /** Where the camera should be to frame the boots, for the astronaut's current pose. */
-/** Aboard the ship: the astronaut floats at the center, off to one side of the about text on wide screens. */
-function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, aspect: number) {
+/**
+ * Arriving aboard, the astronaut drops in from just above the frame and settles, every time. Shorter and gentler
+ * than the entrance in orbit, since the camera is close on the head and chest.
+ */
+const SHIP_ARRIVAL_DELAY = 0.25;
+const SHIP_ARRIVAL_SECONDS = 1.6;
+/** Enough to start above the close crop. */
+const SHIP_ARRIVAL_DROP = 0.4;
+const SHIP_ARRIVAL_SPIN = 0.25;
+
+/**
+ * Aboard the ship: the astronaut floats at the center, off to one side of the about text on wide screens.
+ * `arrivedAt` is when the drop-in started (performance.now ms), or null while it's still waiting.
+ */
+function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, aspect: number, arrivedAt: number | null) {
   const t = space.time;
   const wide = aspect > 1.1;
+  const progress = arrivedAt === null ? 0 : clamp01((performance.now() - arrivedAt) / 1000 / SHIP_ARRIVAL_SECONDS);
+  const left = (1 - progress) ** 3; // ease-out: quick at first, settling at the end
   space.inShip = true;
   space.flailAmount = 1;
-  astronaut.visible = space.headOn; // stays hidden until the head has loaded, so the helmet never shows
+  // stays hidden until the head has loaded, so the helmet never shows, and until the drop-in begins
+  astronaut.visible = space.headOn && arrivedAt !== null && performance.now() >= arrivedAt;
   astronaut.scale.setScalar(1);
-  astronaut.position.set(0, Math.sin(t * 0.5) * 0.008, 0);
-  astronaut.rotation.set(0.04 * Math.sin(t * 0.3), 0.3 + 0.08 * Math.sin(t * 0.2), 0.03 * Math.sin(t * 0.25));
+  astronaut.position.set(0, Math.sin(t * 0.5) * 0.008 + left * SHIP_ARRIVAL_DROP, 0);
+  astronaut.rotation.set(
+    0.04 * Math.sin(t * 0.3) - left * SHIP_ARRIVAL_SPIN,
+    0.3 + 0.08 * Math.sin(t * 0.2),
+    0.03 * Math.sin(t * 0.25) + left * SHIP_ARRIVAL_SPIN * 0.5,
+  );
   // a close crop on the head and chest: to the left of the text on wide screens, above it on narrow ones
   camera.position.set(wide ? 0.13 : 0, 0.17, wide ? 0.62 : 0.72);
   camera.lookAt(wide ? 0.13 : 0, wide ? 0.15 : 0.1, 0);
+}
+
+/**
+ * Gets the GPU ready to draw the astronaut and its head before they first appear: builds their shaders and
+ * uploads their textures. Otherwise all of that happens on the first visible frame, which froze the drop-in
+ * partway through when /about was opened directly (the body had never been drawn yet).
+ */
+async function prepareToDraw(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, astronaut: THREE.Object3D) {
+  astronaut.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    for (const material of [object.material].flat() as THREE.MeshStandardMaterial[])
+      for (const map of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap, material.aoMap, material.emissiveMap])
+        if (map) gl.initTexture(map);
+  });
+  // resolves once the shaders have really finished building, not just started
+  await gl.compileAsync(scene, camera);
 }
 
 function frameBoots(astronaut: THREE.Object3D, scale: number) {
@@ -126,6 +170,10 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     alignedRotation: new THREE.Quaternion(),
     startPosition: new THREE.Vector3(),
     feetOffset: new THREE.Vector3(),
+    /** When the drop-in aboard the ship starts (performance.now ms). Null until the head is on and the view is uncovering. */
+    shipArrival: null as number | null,
+    /** Getting the astronaut with its head ready to draw: not started, under way, or done. */
+    readyToDraw: "no" as "no" | "pending" | "yes",
     touchdown: new THREE.Vector3(),
     surfaceNormal: new THREE.Vector3(),
     landedScale: 1,
@@ -142,6 +190,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
   const standOn = (moon: MoonSpec) => {
     const t = trip.current;
     t.moon = moon;
+    t.shipArrival = null; // every arrival aboard gets its own drop-in
     if (moon.ship) {
       // going back starts just outside the hull
       shipPosition(space.time, shipAt);
@@ -186,7 +235,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     }
   }, [destination]);
 
-  useFrame(({ camera, size }) => {
+  useFrame(({ camera, size, gl, scene }) => {
     const t = trip.current;
     const astronaut = space.astronaut;
     if (t.phase === "idle" || !astronaut || !t.moon) return;
@@ -196,6 +245,14 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     const begin = (phase: Phase) => {
       t.phase = phase;
       t.startedAt = now;
+    };
+    // the drop-in waits for this, so its first frames don't stall
+    const getReadyToDraw = () => {
+      if (!space.headOn || t.readyToDraw !== "no") return;
+      t.readyToDraw = "pending";
+      prepareToDraw(gl, scene, perspective, astronaut).finally(() => {
+        t.readyToDraw = "yes";
+      });
     };
     const lens = (fov: number, near: number) => {
       perspective.fov = fov;
@@ -242,9 +299,12 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         const e = ease(k);
         astronaut.quaternion.copy(t.startAstronautRotation).slerp(t.alignedRotation, e);
         space.flailAmount = 1 - e;
-        astronaut.visible = k > 0.3;
+        astronaut.visible = e > LOOK_DOWN_REVEAL;
         frameBoots(astronaut, 1);
-        perspective.position.copy(t.startCamera).lerp(cameraGoal, e);
+        perspective.position
+          .copy(t.startCamera)
+          .lerp(cameraGoal, e)
+          .addScaledVector(forward, ASTRONAUT_HEIGHT * LOOK_DOWN_SWING_OUT * Math.sin(Math.PI * e));
         perspective.quaternion.copy(t.startRotation).slerp(rotationGoal, e);
         lens(POV_FOV, POV_NEAR);
         if (space.visor) space.visor.style.opacity = String(1 - clamp01(k * 2));
@@ -323,7 +383,10 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
       case "boarded": {
         const k = clamp01(seconds / BOARDED_FADE_SECONDS);
         if (space.blackout) space.blackout.style.opacity = String(1 - k);
-        poseInShip(astronaut, perspective, size.width / size.height);
+        // start once the fade is far enough along to see it
+        getReadyToDraw();
+        if (t.readyToDraw === "yes" && k >= 0.3) t.shipArrival ??= now + SHIP_ARRIVAL_DELAY * 1000;
+        poseInShip(astronaut, perspective, size.width / size.height, t.shipArrival);
         lens(BASE_FOV, 0.01);
         if (k >= 1) {
           if (wanted.current) t.phase = "landed";
@@ -334,7 +397,10 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
 
       case "landed":
         if (t.moon.ship) {
-          poseInShip(astronaut, perspective, size.width / size.height);
+          // opened straight on About, or switched to it: drop in once the head is on
+          getReadyToDraw();
+          if (t.readyToDraw === "yes") t.shipArrival ??= now + SHIP_ARRIVAL_DELAY * 1000;
+          poseInShip(astronaut, perspective, size.width / size.height, t.shipArrival);
           lens(BASE_FOV, 0.01);
         }
         return;

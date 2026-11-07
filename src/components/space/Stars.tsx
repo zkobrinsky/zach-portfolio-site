@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { useThree } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { SKY_FRAGMENT } from "./shaders";
 
@@ -9,6 +9,8 @@ const COUNT = 14000;
 const RADIUS = 900;
 const HERO_STAR_CHANCE = 0.0125;
 const GALACTIC_POLE = new THREE.Vector3(0.35, 1, -0.25).normalize();
+/** The sky turns very slowly around the galaxy's pole, about once an hour, so the band of the Milky Way stays put. */
+const SKY_TURN_SPEED = (Math.PI * 2) / 3600;
 const TEMPERATURES = [
   [0.62, 0.72, 1.0],
   [0.85, 0.9, 1.0],
@@ -84,9 +86,13 @@ export function Stars() {
   const geometry = useMemo(() => starGeometry(), []);
   const starUniforms = useMemo(() => ({ uDpr: { value: dpr } }), [dpr]);
   const skyUniforms = useMemo(() => ({ uBand: { value: GALACTIC_POLE }, uRingIn: { value: 0 }, uRingOut: { value: 1 } }), []);
+  const sky = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    sky.current?.rotateOnWorldAxis(GALACTIC_POLE, Math.min(delta, 0.1) * SKY_TURN_SPEED);
+  });
 
   return (
-    <>
+    <group ref={sky}>
       {/* drawn first: the sun sits beyond this sphere, and opaque objects don't sort by depth alone */}
       <mesh renderOrder={-1}>
         <sphereGeometry args={[950, 64, 32]} />
@@ -108,6 +114,6 @@ export function Stars() {
           fragmentShader={STAR_FRAGMENT}
         />
       </points>
-    </>
+    </group>
   );
 }
