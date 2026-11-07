@@ -8,13 +8,15 @@
   list-style: none;
 }
 
-.grid button {
+.grid button,
+.grid a {
   display: block;
   width: 100%;
   padding: 0;
   font: inherit;
   text-align: left;
   color: var(--cream);
+  text-decoration: none;
   background: none;
   border: 0;
   cursor: pointer;
@@ -34,7 +36,9 @@
 }
 
 .grid button:hover img,
-.grid button:focus-visible img {
+.grid button:focus-visible img,
+.grid a:hover img,
+.grid a:focus-visible img {
   transform: scale(1.04);
 }
 

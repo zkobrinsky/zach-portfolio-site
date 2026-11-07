@@ -9,9 +9,11 @@ import styles from "./VideoGallery.module.css";
 export function VideoGallery({ videos }: { videos: Video[] }) {
   const [open, setOpen] = useState<number | null>(null);
   const viewer = useRef<HTMLDialogElement>(null);
-  const video = open === null ? null : videos[open];
+  // only these open in the viewer, so stepping through it skips videos that can't play here
+  const players = videos.filter((item) => !item.vimeoOnly);
+  const video = open === null ? null : players[open];
 
-  const step = (by: number) => setOpen((index) => (index === null ? null : (index + by + videos.length) % videos.length));
+  const step = (by: number) => setOpen((index) => (index === null ? null : (index + by + players.length) % players.length));
 
   useEffect(() => {
     const dialog = viewer.current;
@@ -22,16 +24,29 @@ export function VideoGallery({ videos }: { videos: Video[] }) {
   return (
     <>
       <ul className={styles.grid}>
-        {videos.map((item, index) => (
-          <li key={item.id}>
-            <button type="button" onClick={() => setOpen(index)} aria-label={`Play ${item.title}`}>
+        {videos.map((item) => {
+          const card = (
+            <>
               <span className={styles.thumbnail}>
                 <Image src={`/videos/${item.id}.jpg`} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw" />
               </span>
               <span className={styles.title}>{item.title}</span>
-            </button>
-          </li>
-        ))}
+            </>
+          );
+          return (
+            <li key={item.id}>
+              {item.vimeoOnly ? (
+                <a href={`https://vimeo.com/${item.id}`} target="_blank" rel="noopener noreferrer">
+                  {card}
+                </a>
+              ) : (
+                <button type="button" onClick={() => setOpen(players.indexOf(item))} aria-label={`Play ${item.title}`}>
+                  {card}
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
 
       <dialog

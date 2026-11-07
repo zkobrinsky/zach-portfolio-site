@@ -96,6 +96,7 @@ export function Header({ pageId, inOrbit, landed, muted, onToggleMute, onGoTo, o
           }}
         >
           Zach Kobrinsky
+          <span className={styles.jobTitle}>Senior Frontend Engineer</span>
         </Link>
       </h1>
       <button

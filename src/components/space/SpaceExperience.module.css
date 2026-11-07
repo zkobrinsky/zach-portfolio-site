@@ -246,6 +246,15 @@
   background: rgb(0 0 0 / 0.55);
 }
 
+.name .jobTitle {
+  display: block;
+  margin-top: 2px;
+  font: 12px/1.2 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .menuButton {
   display: none;
 }
@@ -266,6 +275,11 @@
   .name a {
     font-size: 24px;
     letter-spacing: 0.05em;
+  }
+
+  .name .jobTitle {
+    font-size: 10px;
+    letter-spacing: 0.1em;
   }
 
   .mute,
@@ -361,6 +375,11 @@
   .name a {
     font-size: 19px;
     letter-spacing: 0.03em;
+  }
+
+  .name .jobTitle {
+    font-size: 8px;
+    letter-spacing: 0.06em;
   }
 }
 

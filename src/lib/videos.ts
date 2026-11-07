@@ -5,6 +5,8 @@ export type Video = {
   caption?: string;
   /** Set for a silent clip hosted here instead of on Vimeo. It plays on a loop. */
   file?: string;
+  /** Set for a video whose owner blocks embedding, so its card opens Vimeo instead. */
+  vimeoOnly?: boolean;
 };
 
 export const VIDEOS: Video[] = [
@@ -45,5 +47,5 @@ export const VIDEOS: Video[] = [
     title: "BKCM Music Partners",
     caption: "Promo for the Music Partners Program at the Brooklyn Conservatory of Music",
   },
-  { id: "238468680", title: "Brooklyn Conservatory of Music Community Outreach" },
+  { id: "238468680", title: "Brooklyn Conservatory of Music Community Outreach", vimeoOnly: true },
 ];
