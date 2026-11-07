@@ -71,6 +71,14 @@ export const PAGES = {
     title: "StoragePug",
     description: "An interactive 3D application and 2D canvas tool built with Three.js and WebGL by Zach Kobrinsky. Still under NDA.",
   },
+  "/projects/complex": {
+    title: "Complex",
+    description: "How Ye Changed Music, created by Zach Kobrinsky for Complex's 20th Anniversary cover story.",
+  },
+  "/projects/kargo": {
+    title: "Kargo Flourishes",
+    description: "Interactive elements for open-web and PMP banner ads, led by Zach Kobrinsky, driving CTR lifts of up to 160%.",
+  },
   "/projects/kaleidoscope-maker": {
     title: "Kaleidoscope Maker",
     description: "A React app for creating kaleidoscopic art, drawn with p5.js and controlled through Redux.",

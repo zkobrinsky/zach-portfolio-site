@@ -1,0 +1,127 @@
+.project {
+  width: min(100%, 42rem);
+  margin-inline: auto;
+  padding: 32px 0 72px;
+  text-align: left;
+}
+
+.project.project h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.project.project p {
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.story {
+  display: block;
+  margin-top: 16px;
+}
+
+.story img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.project.project .note {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--red);
+  background: rgb(200 64 47 / 0.12);
+}
+
+.project.project .button {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 12px 22px;
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+}
+
+.project h3 {
+  margin: 44px 0 10px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phone {
+  display: block;
+  width: min(100%, 340px);
+  aspect-ratio: 9 / 18;
+  margin: 18px auto 0;
+  background: #000;
+  border: 1px solid rgb(201 161 74 / 0.5);
+  border-radius: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid a,
+.lost {
+  display: block;
+  font: 14px/1.5 var(--font-mono);
+  text-decoration: none;
+  color: var(--cream);
+}
+
+.preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  font: 900 26px/1.1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: #111;
+  border: 1px solid rgb(201 161 74 / 0.25);
+  transition: border-color 0.2s ease;
+}
+
+.preview img {
+  object-fit: cover;
+}
+
+.grid a:hover .preview,
+.grid a:focus-visible .preview {
+  border-color: var(--gold);
+}
+
+.grid strong {
+  display: block;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* no link to follow: the site is gone */
+.lost {
+  cursor: not-allowed;
+}
+
+.logo {
+  display: block;
+  width: min(100%, 22rem);
+  height: auto;
+}
