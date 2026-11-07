@@ -2,12 +2,12 @@ import Image from "next/image";
 import { pageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
-export const metadata = pageMetadata("/previous-life/fish-mongering");
+export const metadata = pageMetadata("/previous-life/fishmongering");
 
-export default function FishMongeringPage() {
+export default function FishmongeringPage() {
   return (
     <div className={styles.story}>
-      <h2>Fish Mongering</h2>
+      <h2>Fishmongering</h2>
       <p>
         My first job when I moved to New York was as a fishmonger for Blue Moon Fish, the only fisherman who brought his catch
         straight to the greenmarkets. It was the best fish in New York City, and we supplied a lot of Michelin-rated
@@ -57,7 +57,7 @@ export default function FishMongeringPage() {
             height={1050}
             sizes="(max-width: 800px) 100vw, 29rem"
           />
-          <figcaption>Aaron Quinn, my fish mongering mentor, at the Tribeca Greenmarket.</figcaption>
+          <figcaption>Aaron Quinn, my fishmongering mentor, at the Tribeca Greenmarket.</figcaption>
         </figure>
         <figure>
           <video

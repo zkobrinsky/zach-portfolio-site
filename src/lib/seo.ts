@@ -46,8 +46,8 @@ export const PAGES = {
     title: "Newspaper Editor",
     description: "Zach Kobrinsky was the editor in chief and photo editor of the High Plains Reader.",
   },
-  "/previous-life/fish-mongering": {
-    title: "Fish Mongering",
+  "/previous-life/fishmongering": {
+    title: "Fishmongering",
     description: "Before frontend engineering, Zach Kobrinsky was a fishmonger for Blue Moon Fish in New York City.",
   },
   "/projects/cards-with-friends": {

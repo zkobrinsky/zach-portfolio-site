@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+    <meta name="robots" content="noindex">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>How Ye Changed Pop Culture</title>
+    <meta name="description" content="These are the moments that prove no other artist has shifted pop culture and how the media deals with celebrities the way Kanye West has in the past 20 years.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Facebook Tags -->
+    <meta property="og:title" content="How Ye Changed Pop Culture">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.complex.com/pop-culture/kanye-west-pop-culture">
+    <meta property="og:image" content="https://bin.complex.com/websites/twentieth-anniversary-cover-story/img/pop-culture/share-culture.jpg">
+    <meta property="og:site_name" content="Complex.com">
+    <meta property="og:description" content="These are the moments that prove no other artist has shifted pop culture and how the media deals with celebrities the way Kanye West has in the past 20 years.">
+
+    <!-- Twitter Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.complex.com/pop-culture/kanye-west-pop-culture">
+    <meta name="twitter:title" content="How Ye Changed Pop Culture">
+    <meta name="twitter:description" content="These are the moments that prove no other artist has shifted pop culture and how the media deals with celebrities the way Kanye West has in the past 20 years.">
+    <meta name="twitter:image" content="https://bin.complex.com/websites/twentieth-anniversary-cover-story/img/pop-culture/share-culture.jpg">
+
+    <!-- CHANGE IF YOU HAVE A "VANITY" URL, e.g. complex.com/brand -->
+    <link rel="canonical" href="https://www.complex.com/pop-culture/kanye-west-pop-culture">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="https://bin.complex.com/common/images/favicons/complex/favicon.ico" />
+
+    <!-- PRIVACY COMPLIANCE -->
+    <script>var isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    // the scene queues ads when an item opens; ads are stripped, so give it somewhere to queue them
+    window.catalyst = { cmd: [] };</script>
+
+    <script type="text/javascript">
+        function append(scriptid, url, async, onload) {
+            var d = document,
+                sn = 'script',
+                f = d.getElementsByTagName(sn)[0];
+            if (!f) f = d.head;
+            var s = d.createElement(sn);
+            s.async = true;
+            s.id = scriptid;
+            if (typeof onload === 'function') {
+                s.onload = onload;
+            }
+            s.src = url;
+            f.parentNode.insertBefore(s, f);
+        }
+    </script>
+
+    
+
+    <!-- ANY FONTS GO HERE -->
+    <link rel="stylesheet" href="https://use.typekit.net/hmi1ygu.css">
+
+    <!-- css -->
+    <link rel="stylesheet" href="https://partner.complex.com/twentieth-anniversary-cover-story/css/main.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@100;400&display=swap" rel="stylesheet">
+
+    <script>
+        // load IntersectionObserver polyfill if not fully supported. Done in the head to ensure it is available for all webmodules
+        if (!('IntersectionObserver' in window && 'IntersectionObserverEntry' in window && 'intersectionRatio' in window.IntersectionObserverEntry.prototype)) {
+            document.write('<script src="https://bin.complex.com/common/polyfills/intersection-observer-polyfill.min.js"><\/script>');
+        }
+
+        // expose homeURL as JS variable
+        window.homeURL = "https://partner.complex.com/twentieth-anniversary-cover-story/";
+    </script>
+<style>/* hide the bar only; the page still scrolls, which drives the 3D effect */
+*{scrollbar-width:none}
+*::-webkit-scrollbar{display:none}</style>
+</head>
+
+<body>
+    <script>if (isLocalhost) document.body.classList.add('is_dev');</script>
+<style>
+/* *******************************
+************ STARS ************
+******************************* */
+
+body {
+    min-height: 100vh;
+}
+
+.stars-container {
+    position: fixed;
+    background: black;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -100;
+}
+
+.stars-background {
+    transform-origin: center;
+}
+
+.star {
+    position: absolute;
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: white;
+    border-radius: 100px;
+}
+
+/* reduces concentration of stars on mobile */
+@media (max-width: 920px) {
+    .stars-container div:nth-child(3n+3) {
+        display: none;
+    }
+}
+</style>
+
+
+
+<script>
+    const container = document.querySelector('body');    
+
+    // stars container
+    let starsContainer = null;
+    let background = null;
+    let middleground = null;
+    let foreground = null;
+
+    // stars
+    const starsArray = [];
+
+    function createStars(numStars) {
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.opacity = `${random(0.7, 0.9)}`;
+            star.style.transform = `translate(${Math.random() * container.clientWidth}px, ${Math.random() * container.clientHeight}px)`;
+            starsArray.push(star);
+
+        }
+        return starsArray;
+    }
+
+    function addStarsToDom(starsArray, container) {
+        starsContainer = document.createElement('div');
+        starsContainer.classList.add('stars-container');
+
+        background = document.createElement('div');
+        middleground = document.createElement('div');
+        foreground = document.createElement('div');
+
+        background.classList.add('stars-background');
+        middleground.classList.add('stars-middleground');
+        foreground.classList.add('stars-foreground');
+
+        starsContainer.appendChild(background);
+        starsContainer.appendChild(middleground);
+        starsContainer.appendChild(foreground);
+
+        for (let i = 0; i < starsArray.length; i++) {
+            const star = starsArray[i];
+            if (i % 1 === 0 ) {
+                background.appendChild(star);
+                star.style.width = `${random(2, 5)}px`;
+                star.style.height = `${random(2, 5)}px`;
+            }
+            if (i % 2 === 0 ) {
+                middleground.appendChild(star);
+                star.style.width = `${random(4, 7)}px`;
+                star.style.height = `${random(4, 7)}px`;
+            }
+            if (i % 3 === 0 ) {
+                foreground.appendChild(star);
+                star.style.width = `${random(5, 8)}px`;
+                star.style.height = `${random(5, 8)}px`;
+            }
+        };
+        container.appendChild(starsContainer);
+    }
+
+    addStarsToDom(createStars(1000), container);
+
+    function random(min, max) {
+        return min + Math.random() * (max - min);
+    };
+
+    window.addEventListener('resize', () => {
+        starsArray.forEach(star => {
+            star.style.transform = `translate(${Math.random() * container.clientWidth}px, ${Math.random() * container.clientHeight}px)`;
+        });
+    });
+
+    // Parallax effect threshold - lower number is more extreme:
+    const threshold = 60;
+
+    document.addEventListener('mousemove', e => {
+        const x = e.clientX-(container.clientWidth/2);
+        const y = e.clientY-(container.clientHeight/2)
+        background.style.transform = `translate(${x/threshold*0.3}px, ${y/threshold*0.3}px`;
+        middleground.style.transform = `translate(${x/threshold*0.6}px, ${y/threshold*0.6}px`;
+        foreground.style.transform = `translate(${x/threshold}px, ${y/threshold}px`;
+    });
+
+</script><div class="top-nav">
+    <a href="https://www.complex.com/" title="Go back to Complex">
+                <img class="top-nav-logo" src="https://svg.complex.com/svg/complex-logo-light.svg" alt="Go back to Complex">
+    </a>
+
+    <div class="back-button">
+        <a href="https://stories.complex.com/kanye-west-changed-complex" target="_blank">BACK TO YE HUB &#x2192;</a>
+    </div>
+
+    <!-- <div class="top-nav-bc-logo">
+        <div class="advertisement" id="ad_logo_alt" data-ad-size="logo_alt"></div>
+    </div> -->
+
+    </div>
+
+<script>
+    // SHARING
+    // (function(){
+    //     function share(network) {
+    //         var TwitterText = 'Making culture pop';
+
+    //         var wWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    //         var wHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    //         var pWidth = 626;
+    //         var pHeight = 436;
+    //         var left = wWidth/2 - pWidth/2 + 'px';
+    //         var top = wHeight/2 - pHeight/2 + 'px';
+
+    //         //default to FB
+    //         var shareURL = encodeURIComponent(location.protocol + '//' + location.host + location.pathname);
+    //         let url = 'https://www.facebook.com/sharer/sharer.php?u='+shareURL;
+    //         let title = 'facebook-share-dialog';
+
+    //         if (network === 'Twitter') {
+    //             url = 'https://twitter.com/share?url='+shareURL+'&text='+encodeURIComponent(TwitterText);
+    //             title = 'twitter-share-dialog';
+    //         }
+
+    //         CMPLX.trackEvent('ShareTo' + network);
+    //         window.open(url, title, 'width='+pWidth+',height='+pHeight+',left='+left+',top='+top);
+    //     }
+
+    //     document.querySelector('.fb-share').addEventListener('click', function(e){
+    //         e.preventDefault();
+    //         share('Facebook');
+    //     });
+
+    //     document.querySelector('.twitter-share').addEventListener('click', function(e){
+    //         e.preventDefault();
+    //         share('Twitter');
+    //     });
+    // })();
+</script>
+<div class="wrapper" id="culture">
+    <div id="progress-bar">
+        <div id="progress-bar-inner"></div>
+    </div>
+    <div id="cta" class="arrowed-text">
+        <img src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/img/pop-culture/scroll-cta.png" alt="scroll to interact">
+    </div>
+    <div id="cta-interact">CLICK IMAGES FOR INFO</div>
+    <div id="close" class="hidden arrowed-text"><div>&lt;</div>< CLOSE >></div>
+    <picture class="splash-screen hidden">
+        <source media="(min-width:768px)" srcset="https://bin.complex.com/websites/twentieth-anniversary-cover-story/img/pop-culture/culture-title-byline.png">
+        <img src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/img/pop-culture/culture-title-byline-mobile.png" alt="How Ye Changed Pop Culture, Click to Enter">
+    </picture>
+    <div class="scroll"></div>
+    <div class="modal-popup">
+        <div class="top-elements">
+            <div class="modal-popup__close close-button"></div>
+        </div>
+        <div class="modal-popup__content">
+            <div class="modal-popup__col-left">
+                <div class="modal-popup__video-outer">
+                    <div class="modal-popup__video">
+                        <div class="loader">
+                            <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+                                <g fill="none" fill-rule="evenodd">
+                                    <g transform="translate(1 1)" stroke-width="2">
+                                        <circle stroke-opacity=".5" cx="18" cy="18" r="18"/>
+                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                        </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="video-container">
+                            <!-- iframe gets injected by JS -->
+                        </div>
+                        <div class="video-poster">
+                            <img src="" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-popup__col-right">
+                <div class="modal-popup__title">
+                    <div class="modal-popup__title__hed"></div>
+                </div>
+                <div class="modal-popup__year"></div>
+                <div class="modal-popup__song"></div>
+                <div class="modal-popup__description"></div>
+            </div>
+        </div>
+    </div>
+    <div id="video-materials">
+        <video id="george-bush-1" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/george-bush.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="george-bush2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/george-bush2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="taylor-swift-1" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/kanye-west-shrug-taylor-swift.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="his-twitter-1" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/kanye-interviews.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="how-sway" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/sway-interview.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="jeen-yuhs" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/jeen-yuhs.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="jeen-yuhs-2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/jeen-yuhs2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="hbo" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/ye-hbo.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="hbo2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/ye-hbo2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="tmz" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/tmz.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="tmz2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/tmz2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="paparazzi" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/paparazzi.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="paparazzi2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/paparazzi2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="zane-lowe" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/zane-lowe.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="zane-lowe2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/zane-lowe2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="sunday-service" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/sunday-service.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="sunday-service2" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/sunday-service2.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+        <video id="white-house" playsinline webkit-playsinline muted loop autoplay preload="auto" src="https://bin.complex.com/websites/twentieth-anniversary-cover-story/video/white-house.mp4" crossorigin="anonymous" poster="https://media.complex.com/common/fpos/fpo-800x450.jpg"></video>
+    </div>
+    <script src="https://www.youtube.com/player_api"></script>
+    <script src="/archive/how-ye-changed-pop-culture/culture.min.js"></script>
+    <div class="footer">
+        <a href="https://www.complex.com/privacy" target="_blank" data-clickto="Privacy Policy">Privacy Policy</a> |
+        <a href="https://www.complex.com/terms" target="_blank" data-clickto="Terms of Service">Terms of Service</a>
+    </div>
+
+</body>
+
+</html>
