@@ -20,7 +20,7 @@ const THRUST_RESPONSE = 2.5;
 const CLOSEST_TO_PLANET = 1.15;
 /** Or through a moon: the closest you get to one, in moon radii, leaving room for its mountains. */
 const CLOSEST_TO_MOON = 1.25;
-const SOLID_MOONS = MOONS.filter((moon) => !moon.ship);
+const SOLID_MOONS = MOONS.filter((moon) => !moon.ship && !moon.unlisted);
 /** How close the camera gets to the head before the astronaut disappears. The helmet is about 0.05 across from its center. */
 const HIDE_ASTRONAUT_WITHIN = 0.1;
 const MOUSE_SENSITIVITY = 0.0022;

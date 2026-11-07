@@ -259,5 +259,5 @@ export function Moons() {
     }
   });
   const detail = useMemo(() => detailTexture(), []);
-  return MOONS.filter((spec) => !spec.ship).map((spec) => <Moon key={spec.id} spec={spec} color={color} height={height} detail={detail} />);
+  return MOONS.filter((spec) => !spec.ship && !spec.unlisted).map((spec) => <Moon key={spec.id} spec={spec} color={color} height={height} detail={detail} />);
 }

@@ -27,6 +27,8 @@ export type MoonSpec = {
   seed: number;
   /** This page is aboard the spaceship, so there's no moon. */
   ship?: boolean;
+  /** A page reachable only by its URL, like a prototype: no moon in the sky and no place in the nav. */
+  unlisted?: boolean;
 };
 
 /** Placed by where they sit in the opening view: x right, y up, z away from the camera. */
@@ -137,6 +139,17 @@ export const MOONS: MoonSpec[] = [
     tint: "#ffffff",
     world: "haze",
     seed: 12.4,
+  },
+  {
+    id: "projects/improv-buddy",
+    label: "Improv Buddy",
+    // never drawn; this is just where the camera pretends it landed, for the trip back to orbit
+    position: at(0.6, 2.2, 0.5),
+    radius: 0.03,
+    tint: "#ffffff",
+    world: "ocean",
+    seed: 14.2,
+    unlisted: true,
   },
   {
     id: "projects/baby-kick-sensor",

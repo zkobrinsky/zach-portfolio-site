@@ -76,6 +76,10 @@ export function createSketchAudio() {
       waiting.push(run);
       sync();
     },
+    /** For sketches that make their own sound, so they can follow the site's mute button. */
+    isSilent() {
+      return silent;
+    },
     setSilent(value: boolean) {
       silent = value;
       sync();

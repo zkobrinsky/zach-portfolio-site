@@ -11,6 +11,7 @@ import { ProjectOverlay } from "./ProjectOverlay";
 const SKETCHES = {
   "expanding-universe": () => import("@/lib/sketches/expandingUniverse"),
   "baby-kick": () => import("@/lib/sketches/babyKick"),
+  "improv-buddy": () => import("@/lib/sketches/improvBuddy"),
 };
 
 type Props = { title: string; sketch: keyof typeof SKETCHES; children: ReactNode };
