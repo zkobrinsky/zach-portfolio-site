@@ -107,7 +107,6 @@ const expandingUniverse: Sketch = (context) => (p) => {
     p.frameRate(FRAME_RATE);
     p.background(0);
     p.noStroke();
-    p.noCursor();
     rollNextNote();
     followHost(context, (width, height) => {
       const [fittedWidth, fittedHeight] = fit(width, height);
