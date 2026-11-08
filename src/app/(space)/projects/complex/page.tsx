@@ -75,7 +75,7 @@ const MORE_WORK: {
     title: "Swagger on Apple TV+",
     detail:
       "A jumbotron ad with a built-in photo gallery and video player that you can switch between.",
-    url: "/archive/complex-ads/swagger",
+    url: "/archive/complex-ads/?demo=swagger",
     image: "/projects/complex/swagger.jpg",
     desktopOnly: true,
   },
@@ -83,21 +83,21 @@ const MORE_WORK: {
     title: "Dell Alienware",
     detail:
       "A banner with a product carousel and scrolling marquee, promoting the Alienware x Bodega sweepstakes.",
-    url: "/archive/complex-ads/dell",
+    url: "/archive/complex-ads/?demo=dell",
     image: "/projects/complex/dell-alienware.jpg",
   },
   {
     title: "Timberland",
     detail:
       "An animated banner with sound for Timbs Trails, with six themed panels.",
-    url: "/archive/complex-ads/timberland",
+    url: "/archive/complex-ads/?demo=timberland",
     image: "/projects/complex/timberland.jpg",
   },
   {
     title: "Banana Republic",
     detail:
       "A banner with a smooth-scrolling lookbook of the fall collection.",
-    url: "/archive/complex-ads/banana-republic",
+    url: "/archive/complex-ads/?demo=banana-republic",
     image: "/projects/complex/banana-republic.jpg",
     desktopOnly: true,
   },

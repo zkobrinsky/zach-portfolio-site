@@ -6,7 +6,7 @@
     timberland: { top: "timberland.desktop.3x3", toolbar: "timberland.desktop.7x7", inline: "timberland.mobile.content" },
     "banana-republic": { top: "banana.desktop.3x3" },
   };
-  var demo = DEMOS[location.pathname.replace(/\/+$/, "").split("/").pop()];
+  var demo = DEMOS[new URLSearchParams(location.search).get("demo")];
   if (!demo) return;
 
   // the creatives ask the host page to pause and resume ad refreshes; nothing refreshes here
