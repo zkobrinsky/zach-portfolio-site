@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
         source: "/archive/how-ye-changed-pop-culture",
         destination: "/archive/how-ye-changed-pop-culture/index.html",
       },
+      // archived Complex ad demos: one page, and ads.js picks the ad from the URL
+      {
+        source: "/archive/complex-ads/:demo(swagger|dell|timberland|banana-republic)",
+        destination: "/archive/complex-ads/index.html",
+      },
     ];
   },
 };

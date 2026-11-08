@@ -1,0 +1,474 @@
+<!-- START SuperHero advertisement -->
+
+<img src="https://media.complex.com/common/images/spacer.gif" border="0" width="0" height="0" style="display:none;" alt="Advertisement" />
+
+<!--{{HEAD}}-->
+<link rel="stylesheet" href="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.css" />
+<script src="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.js"></script>
+<script type="text/javascript">
+	// SETUP UNIT SIZE. Use defaults or uncomment to customize
+	var options = {
+		// landscapeToAspectRatio:     0.28125, // based on landscape PSD size (height/width). Applies to header and inline
+		// portraitToAspectRatio: 	   1.125, // based on portrait PSD size (height/width). Applies to header and inline
+		// landscapeRosAspectRatio:    0.5625, // based on portrait PSD size (height/width). Applies to ROS unit only
+		// portraitBreakpoint:         680, // at what container size should layout be switched to portrait
+		// maxPortraitWidth:           740, // max width in portrait view. Applies to header and inline
+		// maxRosHeaderWidth:          970, // max header unit size when ROS (ROS is always landscape)
+		// maxRosInlineWidth:          740, // max inline unit size when ROS (ROS is always landscape)
+		// maxToLandscapeWidth:        -1, // use -1 for unlimited. Limited width will add 20px padding around header unit
+		// beSticky:                   'false', // when set to true unit will become sticky on configured sites
+
+		// NO need to change values below
+        isHeaderUnit:   (
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === '3x3' ||
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === 'top' ||
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === 'top-d'
+            ) ? 'true' : 'false',
+        // is this an ROS (if yes sizes will be limited and won't switch to portrait)
+        isRos:          ('ROS'.toLowerCase() === 'ros' || 'ROS'.toLowerCase() === 'branded content') ? 'true' : 'false',
+		wrapId:         'wrap' // this is the outermost div in the unit. If you change this make sure to also make a change in CSS
+	};
+
+	var unit_kind = '';
+    // restrict autoplay to inline units only
+	if (options.isHeaderUnit === 'false') {
+		unit_kind = 'Inline';
+
+		options.onInview = function() {
+            // wait for player to be ready
+            var wait = setInterval(function() {
+                if (window.player) {
+                    window.postMessage('play', '*');
+                    clearInterval(wait);
+                }
+            }, 50);
+            // returning true to the onInview callback will unbind the
+            // scroll listener after it has executed
+            return true;
+        }
+	} else {
+		unit_kind = 'Header';
+	}
+
+	// CAMPAIGN SETUP
+	var campaign_name    =    'banana-republic-fall-harlem-fashion-09-2021',
+		unit_type        =    'SuperHero-' + unit_kind + '-',
+		full_name        =    campaign_name + '-' + unit_type,
+		click_tracker    =    'https://partner.complex.com/click-through-success',
+		percent_c        =    '';
+</script>
+
+<style type="text/css">
+	body,
+    html { margin: 0; padding: 0; width: 100%; height: 100%; }
+
+	*,
+    *:before,
+    *:after { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+	/* GENERAL SUPERHERO STYLES (LANDSCAPE VIEW) */
+	#wrap {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		-webkit-transition: opacity 0.2s;
+		transition: opacity 0.2s;
+		-webkit-user-select: none;
+		   -moz-user-select: none;
+		    -ms-user-select: none;
+		        user-select: none;
+	}
+
+	#bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background:  center / cover no-repeat url("https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/bg.jpg");
+	}
+
+	#clicker {
+		position: absolute;
+		top:0;
+		left: 0;
+		z-index: 45;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+	}
+
+	#video {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 250;
+		width: 50%;
+		height: auto;
+	}
+	#video_holder { position: relative; left: 0; top: 0%; width: 100%; height: 0; padding-top: 56.25%; }
+	#video_player { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+	#click_out {
+		display: none;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 500;
+		width: 9%;
+		max-width: 60px;
+		min-width: 30px;
+		opacity: 0;
+		transition: opacity 0.3s ease-out;
+		-webkit-transition: opacity 0.3s ease-out;
+		cursor: pointer;
+	}
+	#click_out:hover {
+		opacity: 1 !important;
+	}
+	#video:hover #click_out {
+		opacity: 0.5;
+	}
+	#ros_curtain {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 50;
+		width: 100%;
+		height: 100%;
+		transition: opacity 0.3s ease-out;
+		-webkit-transition: opacity 0.3s ease-out;
+		opacity: 0;
+		background: rgba(0, 0, 0, 0.7);
+	}
+	#ros_curtain:hover {
+		opacity: 1;
+	}
+	.curtain_action {
+		position: absolute;
+		top: 0;
+		width: 50%;
+		height: 100%;
+		cursor: pointer;
+	}
+	.curtain_icon {
+		position: absolute;
+		top: 50%;
+		width: 20%;
+		height: auto;
+		opacity: 0.5;
+		-webkit-backface-visibility: hidden;
+		        backface-visibility: hidden;
+		-webkit-transition: all 0.3s ease-out;
+		transition: all 0.3s ease-out;
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		-webkit-transform-origin: top;
+		        transform-origin: top;
+	}
+	#left_curtain_action { left: 0; }
+	#right_curtain_action { left: 50%; }
+
+	#left_curtain_action .curtain_icon {
+		right: 12%;
+	}
+	#right_curtain_action .curtain_icon {
+		left: 12%;
+	}
+	#left_curtain_action:hover .curtain_icon, #right_curtain_action:hover .curtain_icon {
+		opacity: 1;
+	}
+	#divider {
+		position: absolute;
+		top: 30%;
+		left: 50%;
+		height: 40%;
+		width: 1px;
+		background: rgba(255, 255, 255, 0.5);
+	}
+
+	/* SUPERHERO OVERRIDES FOR TAKEOVERS (PORTRAIT VIEW). */
+	#wrap.portrait {
+		margin: 0 auto;
+	}
+
+	.portrait #bg {
+		width: 100%;
+		height: 100%;
+		background-image: url("https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/bg.jpg");
+	}
+	.portrait #video {
+		left: 0%;
+		top: 50%;
+		width: 100%;
+	}
+
+	/* SUPERHERO OVERRIDES FOR ROS (INLINE ONLY). */
+	#wrap.ros {
+		margin: 0 auto;
+	}
+
+	.ros #bg {
+		width: 100%;
+		background-image: url("https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/bg.jpg");
+	}
+	.ros #video {
+		width: 100%;
+		left: 0;
+		top: 0;
+	}
+	.ros #ros_curtain {
+		display: block;
+	}
+
+	.swiper-container {
+		z-index: 300;
+		position: absolute;
+		height: 100%;
+		right: 0%;
+		width: 70%;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		        transform: translateY(-50%);
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		overflow: hidden;
+  	}
+
+	.swiper-wrapper {
+		-webkit-transition-timing-function:linear!important;
+		transition-timing-function:linear!important;
+	}
+
+   .swiper-slide {
+    	display: -webkit-box;
+    	display: -ms-flexbox;
+    	display: flex;
+		-webkit-box-pack: center;
+		    -ms-flex-pack: center;
+		        justify-content: center;
+		-webkit-box-align: center;
+		    -ms-flex-align: center;
+		        align-items: center
+    }
+
+
+   .swiper-slide img {
+		width: 100%;
+    }
+
+   .swiper-button {
+	    color: white;
+    }
+
+   .swiper-button:after {
+		font-size: 20px !important;
+		font-weight: bold !important;
+    }
+
+   .swiper-button-next {
+		right: -7px;
+    }
+
+   .swiper-button-prev {
+		left: -7px;
+    }
+
+</style>
+
+
+
+<div id="wrap">
+    <div id="bg"><!-- bg is applied on this div using css --></div>
+
+    <img id="clicker" src="https://media.complex.com/common/images/spacer.gif" alt="clicker" />
+
+	<div class="swiper-container">
+		<!-- Additional required wrapper -->
+		<div class="swiper-wrapper">
+			<!-- Slides -->
+			<div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-1.jpg">
+			  </div>
+			<div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-2.jpg">
+			</div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-3.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-4.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-5.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-6.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-7.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/superhero/img/gallery-8.jpg">
+			  </div>
+			</div>
+			<!-- <div class="swiper-button swiper-button-prev">
+			</div>
+			<div class="swiper-button swiper-button-next">
+			</div> -->
+	  </div>
+
+</div>
+
+<!-- <script type="text/javascript" src="https://media.complex.com/common/videoplayer/universal-video-player/v1/uvp.v1.min.js"></script> -->
+<script type="text/javascript">
+	// COLLECT ELEMENTS
+	var superheroClicker = document.getElementById('clicker');
+	var wrap = document.getElementById('wrap');
+
+	if (options.isHeaderUnit === 'false') {
+		if (options.isRos === 'true') {
+			wrap.classList.add('ros');
+		} else if (window.frameElement.parentNode.offsetWidth <= options.portraitBreakpoint) {
+			wrap.classList.add('portrait');
+		}
+	}
+
+    
+    // var videoFilePath = 'https://media.complex.com/videos/2021-q3/banana-republic-fall-harlem-fashion-09-2021/' +
+    //                     'banana-republic-fall-harlem-fashion-09-2021-960-30.mp4';
+    // var videoID = 'Generic';
+    
+
+    // INITIALIZE VIDEO PLAYER
+    // window.MWD_PLAYER.init({
+    //     videoID: videoID,
+    //     videoFilePath: videoFilePath,
+    //     posterFilePath: 'https://media.complex.com/campaigns/2021-q3/banana-republic-fall-harlem-fashion-09-2021/video.jpg',
+    //     campaignName: campaign_name,
+    //     unitType: unit_type,
+    //     containerSelector: '#video_player'
+    //     // autoplay: 'false',
+    //     // controls: 'true', // accepts 'true', 'false', 'custom'
+    //     // defaultVolume: 0.5,
+    //     // animatedPosterDirection: 'topLeft', // accepts 'topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'none'
+    //     // progressbar: {
+    //     //     strokeWidth: 5,
+    //     //     easing: 'linear',
+    //     //     duration: 2000,
+    //     //     color: '#03A9F4',
+    //     //     trailColor: '#FFF',
+    //     //     trailWidth: 5,
+    //     //     svgStyle: null
+    //     // },
+    //     // gaTracking: [
+    //     //     '25%', '50%', '75%' // the string syntax should be either '%' or 's'
+    //     // ],
+    //     // debug: 'false', // set to 'true' if you want to debug google analytics events on console
+    // });
+
+	// ASSIGN EVENTS
+	superheroClicker.onclick = function() {
+		SUPERHERO.clickThrough(click_tracker, 'ClickToClient');
+	};
+
+	// document.getElementById('left_curtain_action').onclick = function() {
+	// 	window.postMessage('play', '*');
+	// 	document.getElementById('video').style.display = 'block';
+	// }
+	// document.getElementById('right_curtain_action').onclick = function() {
+	// 	SUPERHERO.clickThrough(click_tracker, 'ClickToClient-CurtainIcon');
+	// }
+	// document.getElementById('click_out').onclick = function() {
+	// 	SUPERHERO.clickThrough(click_tracker, 'ClickToClient-VideoIcon');
+	// 	window.postMessage('mute', '*');
+	// }
+	// window.addEventListener('message', function(event) {
+	// 	if (event.data == 'cmnunt_videoplayer_video_end') {
+	// 		var wrap = document.getElementById(options.wrapId);
+
+	// 		if (wrap.classList.contains('ros')) {
+	// 			document.getElementById('video').style.display = 'none';
+	// 		}
+
+    //         try {
+	// 			window.top.CMNHELPERS.timeBasedRefresh.init();
+	// 		} catch(e) {}
+	// 	} else if (event.data == 'cmnunt_videoplayer_video_start'){
+    //         try {
+    //             window.top.CMNHELPERS.timeBasedRefresh.stop();
+    //         } catch(e) {}
+
+	// 		document.getElementById('click_out').style.display = 'block';
+	// 	}
+	// }, false);
+
+	var timer = null;
+	// fade in wrap
+	window.addEventListener('load', function() {
+		clearTimeout(timer);
+		document.getElementById(options.wrapId).style.opacity = 1;
+	});
+
+	// just in case window load takes too long
+	timer = window.setTimeout(function() {
+		document.getElementById(options.wrapId).style.opacity = 1;
+	}, 3000);
+	
+</script>
+<script type="text/javascript" src="https://media.complex.com/common/units/superhero/superhero.min.js"></script>
+<script type="text/javascript">
+	// SWIPER
+	const swiper = new Swiper('.swiper-container', {
+  loop: true,
+  grabCursor: true,
+  autoplay: {
+	delay: 1,
+	disableOnInteraction: true,
+  },
+  speed: 5000,
+  freeMode: false,
+  slidesPerView: 3.8,
+  spaceBetween: 10
+});
+
+const swiperWrapper = document.querySelector('.swiper-wrapper');
+
+swiper.on('slideChangeTransitionEnd', () => {
+    SUPERHERO.trackEvent(`swiped to slide ${swiper.realIndex+1}`);
+});
+
+swiper.on('click', () => {
+	SUPERHERO.trackEvent(`clicked ${+swiper.clickedSlide.dataset.swiperSlideIndex+1}`);
+	SUPERHERO.clickThrough(click_tracker, 'ClickToClient');
+});
+
+let interacted = false;
+let timeOut;
+
+function manualScroll() {
+	if (!interacted) {
+		swiper.params.speed = 300;
+		swiper.update();
+		interacted = true;
+	}
+}
+
+function autoScroll() {
+	interacted = false;
+	swiper.params.speed = 5000;
+	swiper.autoplay.start();
+	swiper.update();
+}
+swiper.on('touchEnd', e => {
+	manualScroll();
+	clearTimeout(timeOut);
+	timeOut = setTimeout(autoScroll, 2000);
+})
+</script>
+
+<!--{{FOOT}}-->
+
+<!-- END SuperHero advertisement -->

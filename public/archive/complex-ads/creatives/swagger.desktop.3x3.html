@@ -1,0 +1,352 @@
+<!-- START Jumbotron advertisement -->
+<img src="https://media.complex.com/common/images/spacer.gif" border="0" width="0" height="0" style="display:none;" alt="Advertisement" />
+<!--{{HEAD}}-->
+<link rel="stylesheet" href="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.css" />
+<script src="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.js"></script>
+<script type="text/javascript">
+    // CAMPAIGN INFO
+    var campaignname  = 'apple-tv-swagger-10-2021';
+    var unitType      = 'Jumbotron-';
+    var unitname      = campaignname + '-' + unitType;
+    var click_tracker = 'https://partner.complex.com/click-through-success';
+
+    // SETUP THESE PATHS AND VIDEO FILE NAME
+    var media = {
+        media1 : {
+            teaser:     'https://media.complex.com/videos/2021-q4/apple-tv-swagger-10-2021/' +
+                        'apple-tv-swagger-10-2021-1060x596-30-lq.mp4' + '?unit=teaser|' + encodeURIComponent(unitType),
+            src:        'https://media.complex.com/videos/2021-q4/apple-tv-swagger-10-2021/' +
+                        'apple-tv-swagger-10-2021-1060x596-30-lq.mp4' + '?unit=' + encodeURIComponent(unitType),
+            thumb:      'https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/video1.jpg'
+        }
+    };
+    
+
+    var options = {
+        videoAspectRatio:   0.5625, /* height / width*/
+        isHeaderUnit:       (window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === '3x3') ? 'true' : 'false',
+        wrapId:             'wrap', // this is the outermost div in the unit. If you change this make sure to also make a change in CSS
+        playerId:           'videoPlayer',
+        campaignName:       campaignname,
+        unitName:           unitname,
+        videoPath:          media.media1.src,
+        teaserPath:         media.media1.teaser,// if you want to play teaser video first time, full video on replay.
+        thumbNail:          media.media1.thumb,
+        autoplay:           false,
+        muted:              true,
+        registerListeners: function() {
+            window.JUMBOTRON.events.subscribe('doormat/ready', function() {
+                // your code here
+            });
+            window.JUMBOTRON.events.subscribe('video/playing', function() {
+                try {
+                    window.top.CMNHELPERS.timeBasedRefresh.stop();
+                } catch(e) {}
+                // your code here
+                // toggleLogo(false);
+            });
+            window.JUMBOTRON.events.subscribe('doormat/complete', function() {
+                try {
+                    window.top.CMNHELPERS.timeBasedRefresh.init();
+                } catch(e) {}
+                // your code here
+                // toggleLogo(true);
+            });
+        }
+    };
+</script>
+
+<style type="text/css">
+
+    #wrap {
+        background:  center / cover no-repeat url("https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/bg.jpg");
+    }
+
+    #logo {
+        position: absolute;
+        left: 2%;
+        top: 2%;
+        width: 12%;
+        height:auto;
+        z-index: 60;
+        cursor: pointer;
+        transition: all 0.3s ease-out;
+        -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+    }
+    #logo:hover {
+        transform: scale(1.1);
+    }
+    .vjs-poster {
+        transform-origin: center !important;
+        background-size: cover;
+        /* use line below to disable motion on the end card */
+        /* animation-name: none; */
+    }
+    /* icons color*/
+    .control_button .control_button_text{
+        color: #FFFFFF;
+    }
+
+    #gallery-outer-container {
+        display: flex;
+        position: absolute;
+        top: 27%;
+        left: 5%;
+        height: 52%;
+        width: 55%;
+    }
+
+    #gallery-nav {
+        width: 5%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .nav-tab {
+        width: 100%;
+        height: 40%;
+        margin: 10% 0;
+        border-radius: 0.3vw 0 0 0.3vw;
+        z-index: 60;
+        background-color: #d4d4d4;
+    }
+
+    .nav-tab p {
+        opacity: 0;
+    }
+
+    .nav-tab:hover {
+        filter: brightness(110%);
+    }
+
+    #gallery-tab {
+        background:  #d4d4d4 60% center / 39% no-repeat url(https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery-text.png);
+    }
+
+    #video-tab {
+        background:  #d4d4d4 60% center / 39% no-repeat url(https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/video-text.png);
+    }
+
+    .nav-tab:hover {
+        cursor: pointer;
+    }
+
+    /* contains both video and swiper gallery */
+    #gallery-container{
+        position: relative;
+        height: 100%;
+        width: 100%;
+        border: solid 2px#cb944c;
+    }
+
+    #sound-init-replay {
+        display: none !important;
+    }
+
+    #continue {
+        display: none !important;
+    }
+
+    .swiper-container {
+		z-index: 300;
+		height: 100%;
+		width: 100%;
+		display: flex;
+		overflow: hidden;
+		position: absolute;
+    	top: 0;
+    }
+
+	.swiper-slide img {
+		width: 100%;
+	}
+
+	.swiper-button {
+		color: transparent;
+	}
+
+    .swiper-button:hover {
+        opacity: 0.5;
+    }
+
+    .swiper-button:active {
+        opacity: 1;
+        transform: scale(0.9);
+    }
+
+	.swiper-button-next {
+		right: 8px;
+        background:  center / contain no-repeat url(https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/arrow-right.png);
+	}
+
+	.swiper-button-prev {
+		left: 8px;
+        background:  center / contain no-repeat url(https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/arrow-left.png);
+	}
+
+    .hidden {
+        display: none;
+    }
+
+    .active {
+        background-color: #cb944c !important;
+    }
+    
+</style>
+
+<div id="wrap">
+    <img id="clicker" src="https://media.complex.com/common/images/spacer.gif" alt="clicker" />
+    <div id="gallery-outer-container">
+        <div id="gallery-nav">
+            <div class="nav-tab active" id="gallery-tab">
+                <!-- FOR ACCESSIBILITY: -->
+                <p>
+                    VIEW GALLERY
+                </p>
+            </div>
+            <div class="nav-tab" id="video-tab">
+                <p>
+                    WATCH VIDEO
+                </p>
+            </div>
+        </div>
+        <div id="gallery-container">
+            <div class="swiper-container">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide">
+                        <img src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery/gallery-1.jpg">
+                      </div>
+                    <div class="swiper-slide">
+                        <img src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery/gallery-2.jpg">
+                    </div>
+                      <div class="swiper-slide">
+                        <img src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery/gallery-3.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <img src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery/gallery-4.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <img src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/gallery/gallery-5.jpg">
+                      </div>
+                    </div>
+                    <div class="swiper-button swiper-button-prev">
+                    </div>
+                    <div class="swiper-button swiper-button-next">
+                    </div>
+              </div>
+            <div id="video-container" class="hidden">
+                <div id="loader">&nbsp;</div>
+                <!-- <img id="logo" src="https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/jumbotron/img/logo.png" alt="logo" /> -->
+                <div id="sound-init-replay" class="control_button" onClick="window.JUMBOTRON.unmute();"><div class="control_button_text"></div></div>
+                <div id="sound" class="control_button soundOff" onClick="window.JUMBOTRON.toggleVolume();"><div class="control_button_text"></div></div>
+                <div id="continue" class="control_button" onclick="window.JUMBOTRON.stop();"><div class="control_button_text"></div></div>
+                <div id="video">
+                    <img id="click_out" src="https://media.complex.com/common/images/controls/superhero/click-out-light.svg" alt="click out" />
+                    <div id="video_holder">
+                        <div id="video_player_wrapper">
+                            <video id="videoPlayer" class="video-js vjs-complex-skin">
+                                <p class="vjs-no-js">
+                                    To view this video please enable JavaScript, and consider upgrading to a web browser
+                                    that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                                </p>
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // COLLECT ELEMENTS
+    var jumbotronClicker = document.getElementById('clicker');
+    var timer = null;
+    const galleryTab = document.getElementById('gallery-tab');
+    const videoTab = document.getElementById('video-tab');
+    const galleryContainer = document.querySelector('.swiper-container');
+    const videoContainer = document.getElementById('video-container');
+
+    galleryTab.addEventListener('click', () => {
+        galleryContainer.classList.remove('hidden');
+        galleryTab.classList.add('active');
+        videoTab.classList.remove('active');
+        videoContainer.classList.add('hidden');
+
+        JUMBOTRON.trackEvent(`clicked-gallery-tab`);
+        window.JUMBOTRON.togglePlay();
+    });
+
+    videoTab.addEventListener('click', () => {
+        galleryContainer.classList.add('hidden');
+        videoTab.classList.add('active');
+        galleryTab.classList.remove('active');
+        videoContainer.classList.remove('hidden');
+        JUMBOTRON.trackEvent(`clicked-video-tab`);
+        window.JUMBOTRON.start();
+    });
+    
+
+    // GLOBAL FUNCTIONS
+    function clickToClient() {
+        window.JUMBOTRON.clickThrough(click_tracker, 'ClickToClient');
+        window.JUMBOTRON.mute();
+    }
+
+    // ASSIGN EVENTS
+    jumbotronClicker.onclick = clickToClient;
+    // logo.onclick = clickToClient;
+
+    // fade in wrap
+    window.addEventListener('load', function() {
+        clearTimeout(timer);
+        document.getElementById(options.wrapId).style.opacity = 1;
+    });
+
+    // just in case window load takes too long
+    timer = window.setTimeout(function() {
+        document.getElementById(options.wrapId).style.opacity = 1;
+    }, 3000);
+
+    // function toggleLogo(isDisplayed) {
+    //     logo.hidden = !Boolean(isDisplayed);
+    // }
+
+</script>
+
+<link href="https://media.complex.com/common/videoplayer/universal-video-player/v1/vjs.v7.min.css" rel="stylesheet">
+<link href="https://media.complex.com/common/units/jumbotron/jumbotron.min.v2.css" rel="stylesheet">
+<script src="https://media.complex.com/common/videoplayer/universal-video-player/v1/vjs.v7.min.js"></script>
+<script src="https://media.complex.com/common/units/jumbotron/jumbotron.min.v2.js"></script>
+<script>
+    window.JUMBOTRON.init(options);
+</script>
+<script type="text/javascript">
+	// SWIPER
+	const swiper = new Swiper('.swiper-container', {
+	loop: true,
+	centeredSlides: true,
+	resistanceRatio: 0.2,
+	navigation: {
+		nextEl: '.swiper-button-next',
+		prevEl: '.swiper-button-prev',
+	},
+    grabCursor: true
+	});
+
+	swiper.on('slideChangeTransitionEnd', function () {
+		JUMBOTRON.trackEvent(`swiped to slide ${swiper.realIndex+1}`);
+	});
+
+	swiper.on('click', () => {
+		JUMBOTRON.trackEvent(`clicked ${+swiper.clickedSlide.dataset.swiperSlideIndex+1}`);
+		JUMBOTRON.clickThrough(click_tracker, 'ClickToClient');
+	});
+</script>
+<!--{{FOOT}}-->
+<!-- END SuperHero advertisement -->

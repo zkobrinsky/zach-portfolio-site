@@ -8,7 +8,7 @@ export const metadata = pageMetadata("/projects/complex");
 const STORY_URL =
   "https://www.complex.com/music/a/eric-skelton/kanye-west-changed-music";
 
-// desktopOnly: full-page takeovers on complex.com that its mobile site never shows
+// desktopOnly: blocks the link on touch devices and shows a "desktop only" tooltip instead
 const MORE_WORK: {
   title: string;
   detail: string;
@@ -74,32 +74,30 @@ const MORE_WORK: {
   {
     title: "Swagger on Apple TV+",
     detail:
-      "A jumbotron ad with a built-in photo gallery and video player that you can switch between. Scroll down to see it.",
-    url: "https://www.complex.com/?democampaign=apple-tv-swagger-10-2021_jumbotron",
+      "A jumbotron ad with a built-in photo gallery and video player that you can switch between.",
+    url: "/archive/complex-ads/swagger",
     image: "/projects/complex/swagger.jpg",
     desktopOnly: true,
   },
   {
     title: "Dell Alienware",
     detail:
-      "A banner with a product carousel and scrolling marquee, promoting the Alienware x Bodega sweepstakes. Scroll down to see it.",
-    url: "https://www.complex.com/?democampaign=dell-alienware-fy22-09-2021_to",
+      "A banner with a product carousel and scrolling marquee, promoting the Alienware x Bodega sweepstakes.",
+    url: "/archive/complex-ads/dell",
     image: "/projects/complex/dell-alienware.jpg",
-    desktopOnly: true,
   },
   {
     title: "Timberland",
     detail:
-      "An animated banner with sound for Timbs Trails, with six themed panels. Scroll down to see it.",
-    url: "https://www.complex.com/?democampaign=timberland-boot-demo-01-2022_to-animated-no-boot",
+      "An animated banner with sound for Timbs Trails, with six themed panels.",
+    url: "/archive/complex-ads/timberland",
     image: "/projects/complex/timberland.jpg",
-    desktopOnly: true,
   },
   {
     title: "Banana Republic",
     detail:
-      "A banner with a smooth-scrolling lookbook of the fall collection. Scroll down to see it.",
-    url: "https://www.complex.com/?democampaign=banana-republic-fall-harlem-fashion-09-2021_ros-smoother",
+      "A banner with a smooth-scrolling lookbook of the fall collection.",
+    url: "/archive/complex-ads/banana-republic",
     image: "/projects/complex/banana-republic.jpg",
     desktopOnly: true,
   },

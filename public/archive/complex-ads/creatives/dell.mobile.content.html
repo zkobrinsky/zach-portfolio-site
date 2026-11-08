@@ -1,0 +1,305 @@
+<!-- START SuperHero advertisement -->
+
+<img src="https://media.complex.com/common/images/spacer.gif" border="0" width="0" height="0" style="display:none;" alt="Advertisement" />
+
+<!--{{HEAD}}-->
+<link rel="stylesheet" href="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.css" />
+<script src="https://media.complex.com/common/plugins/swiper/swiper-bundle-7.0.2.min.js"></script>
+<script type="text/javascript">
+	// SETUP UNIT SIZE. Use defaults or uncomment to customize
+	var options = {
+		// landscapeToAspectRatio:     0.28125, // based on landscape PSD size (height/width). Applies to header and inline
+		// portraitToAspectRatio: 	   1.125, // based on portrait PSD size (height/width). Applies to header and inline
+		// landscapeRosAspectRatio:    0.5625, // based on portrait PSD size (height/width). Applies to ROS unit only
+		// portraitBreakpoint:         680, // at what container size should layout be switched to portrait
+		// maxPortraitWidth:           740, // max width in portrait view. Applies to header and inline
+		// maxRosHeaderWidth:          970, // max header unit size when ROS (ROS is always landscape)
+		// maxRosInlineWidth:          740, // max inline unit size when ROS (ROS is always landscape)
+		// maxToLandscapeWidth:        -1, // use -1 for unlimited. Limited width will add 20px padding around header unit
+		// beSticky:                   'false', // when set to true unit will become sticky on configured sites
+
+		// NO need to change values below
+        isHeaderUnit:   (
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === '3x3' ||
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === 'top' ||
+            window.frameElement.parentNode.parentNode.getAttribute('data-cmnunt-ad-size') === 'top-d'
+            ) ? 'true' : 'false',
+        // is this an ROS (if yes sizes will be limited and won't switch to portrait)
+        isRos:          ('Takeover'.toLowerCase() === 'ros' || 'Takeover'.toLowerCase() === 'branded content') ? 'true' : 'false',
+		wrapId:         'wrap' // this is the outermost div in the unit. If you change this make sure to also make a change in CSS
+	};
+
+	var unit_kind = '';
+    // restrict autoplay to inline units only
+	if (options.isHeaderUnit === 'false') {
+		unit_kind = 'Inline';
+
+		options.onInview = function() {
+            // wait for player to be ready
+            // var wait = setInterval(function() {
+            //     if (window.player) {
+            //         window.postMessage('play', '*');
+            //         clearInterval(wait);
+            //     }
+            // }, 50);
+            // returning true to the onInview callback will unbind the
+            // scroll listener after it has executed
+            return true;
+        }
+	} else {
+		unit_kind = 'Header';
+	}
+
+	// CAMPAIGN SETUP
+	var campaign_name    =    'dell-alienware-fy22-09-2021',
+		unit_type        =    'SuperHero-' + unit_kind + '-',
+		full_name        =    campaign_name + '-' + unit_type,
+		click_tracker    =    'https://partner.complex.com/click-through-success',
+		percent_c        =    '';
+</script>
+
+<style type="text/css">
+	body,
+    html { margin: 0; padding: 0; width: 100%; height: 100%; }
+
+	*,
+    *:before,
+    *:after { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+	/* GENERAL SUPERHERO STYLES (LANDSCAPE VIEW) */
+	#wrap {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		-webkit-transition: opacity 0.2s;
+		transition: opacity 0.2s;
+	}
+	#bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background:  center / cover no-repeat url("https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/superhero/img/bg.jpg");
+		width: 50%;
+		height: 100%;
+		overflow: hidden;
+	}
+	#clicker {
+		position: absolute;
+		top:0;
+		left: 0;
+		z-index: 45;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+	}
+	
+	/* SUPERHERO OVERRIDES FOR TAKEOVERS (PORTRAIT VIEW). */
+	#wrap.portrait {
+		margin: 0 auto;
+	}
+
+	.portrait #bg {
+		width: 100%;
+		height: 50%;
+		background-image: url("https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/superhero/img/bg.jpg");
+	}
+
+	/* SUPERHERO OVERRIDES FOR ROS (INLINE ONLY). */
+	#wrap.ros {
+		margin: 0 auto;
+	}
+
+	.ros #bg {
+		width: 100%;
+		background-image: url("https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/superhero/img/bg.jpg");
+	}
+
+	#banner {
+		height: 20%;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-transform: rotate(-5deg);
+		        transform: rotate(-5deg);
+		position: relative;
+    	top: 13%;
+	}
+
+	#banner img {
+		display: block;
+		margin: auto;
+		height: 60%;
+	}
+	
+	.ros .swiper-container {
+		display: none;
+	}
+
+	.swiper-container {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 250;
+		width: 50%;
+		height: auto;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		overflow: hidden;
+  	}
+
+	.portrait .swiper-container {
+		left: 0%;
+		top: 50%;
+		width: 100%;
+	}
+
+   .swiper-slide {
+    	display: -webkit-box;
+    	display: -ms-flexbox;
+    	display: flex;
+		-webkit-box-pack: center;
+		    -ms-flex-pack: center;
+		        justify-content: center;
+		-webkit-box-align: center;
+		    -ms-flex-align: center;
+		        align-items: center;
+    }
+
+
+   .swiper-slide img {
+		width: 100%;
+		outline: 1px solid black;
+  		outline-offset: -1px;
+    }
+
+	.swiper-button {
+		color: transparent;
+		display: inline;
+		-webkit-transform: translateY(-30%);
+		        transform: translateY(-30%);
+	}
+
+	.swiper-button-next {
+		right: 1%;
+		width: 10%;
+		height: 30%;
+		background: url(https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/arrow-right.png) no-repeat center / contain;
+	}
+
+	.swiper-button-prev {
+		right: 1%;
+		width: 10%;
+		height: 30%;
+		background: url(https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/arrow-left.png) no-repeat center / contain;
+	}
+
+
+
+
+</style>
+
+
+<div id="wrap">
+    <div id="bg">
+		<div id="banner">
+			<img id="img1" class="banner-img" src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/banner-v2.svg" alt="alienware banner">
+			<img id="img2" class="banner-img" src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/banner-v2.svg" alt="alienware banner">
+			<img id="img3" class="banner-img" src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/banner-v2.svg" alt="alienware banner">
+		</div>
+	</div>
+    <img id="clicker" src="https://media.complex.com/common/images/spacer.gif" alt="clicker" />
+
+	<div class="swiper-container">
+		<!-- Additional required wrapper -->
+		<div class="swiper-wrapper">
+			<!-- Slides -->
+			<div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/gallery-imgs/img1.jpg">
+			  </div>
+			<div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/gallery-imgs/img2.jpg">
+			</div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/gallery-imgs/img3.jpg">
+			  </div>
+			  <div class="swiper-slide">
+				<img src="https://media.complex.com/campaigns/2021-q3/dell-alienware-fy22-09-2021/gallery-imgs/img4.jpg">
+			</div>
+		</div>
+		<div class="swiper-button swiper-button-prev">
+		</div>
+		<div class="swiper-button swiper-button-next">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	// COLLECT ELEMENTS
+	var superheroClicker = document.getElementById('clicker');
+	var wrap = document.getElementById('wrap');
+
+	if (options.isHeaderUnit === 'false') {
+		if (options.isRos === 'true') {
+			wrap.classList.add('ros');
+		} else if (window.frameElement.parentNode.offsetWidth <= options.portraitBreakpoint) {
+			wrap.classList.add('portrait');
+		}
+	}
+	
+	// ASSIGN EVENTS
+	superheroClicker.onclick = function() {
+		SUPERHERO.clickThrough(click_tracker, 'ClickToClient');
+	};
+
+	var timer = null;
+	// fade in wrap
+	window.addEventListener('load', function() {
+		clearTimeout(timer);
+		document.getElementById(options.wrapId).style.opacity = 1;
+	});
+
+	// just in case window load takes too long
+	timer = window.setTimeout(function() {
+		document.getElementById(options.wrapId).style.opacity = 1;
+	}, 3000);
+	
+</script>
+<script type="text/javascript" src="https://media.complex.com/common/plugins/gsap/3.5.1/gsap.min.js"></script>
+<script>
+	gsap.to(".banner-img", {xPercent: -100, repeat: -1, duration: 20, ease: "linear"}).totalProgress(0.5);
+</script>
+<script type="text/javascript" src="https://media.complex.com/common/units/superhero/superhero.min.js"></script>
+
+<script type="text/javascript">
+	// SWIPER
+const swiper = new Swiper('.swiper-container', {
+  loop: true,
+  grabCursor: true,
+  slidesPerView: 1,
+  spaceBetween: 0,
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+});
+
+swiper.on('slideChangeTransitionEnd', () => {
+    SUPERHERO.trackEvent(`swiped to slide ${swiper.realIndex+1}`);
+});
+
+swiper.on('click', () => {
+	SUPERHERO.trackEvent(`clicked ${+swiper.clickedSlide.dataset.swiperSlideIndex+1}`);
+	SUPERHERO.clickThrough(click_tracker, 'ClickToClient');
+});
+
+// swiper.on('sliderFirstMove', e => {
+// 	console.log('first move')
+// })
+
+</script>
+
+<!--{{FOOT}}-->
+
+<!-- END SuperHero advertisement -->

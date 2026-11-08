@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-// touch devices get complex.com's mobile site, which ignores the democampaign takeovers
 const TOUCH_QUERY = "(hover: none) and (pointer: coarse)";
 const MESSAGE = "Desktop experience only (sorry)";
 

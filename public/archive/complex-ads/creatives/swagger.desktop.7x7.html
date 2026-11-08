@@ -1,0 +1,153 @@
+<!-- apple-tv-swagger-10-2021 - MWD Toolbar Start -->
+<img src="https://media.complex.com/common/images/spacer.gif" alt="advertisement" style="display: none; width: 0; height: 0;" />
+
+<!--{{HEAD}}-->
+
+<script>
+    var campaignName    = 'apple-tv-swagger-10-2021';
+	var unitType        = 'Toolbar-';
+    var fullName        = campaignName + '-' + unitType;
+	var clickTracker    = 'https://partner.complex.com/click-through-success';
+	var options         = {
+        // available options:
+        // panelWidth: '640px',
+        // panelHeight: '360px',
+        // panelDelay: 1000, /* time in ms. If you change this make sure to adjust #logo:hover ~ #hoverbar::before { transition-duration } in CSS */
+        // hoverbarSelector: '#hoverbar',
+        // hoverbarFilledClass: 'filled', /* if you change this make sure to adjust it in CSS */
+        /* if you don't want to use universal video player set this to 'false', remove panelFrameContent variable below and add var panelFrameLocation = 'url_to_html_document.html' */
+        useUniversalVideoPlayer: 'true'
+    };
+
+    
+    var videoFilePath = 'https://media.complex.com/videos/2021-q4/apple-tv-swagger-10-2021/' +
+                        'apple-tv-swagger-10-2021-1280x720-30-lq.mp4';
+    var videoID = 'Generic';
+    
+    var posterFilePath = 'https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/video.jpg';
+</script>
+
+<style type="text/css">
+	#logo {
+		width: 100%;
+		height: 50px;
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		background: center / contain no-repeat url("https://media.complex.com/campaigns/2021-q4/apple-tv-swagger-10-2021/toolbar/img/logo.jpg");
+		cursor: pointer;
+	}
+	#hoverbar {
+		width: 100%;
+		height: 3px;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 5;
+		overflow: hidden;
+	}
+	#hoverbar::before {
+		content: "";
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: translateX(-100%);
+		background:#000;
+		transition: transform 0.2s linear;
+	}
+	#logo:hover ~ #hoverbar::before {
+		transform: translateX(0);
+		transition: transform 900ms linear; /* if you changed the panelDelay in options adjust this value. Should be about 100ms less than panelDelay */
+		transition-delay: 0.05s; /* delayed so that it doesn't show up on mouse over when there is no cookie */
+	}
+	#hoverbar.filled {
+		opacity: 0;
+	}
+</style>
+
+<!-- TOOLBAR HTML START -->
+<div id="logo"></div>
+
+<span id="hoverbar"></span>
+<!-- TOOLBAR HTML END -->
+
+<style type="text/template" id="mwd-tbv-styles">
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+    }
+    #video_player {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+</style>
+<script>
+    var playerOptions = {
+        videoID: videoID,
+        videoFilePath: videoFilePath,
+        posterFilePath: posterFilePath,
+        campaignName: campaignName,
+        unitType: unitType,
+        containerSelector: '#video_player',
+        autoplay: 'true'
+        // controls: 'true', // accepts 'true', 'false', 'custom'
+        // defaultVolume: 0.5,
+        // animatedPosterDirection: 'topLeft', // accepts 'topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'none'
+        // progressbar: {
+        //     strokeWidth: 5,
+        //     easing: 'linear',
+        //     duration: 2000,
+        //     color: '#03A9F4',
+        //     trailColor: '#FFF',
+        //     trailWidth: 5,
+        //     svgStyle: null
+        // },
+        // gaTracking: [
+        //     '25%', '50%', '75%' // the string syntax should be either '%' or 's'
+        // ],
+        // debug: 'false', // set to 'true' if you want to debug google analytics events on console
+    }
+    var panelFrameContent = [
+        '<style>',
+            document.getElementById('mwd-tbv-styles').textContent,
+        '</style>',
+        '<div id="video_player"></div>',
+        '<scr' + 'ipt src="https://media.complex.com/common/videoplayer/universal-video-player/v1/uvp.v1.min.js"></scr' + 'ipt>',
+        '<scr' + 'ipt>',
+        'window.MWD_PLAYER.init(',
+            JSON.stringify(playerOptions),
+        ');',
+        '</scr' + 'ipt>'
+    ].join('');
+</script>
+<script src="/archive/complex-ads/mwd-toolbar-v2.min.js"></script>
+<script>
+    var logo = document.getElementById('logo');
+    logo.addEventListener('mouseover', MWD_TOOLBAR.showPanelTimeoutInit);
+    logo.addEventListener('mouseout', MWD_TOOLBAR.showPanelTimeoutCancel);
+    logo.addEventListener('click', function () {
+        MWD_TOOLBAR.showPanelTimeoutCancel();//so that the panel does not open
+        MWD_TOOLBAR.clickThrough(clickTracker);
+    });
+
+    window.top.addEventListener('message', function (event) {
+        if (event.data == 'cmnunt_videoplayer_video_end') {
+            try {
+                window.top.CMNHELPERS.timeBasedRefresh.init();
+            } catch (e) { }
+        } else if (event.data == 'cmnunt_videoplayer_video_start') {
+            try {
+                window.top.CMNHELPERS.timeBasedRefresh.stop();
+            } catch (e) { }
+        }
+    }, false);
+</script>
+
+<!--{{FOOT}}-->
+
+<!-- apple-tv-swagger-10-2021 - MWD Toolbar End-->
