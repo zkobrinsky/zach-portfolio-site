@@ -4,7 +4,7 @@ import { useMemo, useRef } from "react";
 import { useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { driftMoons, MOON_WORLDS, MOONS, type MoonSpec } from "@/lib/space/moons";
+import { MOON_WORLDS, MOONS, orbitMoons, type MoonSpec } from "@/lib/space/moons";
 import { space } from "@/lib/space/state";
 import { NOISE_GLSL, SUN_VARYINGS_GLSL, SUN_VERTEX_GLSL } from "./shaders";
 
@@ -220,7 +220,7 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
   useFrame(() => {
     if (!mesh.current) return;
     mesh.current.position.copy(spec.position);
-    mesh.current.rotation.y = NEAR_SIDE_TOWARD_US.y + drift.seconds * SPIN_SPEED * (spec.seed % 2 < 1 ? 1 : -1);
+    mesh.current.rotation.y = NEAR_SIDE_TOWARD_US.y + motion.seconds * SPIN_SPEED * (spec.seed % 2 < 1 ? 1 : -1);
   });
 
   return (
@@ -239,14 +239,14 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
   );
 }
 
-/** How far the moons have drifted. It only runs in orbit: during a trip a moon holds still, so the landing hits it exactly. */
-const drift = { seconds: 0 };
+/** How long the moons have been moving. It only runs in orbit: during a trip a moon holds still, so the landing hits it exactly. */
+const motion = { seconds: 0 };
 
 export function Moons() {
   useFrame((_, delta) => {
     if (space.cameraOwner === "landing") return;
-    drift.seconds += Math.min(delta, 0.1);
-    driftMoons(drift.seconds);
+    motion.seconds += Math.min(delta, 0.1);
+    orbitMoons(motion.seconds);
   }, -1);
 
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());

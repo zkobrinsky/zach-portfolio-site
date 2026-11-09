@@ -4,6 +4,11 @@ export const RING_IN = 1.24;
 export const RING_OUT = 2.27;
 export const PLANET_TILT = new THREE.Euler(0.12, 0, 0.42);
 
+/** Seconds per lap for an orbit at distance 1. Far faster than real life, so you can see things move during a visit. */
+const LAP_SECONDS_AT_DISTANCE_1 = 420;
+/** Kepler's third law: a lap's time grows with distance^1.5, so everything nearer the planet moves faster. */
+export const orbitSeconds = (distance: number) => LAP_SECONDS_AT_DISTANCE_1 * distance ** 1.5;
+
 export const BASE_FOV = 32;
 export const POV_FOV = 58;
 export const POV_NEAR = 0.004;

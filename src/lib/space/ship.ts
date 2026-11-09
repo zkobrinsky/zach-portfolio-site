@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import { PLANET_TILT } from "./constants";
+import { orbitSeconds, PLANET_TILT } from "./constants";
 
 /** Just outside the rings, which end at 2.27. */
 export const SHIP_ORBIT_RADIUS = 2.65;
-/** Seconds per lap: slow enough that you can't see it moving. */
-const SHIP_ORBIT_SECONDS = 3600;
 const SHIP_ORBIT_START = 1.2;
 /** How far the orbit leans away from the rings, so it passes over them. */
 export const SHIP_ORBIT_LEAN = 0.1;
@@ -27,7 +25,7 @@ export const shipPlacement = {
  */
 export const shipLight = { fill: 0.04, side: 1.1, front: -0.15 };
 
-export const shipOrbitAngle = (t: number) => shipPlacement.start + (t / SHIP_ORBIT_SECONDS) * Math.PI * 2;
+export const shipOrbitAngle = (t: number) => shipPlacement.start + (t / orbitSeconds(shipPlacement.radius)) * Math.PI * 2;
 
 const lean = new THREE.Euler();
 

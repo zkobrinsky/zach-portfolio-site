@@ -360,12 +360,14 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
       case "approach": {
         const k = clamp01(seconds / APPROACH_SECONDS);
         const e = ease(k), u = 1 - e;
+        // the ship keeps flying, so the end of the path follows it
+        shipPosition(space.time, shipAt);
+        t.startPosition.copy(t.startCamera).sub(shipAt).normalize().multiplyScalar(SHIP_STOP).add(shipAt);
         perspective.position
           .set(0, 0, 0)
           .addScaledVector(t.startCamera, u * u)
           .addScaledVector(t.control, 2 * u * e)
           .addScaledVector(t.startPosition, e * e);
-        shipPosition(space.time, shipAt);
         rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(perspective.position, shipAt, up.set(0, 1, 0)));
         perspective.quaternion.copy(t.startRotation).slerp(rotationGoal, ease(Math.min(1, k / 0.3)));
         lens(POV_FOV, 0.01);
