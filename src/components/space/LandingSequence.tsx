@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { BASE_FOV, ORBIT_NEAR, POV_FOV, POV_NEAR, VIEW_UP } from "@/lib/space/constants";
 import { MOONS, type MoonSpec } from "@/lib/space/moons";
-import { shipPosition } from "@/lib/space/ship";
+import { APPROACH_EASES, shipApproach, shipHatchState, shipPosition } from "@/lib/space/ship";
 import { space } from "@/lib/space/state";
 import { ASTRONAUT_HEIGHT } from "./Astronaut";
 
@@ -18,8 +18,9 @@ import { ASTRONAUT_HEIGHT } from "./Astronaut";
     impact    a hard stop and a jolt, then the screen cuts to black
     landed    the astronaut is out cold. Behind the black, a normal web page takes over, and
               SpaceExperience plays the gasp and the eyes opening.
-    approach  (ship only) first-person flight to the spaceship, fading to black at the hull
-    boarded   (ship only) fades up inside the ship
+    lookAtShip (ship only) the view turns to the spaceship, timed and eased like lookDown
+    approach  (ship only) first-person flight up into the ship's belly ramp as it drops open, whiting out in its light
+    boarded   (ship only) fades up inside the ship from the white
     leave     going back: the page fades to black
     climb     the view fades up on the moon's surface and the camera flies back up to orbit
 
@@ -38,9 +39,8 @@ const FADE_FROM_BLACK_SECONDS = 0.9;
 const SHAKE_SECONDS = 0.5;
 
 /** The trip to the ship: fly over, fade out at the hull, fade in aboard. */
-const APPROACH_SECONDS = 3.6;
 const BOARDED_FADE_SECONDS = 1.2;
-/** How far from the ship's center the flight ends. */
+/** How far from the ship's center the flight back out starts. */
 const SHIP_STOP = 0.24;
 /** The flight curves out to at least this far from the planet's center. */
 const CLEAR_OF_PLANET = 3.2;
@@ -64,7 +64,7 @@ const LOOK_DOWN_SWING_OUT = 0.4;
 /** How far along the look-down (eased) before the body appears: by then the swing has cleared the chest. */
 const LOOK_DOWN_REVEAL = 0.3;
 
-type Phase = "idle" | "flyIn" | "lookDown" | "dive" | "impact" | "approach" | "boarded" | "landed" | "leave" | "climb";
+type Phase = "idle" | "flyIn" | "lookDown" | "dive" | "impact" | "lookAtShip" | "approach" | "boarded" | "landed" | "leave" | "climb";
 
 export type LandingEvents = {
   /** The boots just hit the ground. */
@@ -79,6 +79,8 @@ const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 
 const feetWorld = new THREE.Vector3();
 const shipAt = new THREE.Vector3();
+const runIn = new THREE.Vector3();
+const handleIn = new THREE.Vector3();
 const footA = new THREE.Vector3();
 const up = new THREE.Vector3();
 const forward = new THREE.Vector3();
@@ -89,6 +91,12 @@ const rotationGoal = new THREE.Quaternion();
 const lookMatrix = new THREE.Matrix4();
 const scratch = new THREE.Vector3();
 const scratchRotation = new THREE.Quaternion();
+
+/** Where the flight to the ship ends, under the ramp's opening, and where it lines up to come in level over the ramp. */
+function aimAtHatch(end: THREE.Vector3, lineUp: THREE.Vector3) {
+  end.copy(shipHatchState.end);
+  lineUp.copy(shipHatchState.lineUp);
+}
 
 /** Where the camera should be to frame the boots, for the astronaut's current pose. */
 /**
@@ -180,6 +188,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     landedCamera: new THREE.Vector3(),
     landedCameraRotation: new THREE.Quaternion(),
     control: new THREE.Vector3(),
+    lineUp: new THREE.Vector3(),
   });
   const events = useRef({ onImpact, onCovered, onBackInOrbit });
   useEffect(() => {
@@ -266,15 +275,9 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         if (t.moon.ship) {
           t.startCamera.copy(perspective.position);
           t.startRotation.copy(perspective.quaternion);
-          shipPosition(space.time, shipAt);
-          t.startPosition.copy(t.startCamera).sub(shipAt).normalize().multiplyScalar(SHIP_STOP).add(shipAt);
-          // bow the path out around the planet
-          t.control.copy(t.startCamera).add(t.startPosition).multiplyScalar(0.5);
-          if (t.control.lengthSq() < 1e-4) t.control.copy(VIEW_UP);
-          if (t.control.length() < CLEAR_OF_PLANET) t.control.setLength(CLEAR_OF_PLANET * 2 - t.control.length());
           space.cameraOwner = "landing";
           space.astronautHeld = true;
-          begin("approach");
+          begin("lookAtShip");
           return;
         }
         // Aim the body so the line from the camera through the boots points straight at the moon's center.
@@ -357,23 +360,62 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         return;
       }
 
-      case "approach": {
-        const k = clamp01(seconds / APPROACH_SECONDS);
-        const e = ease(k), u = 1 - e;
-        // the ship keeps flying, so the end of the path follows it
-        shipPosition(space.time, shipAt);
-        t.startPosition.copy(t.startCamera).sub(shipAt).normalize().multiplyScalar(SHIP_STOP).add(shipAt);
-        perspective.position
-          .set(0, 0, 0)
-          .addScaledVector(t.startCamera, u * u)
-          .addScaledVector(t.control, 2 * u * e)
-          .addScaledVector(t.startPosition, e * e);
-        rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(perspective.position, shipAt, up.set(0, 1, 0)));
-        perspective.quaternion.copy(t.startRotation).slerp(rotationGoal, ease(Math.min(1, k / 0.3)));
+      case "lookAtShip": {
+        // the same turn, timing and ease as looking down at the boots on the way to a moon
+        const k = clamp01(seconds / LOOK_DOWN_SECONDS);
+        perspective.position.copy(t.startCamera);
+        rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(t.startCamera, shipHatchState.center, up.set(0, 1, 0)));
+        perspective.quaternion.copy(t.startRotation).slerp(rotationGoal, ease(k));
         lens(POV_FOV, 0.01);
-        if (space.blackout) space.blackout.style.opacity = String(clamp01((k - 0.84) / 0.16));
+        if (k >= 1) {
+          aimAtHatch(t.startPosition, t.lineUp);
+          // bow the path out around the planet
+          t.control.copy(t.startCamera).add(t.lineUp).multiplyScalar(0.5);
+          if (t.control.lengthSq() < 1e-4) t.control.copy(VIEW_UP);
+          if (t.control.length() < CLEAR_OF_PLANET) t.control.setLength(CLEAR_OF_PLANET * 2 - t.control.length());
+          if (space.blackout) space.blackout.style.background = "#fff";
+          begin("approach");
+        }
+        return;
+      }
+
+      case "approach": {
+        const k = clamp01(seconds / shipApproach.seconds);
+        const e = (APPROACH_EASES[shipApproach.ease] ?? ease)(k);
+        // Two legs: out to a point in front of and below the ship, then straight in over the lowered ramp. The ship
+        // keeps flying, so both follow it. The ease runs over the whole trip, split by distance, so the speed carries
+        // smoothly from one leg into the next.
+        aimAtHatch(t.startPosition, t.lineUp);
+        const runLength = runIn.copy(t.startPosition).sub(t.lineUp).length();
+        runIn.divideScalar(runLength || 1);
+        const legLength = t.startCamera.distanceTo(t.control) + t.control.distanceTo(t.lineUp);
+        // the first leg arrives already pointed down the run in, at the same speed
+        handleIn.copy(t.lineUp).addScaledVector(runIn, -legLength / 3);
+        const along = e * (legLength + runLength);
+        if (along < legLength) {
+          const b = along / legLength, a = 1 - b;
+          perspective.position
+            .set(0, 0, 0)
+            .addScaledVector(t.startCamera, a * a * a)
+            .addScaledVector(t.control, 3 * a * a * b)
+            .addScaledVector(handleIn, 3 * a * b * b)
+            .addScaledVector(t.lineUp, b * b * b);
+        } else {
+          perspective.position.copy(t.lineUp).addScaledVector(runIn, along - legLength);
+        }
+        // level with the ship on the way in; at the very end, tipping up into the light, the nose becomes "up"
+        up.set(0, 1, 0)
+          .lerp(scratch.copy(shipHatchState.normal).negate(), e)
+          .lerp(shipHatchState.forward, THREE.MathUtils.smoothstep(e, 0.85, 1))
+          .normalize();
+        rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(perspective.position, shipHatchState.light, up));
+        perspective.quaternion.copy(rotationGoal);
+        shipHatchState.open = THREE.MathUtils.smoothstep(k, shipApproach.hatchOpensAt, Math.max(shipApproach.hatchOpenBy, shipApproach.hatchOpensAt + 0.01));
+        lens(POV_FOV, 0.01);
+        if (space.blackout) space.blackout.style.opacity = String(clamp01((k - shipApproach.fadeStart) / Math.max(1 - shipApproach.fadeStart, 0.01)));
         if (k >= 1) {
           if (space.visor) space.visor.style.opacity = "0";
+          shipHatchState.open = 0;
           space.worldHidden = true;
           standOn(t.moon);
           events.current.onCovered(t.moon.id);
@@ -385,6 +427,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
       case "boarded": {
         const k = clamp01(seconds / BOARDED_FADE_SECONDS);
         if (space.blackout) space.blackout.style.opacity = String(1 - k);
+        if (k >= 1 && space.blackout) space.blackout.style.background = "";
         // start once the fade is far enough along to see it
         getReadyToDraw();
         if (t.readyToDraw === "yes" && k >= 0.3) t.shipArrival ??= now + SHIP_ARRIVAL_DELAY * 1000;
@@ -408,6 +451,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         return;
 
       case "leave": {
+        if (space.blackout) space.blackout.style.background = "";
         const k = clamp01(seconds / FADE_TO_BLACK_SECONDS);
         if (space.blackout) space.blackout.style.opacity = String(k);
         if (k >= 1) {

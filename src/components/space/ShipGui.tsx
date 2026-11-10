@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { shipLight, shipPlacement } from "@/lib/space/ship";
+import { APPROACH_EASES, shipApproach, shipHatch, shipHatchPath, shipLight, shipPlacement } from "@/lib/space/ship";
 
 /** Dev-only sliders for placing the spaceship. Open the site with ?gui to see them. */
 export function ShipGui() {
@@ -25,9 +25,32 @@ export function ShipGui() {
       light.add(shipLight, "fill", 0, 1, 0.01).name("shadow fill");
       light.add(shipLight, "side", 0, 3, 0.01).name("side light");
       light.add(shipLight, "front", -0.8, 0.8, 0.01).name("light angle");
+      const approach = gui.addFolder("Flight to ship");
+      approach.add(shipApproach, "ease", Object.keys(APPROACH_EASES));
+      approach.add(shipApproach, "seconds", 1, 8, 0.1);
+      approach.add(shipApproach, "fadeStart", 0.5, 1, 0.01).name("white-out at");
+      approach.add(shipApproach, "hatchOpensAt", 0, 1, 0.01).name("ramp drops at");
+      approach.add(shipApproach, "hatchOpenBy", 0, 1, 0.01).name("ramp down by");
+      approach.add(shipHatchPath, "runIn", 0, 15, 0.1).name("lines up ahead");
+      approach.add(shipHatchPath, "runBelow", -1, 4, 0.05).name("lines up below");
+      approach.add(shipHatchPath, "endBelow", -0.5, 2, 0.01).name("ends below");
+      const hatch = gui.addFolder("Ramp");
+      hatch.add(shipHatch, "preview", 0, 1, 0.01).name("open (preview)");
+      hatch.add(shipHatch, "x", -8, 10, 0.05);
+      hatch.add(shipHatch, "y", -3, 1, 0.01);
+      hatch.add(shipHatch, "z", -3, 3, 0.05);
+      hatch.add(shipHatch, "length", 0.5, 8, 0.05);
+      hatch.add(shipHatch, "width", 0.5, 6, 0.05);
+      hatch.add(shipHatch, "depth", 0.05, 2, 0.01).name("cut depth");
+      hatch.add(shipHatch, "angle", 0.3, 3, 0.01).name("drop angle");
+      hatch.add(shipHatch, "glow", 1, 12, 0.1);
+      hatch.add(shipHatch, "beam", 0, 1, 0.01).name("light beam");
+      hatch.add(shipHatch, "light", 0, 0.2, 0.001).name("light on hull");
       const copy = {
         "copy values": () => {
-          const values = Object.entries({ ...shipPlacement, ...shipLight }).map(([key, value]) => `${key}: ${value.toFixed(2)}`);
+          const values = Object.entries({ ...shipPlacement, ...shipLight, ...shipApproach, ...shipHatch, ...shipHatchPath }).map(
+            ([key, value]) => `${key}: ${typeof value === "number" ? value.toFixed(2) : value}`,
+          );
           void navigator.clipboard.writeText(`ship placement: ${values.join(", ")}`);
         },
       };

@@ -39,8 +39,9 @@
   fill: none;
   stroke: var(--gold);
   stroke-width: 2;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--progress));
+  /* the dash runs 1% past the full circle, so a full ring closes over its start with no hairline gap */
+  stroke-dasharray: 1.01 1;
+  stroke-dashoffset: calc(1.01 * (1 - var(--progress)));
   transition: stroke-dashoffset 0.35s ease;
 }
 
