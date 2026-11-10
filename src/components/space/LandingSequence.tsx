@@ -208,6 +208,9 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
       t.landedCameraRotation.setFromRotationMatrix(lookMatrix.lookAt(t.landedCamera, shipAt, up.set(0, 1, 0)));
       return;
     }
+    // leaving the ship for another page: nothing of the cabin or the astronaut floating in it stays on screen
+    space.inShip = false;
+    if (space.astronaut) space.astronaut.visible = false;
     t.landedScale = (moon.radius * LANDED_HEIGHT) / ASTRONAUT_HEIGHT;
     t.surfaceNormal.copy(space.orbitPosition).sub(moon.position).normalize();
     t.landedCamera.copy(moon.position).addScaledVector(t.surfaceNormal, moon.radius * 1.02);
@@ -434,7 +437,12 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         poseInShip(astronaut, perspective, size.width / size.height, t.shipArrival);
         lens(BASE_FOV, 0.01);
         if (k >= 1) {
-          if (wanted.current) t.phase = "landed";
+          if (wanted.current) {
+            // navigated somewhere else while the ship was fading in
+            const moon = MOONS.find(({ id }) => id === wanted.current);
+            if (moon && moon.id !== t.moon.id) standOn(moon);
+            t.phase = "landed";
+          }
           else begin("leave");
         }
         return;

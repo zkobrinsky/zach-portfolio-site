@@ -5,7 +5,7 @@ import styles from "./Project.module.css";
 
 type Props = { title: string; onDismiss?: () => void; children: ReactNode };
 
-/** An explanation over a live project. Clicking anywhere, the X, or Esc dismisses it. */
+/** An explanation over a live project. Clicking anywhere, the X, or Esc dismisses it, and the "i" button brings it back. */
 export function ProjectOverlay({ title, onDismiss, children }: Props) {
   const [explaining, setExplaining] = useState(true);
 
@@ -20,7 +20,26 @@ export function ProjectOverlay({ title, onDismiss, children }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [explaining, onDismiss]);
 
-  if (!explaining) return null;
+  if (!explaining) {
+    return (
+      <button
+        type="button"
+        className={styles.reopen}
+        aria-label={`About ${title}`}
+        title={`About ${title}`}
+        // keep the press from reaching the project underneath, which may listen on the whole window
+        onPointerDown={(event) => event.stopPropagation()}
+        onMouseDown={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
+        onClick={(event) => {
+          event.stopPropagation();
+          setExplaining(true);
+        }}
+      >
+        i
+      </button>
+    );
+  }
   return (
     <div
       className={styles.overlay}

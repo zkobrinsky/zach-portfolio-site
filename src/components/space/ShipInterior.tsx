@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { space } from "@/lib/space/state";
@@ -21,14 +22,17 @@ const STRIPS = [-0.7, 0.7, Math.PI - 0.7, Math.PI + 0.7];
 
 export function ShipInterior() {
   const cabin = useRef<THREE.Group>(null);
+  // the cabin only ever shows on About, whatever state the trip is in
+  const onAbout = usePathname() === "/about";
 
   useFrame(({ scene }) => {
-    if (cabin.current) cabin.current.visible = space.inShip;
+    const aboard = space.inShip && onAbout;
+    if (cabin.current) cabin.current.visible = aboard;
     // the fog stays on and is just pushed out of reach in space, so nothing has to recompile
     scene.fog ??= new THREE.Fog("#000000");
     const fog = scene.fog as THREE.Fog;
-    fog.near = space.inShip ? FADE_START : 1e6;
-    fog.far = space.inShip ? FADE_END : 2e6;
+    fog.near = aboard ? FADE_START : 1e6;
+    fog.far = aboard ? FADE_END : 2e6;
   });
 
   return (
