@@ -8,9 +8,16 @@
   font-size: clamp(38px, 6vw, 72px);
 }
 
+/* matches the section headings on Publications */
 .story.story h3 {
   max-width: 44rem;
   margin: 48px auto 0;
+  padding-bottom: 6px;
+  font: 900 24px/1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgb(201 161 74 / 0.4);
 }
 
 .story.story p,
@@ -24,7 +31,6 @@
 /* stand-in text, until the real story is written */
 .todo {
   opacity: 0.55;
-  font-style: italic;
 }
 
 .video {
