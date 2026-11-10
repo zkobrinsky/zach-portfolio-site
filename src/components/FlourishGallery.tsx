@@ -49,10 +49,13 @@ export function FlourishGallery() {
               </button>
               <p>
                 {matchColors
-                  ? "Demos pull their colors from the ad, live."
-                  : "Demos use their default colors, with no color extraction."}
+                  ? "Display demos pull their colors from the ad, live (except Liquid)."
+                  : "Display demos use their default colors, with no color extraction."}
               </p>
             </div>
+          )}
+          {kind === "video" && (
+            <p className={styles.sectionNote}>Color matching is display-only. Video flourishes always use their default colors.</p>
           )}
           <ul className={styles.grid}>
             {FLOURISHES.filter((flourish) => flourish.kind === kind).map((flourish) => {

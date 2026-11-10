@@ -178,6 +178,13 @@
   transform: translateX(20px);
 }
 
+.project.project .sectionNote {
+  margin: 12px auto 20px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
 .project.project .switchRow p {
   margin: 0;
   font-size: 13px;
