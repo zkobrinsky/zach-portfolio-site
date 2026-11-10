@@ -1,0 +1,33 @@
+.story {
+  width: min(100%, 68rem);
+  margin-inline: auto;
+  padding: 16px 0 72px;
+}
+
+.story.story h2 {
+  font-size: clamp(38px, 6vw, 72px);
+}
+
+.story.story h3 {
+  max-width: 44rem;
+  margin: 48px auto 0;
+}
+
+.story.story p,
+.story.story ul {
+  max-width: 44rem;
+  margin: 12px auto 0;
+  font: 15px/1.7 var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* stand-in text, until the real story is written */
+.todo {
+  opacity: 0.55;
+  font-style: italic;
+}
+
+.video {
+  max-width: 44rem;
+  margin: 16px auto 0;
+}

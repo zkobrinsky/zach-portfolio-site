@@ -129,6 +129,15 @@ export const MOONS: MoonSpec[] = [
     retrograde: true,
   },
   {
+    id: "previous-life/science",
+    label: "Science",
+    position: at(-0.4, -2.6, 2.75),
+    radius: 0.022,
+    tint: "#ffffff",
+    world: "ocean",
+    seed: 27.3,
+  },
+  {
     id: "publications",
     label: "Publications",
     position: at(-0.99, -1.53, -1.59),
@@ -255,7 +264,7 @@ export const NAV: NavItem[] = [
   },
   {
     label: "Previous Life",
-    items: ["previous-life/photography", "previous-life/video", "previous-life/newspaper-editor", "previous-life/fishmongering"].map(
+    items: ["previous-life/science", "previous-life/photography", "previous-life/video", "previous-life/newspaper-editor", "previous-life/fishmongering"].map(
       moon,
     ),
   },
