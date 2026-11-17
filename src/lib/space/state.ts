@@ -10,6 +10,8 @@ export const space = {
   feet: null as [THREE.Object3D, THREE.Object3D] | null,
   /** True once the helmet is off and Zach's head is on. */
   headOn: false,
+  /** True once the astronaut, head and all, has been drawn off-screen, so its first visible frame doesn't stall. */
+  astronautWarm: false,
   /** True while the view is inside the spaceship. */
   inShip: false,
   /** True while a web page is showing: space is hidden, so so the canvas is see-through over the page. */

@@ -64,7 +64,8 @@ function LoadProgress() {
 function SceneReady({ waitForHead, onReady }: { waitForHead: boolean; onReady: () => void }) {
   const frames = useRef(0);
   useFrame(() => {
-    if (frames.current > 2 || (waitForHead && !space.headOn)) return;
+    // with the head on, wait for it to be warmed up too: that stalls a few frames, which belong behind the loader
+    if (frames.current > 2 || (waitForHead && !space.astronautWarm)) return;
     frames.current += 1;
     if (frames.current > 2) onReady();
   });

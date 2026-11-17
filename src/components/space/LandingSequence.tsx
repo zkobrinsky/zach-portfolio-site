@@ -108,20 +108,31 @@ const SHIP_ARRIVAL_SECONDS = 1.6;
 /** Enough to start above the close crop. */
 const SHIP_ARRIVAL_DROP = 0.4;
 const SHIP_ARRIVAL_SPIN = 0.25;
+/** On a direct visit, the drop-in waits until the loading screen has faded at least this far. */
+const LOADER_CLEAR_OPACITY = 0.2;
+
+/** Whether the loading screen is (nearly) out of the way, so the drop-in isn't spent underneath it. */
+function loaderClear() {
+  if (!space.loader) return true;
+  return Number(getComputedStyle(space.loader).opacity) <= LOADER_CLEAR_OPACITY;
+}
+
+/** The most one frame can move the drop-in along, so a stalled frame pauses it instead of jumping ahead. */
+const MAX_ARRIVAL_STEP = 1 / 30;
 
 /**
  * Aboard the ship: the astronaut floats at the center, off to one side of the about text on wide screens.
- * `arrivedAt` is when the drop-in started (performance.now ms), or null while it's still waiting.
+ * `arrival` is seconds into the drop-in (negative during the delay before it), or null while it's still waiting.
  */
-function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, aspect: number, arrivedAt: number | null) {
+function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, aspect: number, arrival: number | null) {
   const t = space.time;
   const wide = aspect > 1.1;
-  const progress = arrivedAt === null ? 0 : clamp01((performance.now() - arrivedAt) / 1000 / SHIP_ARRIVAL_SECONDS);
+  const progress = arrival === null ? 0 : clamp01(arrival / SHIP_ARRIVAL_SECONDS);
   const left = (1 - progress) ** 3; // ease-out: quick at first, settling at the end
   space.inShip = true;
   space.flailAmount = 1;
   // stays hidden until the head has loaded, so the helmet never shows, and until the drop-in begins
-  astronaut.visible = space.headOn && arrivedAt !== null && performance.now() >= arrivedAt;
+  astronaut.visible = space.headOn && arrival !== null && arrival >= 0;
   astronaut.scale.setScalar(1);
   astronaut.position.set(0, Math.sin(t * 0.5) * 0.008 + left * SHIP_ARRIVAL_DROP, 0);
   astronaut.rotation.set(
@@ -146,8 +157,33 @@ async function prepareToDraw(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera
       for (const map of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap, material.aoMap, material.emissiveMap])
         if (map) gl.initTexture(map);
   });
+  // The scene is really drawn into the EffectComposer's render target, and three.js builds a different shader
+  // for a render target (linear output) than for the canvas (sRGB). Compiling with no target set built the
+  // canvas versions, so the real ones still compiled on the first visible frame. Compile against a target.
+  const target = new THREE.WebGLRenderTarget(1, 1);
+  const previous = gl.getRenderTarget();
+  gl.setRenderTarget(target);
+  const compiled = gl.compileAsync(scene, camera); // the compile itself happens right here; only the wait is async
+  gl.setRenderTarget(previous);
   // resolves once the shaders have really finished building, not just started
-  await gl.compileAsync(scene, camera);
+  await compiled;
+  // Then draw it once off-screen. Compiling doesn't upload vertex buffers or the skeleton's bone texture, and
+  // catches nothing it guessed wrong; one real draw does all of that before anyone can see it.
+  // The drop-in starts with the astronaut above the frame, so culling would skip the head here and leave its
+  // upload for the moment it slides into view. Draw every part, wherever the camera is pointing.
+  const culled: THREE.Object3D[] = [];
+  astronaut.traverse((object) => {
+    if (object.frustumCulled) culled.push(object);
+    object.frustumCulled = false;
+  });
+  const wasVisible = astronaut.visible;
+  astronaut.visible = true;
+  gl.setRenderTarget(target);
+  gl.render(scene, camera);
+  gl.setRenderTarget(previous);
+  astronaut.visible = wasVisible;
+  for (const object of culled) object.frustumCulled = true;
+  target.dispose();
 }
 
 function frameBoots(astronaut: THREE.Object3D, scale: number) {
@@ -178,7 +214,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     alignedRotation: new THREE.Quaternion(),
     startPosition: new THREE.Vector3(),
     feetOffset: new THREE.Vector3(),
-    /** When the drop-in aboard the ship starts (performance.now ms). Null until the head is on and the view is uncovering. */
+    /** Seconds into the drop-in aboard the ship, counted in clamped frame steps. Null until the head is on and the view is uncovering. */
     shipArrival: null as number | null,
     /** Getting the astronaut with its head ready to draw: not started, under way, or done. */
     readyToDraw: "no" as "no" | "pending" | "yes",
@@ -247,7 +283,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
     }
   }, [destination]);
 
-  useFrame(({ camera, size, gl, scene }) => {
+  useFrame(({ camera, size, gl, scene }, delta) => {
     const t = trip.current;
     const astronaut = space.astronaut;
     if (t.phase === "idle" || !astronaut || !t.moon) return;
@@ -264,7 +300,13 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
       t.readyToDraw = "pending";
       prepareToDraw(gl, scene, perspective, astronaut).finally(() => {
         t.readyToDraw = "yes";
+        space.astronautWarm = true;
       });
+    };
+    /** Starts the drop-in aboard (after its short delay) once the astronaut is ready to draw, then moves it along. */
+    const advanceArrival = (canStart: boolean) => {
+      if (t.shipArrival !== null) t.shipArrival += Math.min(delta, MAX_ARRIVAL_STEP);
+      else if (canStart && t.readyToDraw === "yes") t.shipArrival = -SHIP_ARRIVAL_DELAY;
     };
     const lens = (fov: number, near: number) => {
       perspective.fov = fov;
@@ -433,7 +475,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         if (k >= 1 && space.blackout) space.blackout.style.background = "";
         // start once the fade is far enough along to see it
         getReadyToDraw();
-        if (t.readyToDraw === "yes" && k >= 0.3) t.shipArrival ??= now + SHIP_ARRIVAL_DELAY * 1000;
+        advanceArrival(k >= 0.3);
         poseInShip(astronaut, perspective, size.width / size.height, t.shipArrival);
         lens(BASE_FOV, 0.01);
         if (k >= 1) {
@@ -452,7 +494,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         if (t.moon.ship) {
           // opened straight on About, or switched to it: drop in once the head is on
           getReadyToDraw();
-          if (t.readyToDraw === "yes") t.shipArrival ??= now + SHIP_ARRIVAL_DELAY * 1000;
+          advanceArrival(t.shipArrival === null && loaderClear());
           poseInShip(astronaut, perspective, size.width / size.height, t.shipArrival);
           lens(BASE_FOV, 0.01);
         }
