@@ -239,6 +239,22 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
   );
 }
 
+/**
+ * Loads an image as an ImageBitmap, decoded off the main thread and flipped the way textures expect. It reads
+ * the file through FileLoader, like the models: three's ImageBitmapLoader reads it with Response.blob(), and on
+ * a preloaded response that sometimes never finished or failed outright, which left the loader up for good.
+ */
+class FlippedBitmapLoader extends THREE.Loader<ImageBitmap> {
+  load(url: string, onLoad: (bitmap: ImageBitmap) => void, onProgress?: (event: ProgressEvent) => void, onError?: (error: unknown) => void) {
+    new THREE.FileLoader(this.manager).setResponseType("arraybuffer").load(
+      url,
+      (data) => createImageBitmap(new Blob([data as ArrayBuffer]), { imageOrientation: "flipY", colorSpaceConversion: "none" }).then(onLoad, onError),
+      onProgress,
+      onError,
+    );
+  }
+}
+
 /** How long the moons have been moving. It only runs in orbit: during a trip a moon holds still, so the landing hits it exactly. */
 const motion = { seconds: 0 };
 
@@ -252,9 +268,7 @@ export function Moons() {
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   // Loaded as ImageBitmaps, so the browser decodes these big JPEGs off the main thread. As plain images, they
   // were decoded on the main thread in the middle of the upload to the GPU.
-  const bitmaps = useLoader(THREE.ImageBitmapLoader, [ASSETS.moonColor, ASSETS.moonHeight], (loader) => {
-    loader.setOptions({ imageOrientation: "flipY" });
-  });
+  const bitmaps = useLoader(FlippedBitmapLoader, [ASSETS.moonColor, ASSETS.moonHeight]);
   const [color, height] = useMemo(
     () =>
       bitmaps.map((bitmap, i) => {
