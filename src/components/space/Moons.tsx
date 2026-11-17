@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { useTexture } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { MOON_WORLDS, MOONS, orbitMoons, type MoonSpec } from "@/lib/space/moons";
+import { ASSETS } from "@/lib/space/assets";
 import { space } from "@/lib/space/state";
 import { NOISE_GLSL, SUN_VARYINGS_GLSL, SUN_VERTEX_GLSL } from "./shaders";
 
@@ -250,14 +250,24 @@ export function Moons() {
   }, -1);
 
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
-  const [color, height] = useTexture(["/textures/moon-color.jpg", "/textures/moon-height.jpg"], (textures) => {
-    const [colorMap, heightMap] = textures as THREE.Texture[];
-    colorMap.colorSpace = THREE.SRGBColorSpace;
-    for (const map of [colorMap, heightMap]) {
-      map.wrapS = THREE.RepeatWrapping;
-      map.anisotropy = maxAnisotropy;
-    }
+  // Loaded as ImageBitmaps, so the browser decodes these big JPEGs off the main thread. As plain images, they
+  // were decoded on the main thread in the middle of the upload to the GPU.
+  const bitmaps = useLoader(THREE.ImageBitmapLoader, [ASSETS.moonColor, ASSETS.moonHeight], (loader) => {
+    loader.setOptions({ imageOrientation: "flipY" });
   });
+  const [color, height] = useMemo(
+    () =>
+      bitmaps.map((bitmap, i) => {
+        const map = new THREE.Texture(bitmap);
+        map.flipY = false; // already flipped while decoding: ImageBitmaps can't be flipped on upload
+        map.colorSpace = i === 0 ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+        map.wrapS = THREE.RepeatWrapping;
+        map.anisotropy = maxAnisotropy;
+        map.needsUpdate = true;
+        return map;
+      }),
+    [bitmaps, maxAnisotropy],
+  );
   const detail = useMemo(() => detailTexture(), []);
   return MOONS.filter((spec) => !spec.ship && !spec.unlisted).map((spec) => <Moon key={spec.id} spec={spec} color={color} height={height} detail={detail} />);
 }
