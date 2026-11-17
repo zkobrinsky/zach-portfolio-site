@@ -161,9 +161,13 @@ function detailTexture() {
     const grid = Float32Array.from({ length: cells * cells }, () => random() - 0.5);
     const smooth = (t: number) => t * t * (3 - 2 * t);
     for (let y = 0; y < n; y++) {
-      const gy = (y / n) * cells, iy = Math.floor(gy), fy = smooth(gy - iy);
+      const gy = (y / n) * cells,
+        iy = Math.floor(gy),
+        fy = smooth(gy - iy);
       for (let x = 0; x < n; x++) {
-        const gx = (x / n) * cells, ix = Math.floor(gx), fx = smooth(gx - ix);
+        const gx = (x / n) * cells,
+          ix = Math.floor(gx),
+          fx = smooth(gx - ix);
         const at = (a: number, b: number) => grid[(b % cells) * cells + (a % cells)];
         const top = at(ix, iy) + (at(ix + 1, iy) - at(ix, iy)) * fx;
         const bottom = at(ix, iy + 1) + (at(ix + 1, iy + 1) - at(ix, iy + 1)) * fx;
@@ -175,7 +179,9 @@ function detailTexture() {
   // craters: shallow bowls with soft raised rims, many small and a few large
   for (let i = 0; i < 260; i++) {
     const radius = 3 + Math.pow(random(), 4) * 44;
-    const cx = random() * n, cy = random() * n, depth = 0.05 + 0.1 * random();
+    const cx = random() * n,
+      cy = random() * n,
+      depth = 0.05 + 0.1 * random();
     const reach = Math.ceil(radius * 1.5);
     for (let dy = -reach; dy <= reach; dy++) {
       for (let dx = -reach; dx <= reach; dx++) {
@@ -183,7 +189,8 @@ function detailTexture() {
         if (d > 1.5) continue;
         const bowl = d < 1 ? -(1 - d * d) : 0;
         const rim = Math.exp(-Math.pow((d - 1) / 0.18, 2)) * 0.28;
-        const px = (Math.round(cx) + dx + n) % n, py = (Math.round(cy) + dy + n) % n;
+        const px = (Math.round(cx) + dx + n) % n,
+          py = (Math.round(cy) + dy + n) % n;
         height[py * n + px] += depth * (bowl + rim);
       }
     }
@@ -211,7 +218,14 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
     () =>
       THREE.UniformsUtils.merge([
         THREE.UniformsLib.lights,
-        { uTint: { value: new THREE.Color(spec.tint) }, uSeed: { value: spec.seed }, uWorld: { value: MOON_WORLDS.indexOf(spec.world) }, uColor: { value: null }, uHeight: { value: null }, uDetail: { value: null } },
+        {
+          uTint: { value: new THREE.Color(spec.tint) },
+          uSeed: { value: spec.seed },
+          uWorld: { value: MOON_WORLDS.indexOf(spec.world) },
+          uColor: { value: null },
+          uHeight: { value: null },
+          uDetail: { value: null },
+        },
       ]),
     [spec],
   );
@@ -245,10 +259,19 @@ function Moon({ spec, color, height, detail }: MoonMaps & { spec: MoonSpec }) {
  * a preloaded response that sometimes never finished or failed outright, which left the loader up for good.
  */
 class FlippedBitmapLoader extends THREE.Loader<ImageBitmap> {
-  load(url: string, onLoad: (bitmap: ImageBitmap) => void, onProgress?: (event: ProgressEvent) => void, onError?: (error: unknown) => void) {
+  load(
+    url: string,
+    onLoad: (bitmap: ImageBitmap) => void,
+    onProgress?: (event: ProgressEvent) => void,
+    onError?: (error: unknown) => void,
+  ) {
     new THREE.FileLoader(this.manager).setResponseType("arraybuffer").load(
       url,
-      (data) => createImageBitmap(new Blob([data as ArrayBuffer]), { imageOrientation: "flipY", colorSpaceConversion: "none" }).then(onLoad, onError),
+      (data) =>
+        createImageBitmap(new Blob([data as ArrayBuffer]), {
+          imageOrientation: "flipY",
+          colorSpaceConversion: "none",
+        }).then(onLoad, onError),
       onProgress,
       onError,
     );
@@ -288,5 +311,7 @@ export function Moons() {
     [bitmaps, maxAnisotropy],
   );
   const detail = useMemo(() => detailTexture(), []);
-  return MOONS.filter((spec) => !spec.ship && !spec.unlisted).map((spec) => <Moon key={spec.id} spec={spec} color={color} height={height} detail={detail} />);
+  return MOONS.filter((spec) => !spec.ship && !spec.unlisted).map((spec) => (
+    <Moon key={spec.id} spec={spec} color={color} height={height} detail={detail} />
+  ));
 }

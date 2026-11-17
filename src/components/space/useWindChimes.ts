@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { createWindChimes } from "@/lib/audio/windChimes";
 
-
 /** Always-on ambience. It begins on the visitor's first tap, click or key press, the earliest browsers allow it. */
 export function useWindChimes(muted: boolean, insideHelmet: boolean) {
   const chimes = useRef<ReturnType<typeof createWindChimes> | null>(null);

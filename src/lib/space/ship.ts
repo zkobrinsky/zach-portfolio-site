@@ -25,7 +25,8 @@ export const shipPlacement = {
  */
 export const shipLight = { fill: 0.04, side: 1.1, front: -0.15 };
 
-export const shipOrbitAngle = (t: number) => shipPlacement.start + (t / orbitSeconds(shipPlacement.radius)) * Math.PI * 2;
+export const shipOrbitAngle = (t: number) =>
+  shipPlacement.start + (t / orbitSeconds(shipPlacement.radius)) * Math.PI * 2;
 
 const lean = new THREE.Euler();
 
@@ -78,7 +79,19 @@ export const shipApproach = {
  * out of it: the hull triangles inside this box (up to `depth` above the bottom) become the ramp, and a light
  * sits in the hole behind it.
  */
-export const shipHatch = { x: -0.4, y: -1.42, z: 0, length: 2.4, width: 2.15, depth: 0.51, angle: 0.84, glow: 12, beam: 1, light: 0.08, preview: 0 };
+export const shipHatch = {
+  x: -0.4,
+  y: -1.42,
+  z: 0,
+  length: 2.4,
+  width: 2.15,
+  depth: 0.51,
+  angle: 0.84,
+  glow: 12,
+  beam: 1,
+  light: 0.08,
+  preview: 0,
+};
 /**
  * The flight to the ship has two legs, in the model's units: first out to a point `runIn` ahead of the opening (toward the nose)
  * and `runBelow` under the belly, clear of the hull, then straight in over the lowered ramp to `endBelow` under the opening.

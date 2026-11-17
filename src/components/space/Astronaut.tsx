@@ -4,12 +4,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import {
-  HOME_CAMERA,
-  VIEW_BACK,
-  VIEW_RIGHT,
-  VIEW_UP,
-} from "@/lib/space/constants";
+import { HOME_CAMERA, VIEW_BACK, VIEW_RIGHT, VIEW_UP } from "@/lib/space/constants";
 import { ASSETS } from "@/lib/space/assets";
 import { debugParams, space } from "@/lib/space/state";
 
@@ -61,17 +56,10 @@ function pixels(image: CanvasImageSource, width: number, height: number) {
  * Recolors the suit's orange pads and the tan under the helmet to white. Keeps each pixel's brightest channel so the quilting survives,
  * and skips metallic pixels (glTF metalness is the blue channel) so the gold visor stays gold.
  */
-function whitenPads(
-  texture: THREE.Texture,
-  metalness: THREE.Texture | null,
-  maxAnisotropy: number,
-) {
+function whitenPads(texture: THREE.Texture, metalness: THREE.Texture | null, maxAnisotropy: number) {
   const image = texture.image as ImageBitmap;
   const { canvas, context, data } = pixels(image, image.width, image.height);
-  const metal = metalness
-    ? pixels(metalness.image as ImageBitmap, image.width, image.height).data
-        .data
-    : null;
+  const metal = metalness ? pixels(metalness.image as ImageBitmap, image.width, image.height).data.data : null;
   const d = data.data;
   for (let i = 0; i < d.length; i += 4) {
     const r = d[i],
@@ -79,12 +67,9 @@ function whitenPads(
       b = d[i + 2];
     const max = Math.max(r, g, b);
     const saturation = max ? (max - Math.min(r, g, b)) / max : 0;
-    if (r < g || g < b || saturation <= 0.1 || (metal && metal[i + 2] > 110))
-      continue;
+    if (r < g || g < b || saturation <= 0.1 || (metal && metal[i + 2] > 110)) continue;
     const hue = (g - b) / Math.max(1, r - b);
-    const amount =
-      Math.min(1, (saturation - 0.1) / 0.1) *
-      (hue > 0.05 && hue < 0.85 ? 1 : 0);
+    const amount = Math.min(1, (saturation - 0.1) / 0.1) * (hue > 0.05 && hue < 0.85 ? 1 : 0);
     const v = Math.min(255, max * 0.97 + 6);
     d[i] = r + (v - r) * amount;
     d[i + 1] = g + (v * 0.985 - g) * amount;
@@ -107,9 +92,7 @@ function prepare(model: THREE.Object3D, maxAnisotropy: number): FlailBone[] {
   const box = new THREE.Box3().setFromObject(model);
   const scale = ASTRONAUT_HEIGHT / box.getSize(new THREE.Vector3()).y;
   model.scale.setScalar(scale);
-  model.position
-    .copy(box.getCenter(new THREE.Vector3()))
-    .multiplyScalar(-scale);
+  model.position.copy(box.getCenter(new THREE.Vector3())).multiplyScalar(-scale);
 
   const bones: FlailBone[] = [];
   model.traverse((object) => {
@@ -120,11 +103,7 @@ function prepare(model: THREE.Object3D, maxAnisotropy: number): FlailBone[] {
       // the parts share one material, so this only needs doing once
       if (material.map && !material.userData.whitened) {
         material.userData.whitened = true;
-        material.map = whitenPads(
-          material.map,
-          material.metalnessMap,
-          maxAnisotropy,
-        );
+        material.map = whitenPads(material.map, material.metalnessMap, maxAnisotropy);
       }
     }
     const spec = object instanceof THREE.Bone ? FLAIL[object.name] : undefined;
@@ -132,11 +111,7 @@ function prepare(model: THREE.Object3D, maxAnisotropy: number): FlailBone[] {
       bones.push({
         bone: object,
         rest: object.quaternion.clone(),
-        range: [
-          spec[0] * FLAIL_AMOUNT,
-          spec[1] * FLAIL_AMOUNT,
-          spec[2] * FLAIL_AMOUNT,
-        ],
+        range: [spec[0] * FLAIL_AMOUNT, spec[1] * FLAIL_AMOUNT, spec[2] * FLAIL_AMOUNT],
         frequency: spec[3] * FLAIL_SPEED,
         phase: bones.length * 2.39996,
       });
@@ -162,12 +137,7 @@ const NECK_RING_HEIGHT = 0.67;
 const NECK_RING_TILT = Math.atan(0.41);
 
 function neckRing() {
-  const lathe = (
-    points: number[][],
-    color: string,
-    roughness: number,
-    metalness: number,
-  ) =>
+  const lathe = (points: number[][], color: string, roughness: number, metalness: number) =>
     new THREE.Mesh(
       new THREE.LatheGeometry(
         points.map(([x, y]) => new THREE.Vector2(x, y)),
@@ -223,20 +193,14 @@ function neckRing() {
   );
   ring.position.copy(NECK_RING_CENTER);
   ring.rotation.x = NECK_RING_TILT;
-  ring.scale.set(
-    NECK_RING_SCALE,
-    NECK_RING_SCALE * NECK_RING_HEIGHT,
-    NECK_RING_SCALE,
-  );
+  ring.scale.set(NECK_RING_SCALE, NECK_RING_SCALE * NECK_RING_HEIGHT, NECK_RING_SCALE);
   return ring;
 }
 
 /** Swaps the helmet for Zach's head. The bust rides on the head bone, so it moves with the body. */
 function Bust({ model, bones }: { model: THREE.Object3D; bones: FlailBone[] }) {
   const { scene: bust } = useGLTF(BUST_URL);
-  const maxAnisotropy = useThree((state) =>
-    state.gl.capabilities.getMaxAnisotropy(),
-  );
+  const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
 
   useLayoutEffect(() => {
     const head = model.getObjectByName("Head");
@@ -255,8 +219,7 @@ function Bust({ model, bones }: { model: THREE.Object3D; bones: FlailBone[] }) {
       skin.roughnessMap = null;
       skin.normalScale.setScalar(0.3);
       skin.needsUpdate = true;
-      for (const map of [skin.map, skin.normalMap])
-        if (map) map.anisotropy = maxAnisotropy;
+      for (const map of [skin.map, skin.normalMap]) if (map) map.anisotropy = maxAnisotropy;
     });
 
     // place it against the suit at rest, then hand it to the head bone without moving it
@@ -289,10 +252,7 @@ const HOME_POSITION = HOME_CAMERA.clone()
   .addScaledVector(VIEW_UP, 0.32);
 
 /** Turns the astronaut toward the opening view, looking slightly past the planet. */
-const FACING_VIEWER = Math.atan2(
-  HOME_CAMERA.x - HOME_POSITION.x,
-  HOME_CAMERA.z - HOME_POSITION.z,
-);
+const FACING_VIEWER = Math.atan2(HOME_CAMERA.x - HOME_POSITION.x, HOME_CAMERA.z - HOME_POSITION.z);
 
 /** Enough of a turn that the fly-in passes beside the head, not through the face. */
 const TURNED_TOWARD_PLANET = 0.4;
@@ -300,17 +260,9 @@ const TURNED_TOWARD_PLANET = 0.4;
 const turn = new THREE.Quaternion();
 const euler = new THREE.Euler();
 
-export function Astronaut({
-  helmetOff,
-  preloadHead,
-}: {
-  helmetOff: boolean;
-  preloadHead: boolean;
-}) {
+export function Astronaut({ helmetOff, preloadHead }: { helmetOff: boolean; preloadHead: boolean }) {
   const { scene: model } = useGLTF(MODEL_URL);
-  const maxAnisotropy = useThree((state) =>
-    state.gl.capabilities.getMaxAnisotropy(),
-  );
+  const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   const group = useRef<THREE.Group>(null);
   const bones = useRef<FlailBone[]>([]);
   const [wornBones, setWornBones] = useState<FlailBone[] | null>(null);

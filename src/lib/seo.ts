@@ -65,11 +65,13 @@ export const PAGES = {
   },
   "/projects/martian-weather-service": {
     title: "Martian Weather Service",
-    description: "A Ruby command line app comparing the weather on Mars with the weather where you are, built by Zach Kobrinsky at Flatiron School.",
+    description:
+      "A Ruby command line app comparing the weather on Mars with the weather where you are, built by Zach Kobrinsky at Flatiron School.",
   },
   "/projects/storagepug": {
     title: "StoragePug",
-    description: "An interactive 3D application and 2D canvas tool built with Three.js and WebGL by Zach Kobrinsky. Still under NDA.",
+    description:
+      "An interactive 3D application and 2D canvas tool built with Three.js and WebGL by Zach Kobrinsky. Still under NDA.",
   },
   "/projects/complex": {
     title: "Complex",
@@ -77,7 +79,8 @@ export const PAGES = {
   },
   "/projects/kargo": {
     title: "Kargo Flourishes",
-    description: "Interactive elements for open-web and PMP banner ads, led by Zach Kobrinsky, driving CTR lifts of up to 160%.",
+    description:
+      "Interactive elements for open-web and PMP banner ads, led by Zach Kobrinsky, driving CTR lifts of up to 160%.",
   },
   "/projects/kaleidoscope-maker": {
     title: "Kaleidoscope Maker",
@@ -93,7 +96,14 @@ export function pageMetadata(path: keyof typeof PAGES): Metadata {
     title: { absolute: fullTitle },
     description,
     alternates: { canonical: path },
-    openGraph: { type: "website", siteName: SITE_NAME, url: path, title: fullTitle, description, images: [SHARE_IMAGE] },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url: path,
+      title: fullTitle,
+      description,
+      images: [SHARE_IMAGE],
+    },
     twitter: { card: "summary_large_image", title: fullTitle, description, images: [SHARE_IMAGE] },
   };
 }

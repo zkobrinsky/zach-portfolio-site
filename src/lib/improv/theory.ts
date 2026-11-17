@@ -37,7 +37,8 @@ export function snapToScale(midi: number, key: Key | null, prefer: 1 | -1 = 1) {
 export function stepsBetween(from: number, to: number, key: Key | null) {
   if (!key) return Math.round((to - from) / 2);
   const scale = scaleOf(key);
-  const a = snapToScale(from, key), b = snapToScale(to, key);
+  const a = snapToScale(from, key),
+    b = snapToScale(to, key);
   let steps = 0;
   for (let note = Math.min(a, b) + 1; note <= Math.max(a, b); note++) if (scale.includes(pitchClass(note))) steps++;
   return b >= a ? steps : -steps;
@@ -49,7 +50,7 @@ export function scaleStep(midi: number, steps: number, key: Key | null) {
   const scale = scaleOf(key);
   let note = snapToScale(midi, key);
   const direction = Math.sign(steps);
-  for (let taken = 0; taken < Math.abs(steps); ) {
+  for (let taken = 0; taken < Math.abs(steps);) {
     note += direction;
     if (scale.includes(pitchClass(note))) taken++;
   }

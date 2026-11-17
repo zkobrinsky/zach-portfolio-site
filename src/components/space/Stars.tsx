@@ -85,7 +85,10 @@ export function Stars() {
   const dpr = useThree((state) => state.viewport.dpr);
   const geometry = useMemo(() => starGeometry(), []);
   const starUniforms = useMemo(() => ({ uDpr: { value: dpr } }), [dpr]);
-  const skyUniforms = useMemo(() => ({ uBand: { value: GALACTIC_POLE }, uRingIn: { value: 0 }, uRingOut: { value: 1 } }), []);
+  const skyUniforms = useMemo(
+    () => ({ uBand: { value: GALACTIC_POLE }, uRingIn: { value: 0 }, uRingOut: { value: 1 } }),
+    [],
+  );
   const sky = useRef<THREE.Group>(null);
   useFrame((_, delta) => {
     sky.current?.rotateOnWorldAxis(GALACTIC_POLE, Math.min(delta, 0.1) * SKY_TURN_SPEED);

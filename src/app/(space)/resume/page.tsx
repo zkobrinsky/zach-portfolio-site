@@ -5,9 +5,18 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata("/resume");
 
 const SKILLS = [
-  ["Frontend", "TypeScript · JavaScript · HTML/CSS · Vue.js · Nuxt.js · React · Next.js · Angular · Tailwind · Bootstrap · SASS"],
-  ["Graphics & Animation", "Three.js · WebGL · GSAP · SVG Animation · Figma · Spline · Photoshop · Canvas 2D · p5.js · Konva.js"],
-  ["Tools & Infrastructure", "Docker · Webpack · Vite · Node.js · AWS · S3 · PostgreSQL · WebSockets · WebRTC · Jest · Playwright"],
+  [
+    "Frontend",
+    "TypeScript · JavaScript · HTML/CSS · Vue.js · Nuxt.js · React · Next.js · Angular · Tailwind · Bootstrap · SASS",
+  ],
+  [
+    "Graphics & Animation",
+    "Three.js · WebGL · GSAP · SVG Animation · Figma · Spline · Photoshop · Canvas 2D · p5.js · Konva.js",
+  ],
+  [
+    "Tools & Infrastructure",
+    "Docker · Webpack · Vite · Node.js · AWS · S3 · PostgreSQL · WebSockets · WebRTC · Jest · Playwright",
+  ],
 ];
 
 type Bullet = { text: string; details?: string[] };
@@ -49,7 +58,9 @@ const JOBS: { company: string; role: string; dates: string; bullets: Bullet[] }[
           "Took the application from initial concept through production-ready release",
         ],
       },
-      { text: "Prototyped a Voice AI agent service, leveraging LLMs to create dynamic, conversational user experiences" },
+      {
+        text: "Prototyped a Voice AI agent service, leveraging LLMs to create dynamic, conversational user experiences",
+      },
     ],
   },
   {
@@ -95,8 +106,8 @@ export default function ResumePage() {
         Senior Frontend Engineer with 8+ years of experience building interactive 2D and 3D applications, complex UI
         systems, and visually rich web experiences. Two decades of experience in photography, visual storytelling,
         editorial production, and creative media, bringing a distinctive visual sensibility to frontend engineering and
-        digital product development. Former National Geographic contributing photographer. Former newspaper editor. Former
-        fishmonger.
+        digital product development. Former National Geographic contributing photographer. Former newspaper editor.
+        Former fishmonger.
       </p>
 
       <h3>Technical Skills</h3>

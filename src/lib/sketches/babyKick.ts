@@ -77,7 +77,8 @@ const babyKick: Sketch = (context) => (p) => {
 
   p.setup = () => {
     p.pixelDensity(PIXEL_DENSITY);
-    const canvas = p.createCanvas(Math.max(host.clientWidth, 1), Math.max(host.clientHeight, 1)).elt as HTMLCanvasElement;
+    const canvas = p.createCanvas(Math.max(host.clientWidth, 1), Math.max(host.clientHeight, 1))
+      .elt as HTMLCanvasElement;
     p.noCursor();
     followHost(context, (width, height) => {
       if (width !== p.width || height !== p.height) p.resizeCanvas(width, height);

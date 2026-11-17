@@ -139,7 +139,19 @@ export default function SpaceCanvas({ onFailed, ...props }: Props & { onFailed: 
   );
 }
 
-function Scene({ pov, steer, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
+function Scene({
+  pov,
+  steer,
+  resetCount,
+  destination,
+  startedOnPage,
+  paused,
+  helmetOff,
+  onReady,
+  onImpact,
+  onCovered,
+  onBackInOrbit,
+}: Props) {
   const [warm, setWarm] = useState(false);
   const onWarm = useCallback(() => setWarm(true), []);
   return (
@@ -157,40 +169,40 @@ function Scene({ pov, steer, resetCount, destination, startedOnPage, paused, hel
     >
       <LoadProgress />
       <Suspense fallback={null}>
-      <SceneReady waitForHead={helmetOff} onReady={onReady} />
-      <VisorReflections />
-      <hemisphereLight args={["#8a7a64", "#0a0c12", 0.45]} />
-      <Sun />
-      <World>
-        <Stars />
-        <Planet />
-        <Moons />
-        <Spaceship />
-      </World>
-      <Astronaut helmetOff={helmetOff} preloadHead={destination === "about"} />
-      <ShipInterior />
-      <CameraRig pov={pov} steer={steer} resetCount={resetCount} startedOnPage={startedOnPage} />
-      <LandingSequence
-        destination={destination}
-        startedOnPage={startedOnPage}
-        onImpact={onImpact}
-        onCovered={onCovered}
-        onBackInOrbit={onBackInOrbit}
-      />
-      <DebugHud />
-      <EffectComposer multisampling={4}>
-        {/* additive: the default SCREEN blend assumes 0..1 values, so HDR pixels get darker under their own bloom */}
-        <Bloom
-          mipmapBlur
-          blendFunction={BlendFunction.ADD}
-          intensity={0.45}
-          luminanceThreshold={0.8}
-          luminanceSmoothing={0.15}
-          radius={0.55}
+        <SceneReady waitForHead={helmetOff} onReady={onReady} />
+        <VisorReflections />
+        <hemisphereLight args={["#8a7a64", "#0a0c12", 0.45]} />
+        <Sun />
+        <World>
+          <Stars />
+          <Planet />
+          <Moons />
+          <Spaceship />
+        </World>
+        <Astronaut helmetOff={helmetOff} preloadHead={destination === "about"} />
+        <ShipInterior />
+        <CameraRig pov={pov} steer={steer} resetCount={resetCount} startedOnPage={startedOnPage} />
+        <LandingSequence
+          destination={destination}
+          startedOnPage={startedOnPage}
+          onImpact={onImpact}
+          onCovered={onCovered}
+          onBackInOrbit={onBackInOrbit}
         />
-        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-      </EffectComposer>
-      <WarmUp onWarm={onWarm} />
+        <DebugHud />
+        <EffectComposer multisampling={4}>
+          {/* additive: the default SCREEN blend assumes 0..1 values, so HDR pixels get darker under their own bloom */}
+          <Bloom
+            mipmapBlur
+            blendFunction={BlendFunction.ADD}
+            intensity={0.45}
+            luminanceThreshold={0.8}
+            luminanceSmoothing={0.15}
+            radius={0.55}
+          />
+          <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        </EffectComposer>
+        <WarmUp onWarm={onWarm} />
       </Suspense>
     </Canvas>
   );

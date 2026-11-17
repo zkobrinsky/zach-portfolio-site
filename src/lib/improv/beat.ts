@@ -63,7 +63,10 @@ export class BeatTracker {
           const offHalf = Math.abs(beats * 2 - Math.round(beats * 2)) * (period / 2);
           // Eighth notes count nearly as much as beats. Otherwise any phrase with eighths fits double time best,
           // and a 72 BPM groove reads as 144. With both fitting, the tempo preference decides.
-          total += Math.max(Math.exp(-0.5 * (offBeat / TIMING_SLOP) ** 2), HALF_BEAT_WEIGHT * Math.exp(-0.5 * (offHalf / TIMING_SLOP) ** 2));
+          total += Math.max(
+            Math.exp(-0.5 * (offBeat / TIMING_SLOP) ** 2),
+            HALF_BEAT_WEIGHT * Math.exp(-0.5 * (offHalf / TIMING_SLOP) ** 2),
+          );
         }
         const fit = total / this.onsets.length;
         if (fit * prior > best.score) best = { period, anchor, fit, score: fit * prior };

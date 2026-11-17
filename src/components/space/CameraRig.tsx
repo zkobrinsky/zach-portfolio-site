@@ -97,7 +97,13 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
   // but not when only the height does: mobile browsers change it whenever their address bar slides away.
   // Layout effect, so the first frame already draws from the right distance.
   useLayoutEffect(() => {
-    if (size.width === 0 || size.width === fittedWidth.current || space.cameraOwner === "landing" || flight.current.inPov) return;
+    if (
+      size.width === 0 ||
+      size.width === fittedWidth.current ||
+      space.cameraOwner === "landing" ||
+      flight.current.inPov
+    )
+      return;
     fittedWidth.current = size.width;
     home.current = fitted;
     // refit around the planet, and save that as the view to reset to, even if panning had moved the center
@@ -137,7 +143,8 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
       a.y = THREE.MathUtils.clamp(a.y + pitch, -MAX_PITCH, MAX_PITCH);
     };
     const onMouse = (event: MouseEvent) => {
-      if (document.pointerLockElement === canvas) turn(-event.movementX * MOUSE_SENSITIVITY, -event.movementY * MOUSE_SENSITIVITY);
+      if (document.pointerLockElement === canvas)
+        turn(-event.movementX * MOUSE_SENSITIVITY, -event.movementY * MOUSE_SENSITIVITY);
     };
     // Esc frees the cursor; clicking the scene takes it back
     const onClick = () => {
@@ -145,7 +152,8 @@ export function CameraRig({ pov, steer, resetCount, startedOnPage }: Props) {
     };
     // Looking follows one particular finger, so a thumb on the joystick can fly at the same time.
     let lookFinger: number | null = null;
-    let lastX = 0, lastY = 0;
+    let lastX = 0,
+      lastY = 0;
     const onTouchStart = (event: TouchEvent) => {
       if (lookFinger !== null) return;
       const touch = [...event.touches].find((item) => !(item.target as Element).closest?.("[data-joystick]"));

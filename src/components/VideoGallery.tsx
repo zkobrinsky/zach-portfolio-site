@@ -13,7 +13,8 @@ export function VideoGallery({ videos }: { videos: Video[] }) {
   const players = videos.filter((item) => !item.vimeoOnly);
   const video = open === null ? null : players[open];
 
-  const step = (by: number) => setOpen((index) => (index === null ? null : (index + by + players.length) % players.length));
+  const step = (by: number) =>
+    setOpen((index) => (index === null ? null : (index + by + players.length) % players.length));
 
   useEffect(() => {
     const dialog = viewer.current;
@@ -28,7 +29,12 @@ export function VideoGallery({ videos }: { videos: Video[] }) {
           const card = (
             <>
               <span className={styles.thumbnail}>
-                <Image src={`/videos/${item.id}.jpg`} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw" />
+                <Image
+                  src={`/videos/${item.id}.jpg`}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                />
               </span>
               <span className={styles.title}>{item.title}</span>
             </>
@@ -67,7 +73,16 @@ export function VideoGallery({ videos }: { videos: Video[] }) {
             <figure>
               {/* keyed by video, so stepping starts a fresh player and closing stops the sound */}
               {video.file ? (
-                <video key={video.id} src={video.file} aria-label={video.title} autoPlay muted loop playsInline controls />
+                <video
+                  key={video.id}
+                  src={video.file}
+                  aria-label={video.title}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                />
               ) : (
                 <iframe
                   key={video.id}

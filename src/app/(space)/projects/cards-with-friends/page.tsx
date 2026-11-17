@@ -19,9 +19,14 @@ export default function CardsWithFriendsPage() {
       <ul>
         <li>Built with Nuxt and Vue.</li>
         <li>Games run in real time over WebSockets, so a played card moves for everyone at the table instantly.</li>
-        <li>Every room has live video and audio built in, because half of playing cards is watching people&apos;s faces.</li>
+        <li>
+          Every room has live video and audio built in, because half of playing cards is watching people&apos;s faces.
+        </li>
         <li>Rooms are lightweight and disposable: create one, share the link, and it cleans itself up afterward.</li>
-        <li>Crazy 8s, War, Durak, Cribbage, Solitaire, Social Solitaire, Garbage and Rummy, each with the real rules of the physical game.</li>
+        <li>
+          Crazy 8s, War, Durak, Cribbage, Solitaire, Social Solitaire, Garbage and Rummy, each with the real rules of
+          the physical game.
+        </li>
       </ul>
       <a href="https://www.cardswithfriends.fun/" target="_blank" rel="noopener noreferrer">
         Open Cards with Friends

@@ -5,12 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { PLANET_TILT, RING_IN, RING_OUT } from "@/lib/space/constants";
 import { space } from "@/lib/space/state";
-import {
-  PLANET_FRAGMENT,
-  PLANET_VERTEX,
-  RING_FRAGMENT,
-  RING_VERTEX,
-} from "./shaders";
+import { PLANET_FRAGMENT, PLANET_VERTEX, RING_FRAGMENT, RING_VERTEX } from "./shaders";
 
 function litUniforms() {
   return THREE.UniformsUtils.merge([
@@ -36,8 +31,7 @@ export function Planet() {
   const planetMaterial = useRef<THREE.ShaderMaterial>(null);
 
   useFrame(() => {
-    if (planetMaterial.current)
-      planetMaterial.current.uniforms.uTime.value = space.time;
+    if (planetMaterial.current) planetMaterial.current.uniforms.uTime.value = space.time;
   });
 
   return (

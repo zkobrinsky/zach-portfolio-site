@@ -65,7 +65,18 @@ const LOOK_DOWN_SWING_OUT = 0.4;
 /** How far along the look-down (eased) before the body appears: by then the swing has cleared the chest. */
 const LOOK_DOWN_REVEAL = 0.3;
 
-type Phase = "idle" | "flyIn" | "lookDown" | "dive" | "impact" | "lookAtShip" | "approach" | "boarded" | "landed" | "leave" | "climb";
+type Phase =
+  | "idle"
+  | "flyIn"
+  | "lookDown"
+  | "dive"
+  | "impact"
+  | "lookAtShip"
+  | "approach"
+  | "boarded"
+  | "landed"
+  | "leave"
+  | "climb";
 
 export type LandingEvents = {
   /** The boots just hit the ground. */
@@ -125,7 +136,12 @@ const MAX_ARRIVAL_STEP = 1 / 30;
  * Aboard the ship: the astronaut floats at the center, off to one side of the about text on wide screens.
  * `arrival` is seconds into the drop-in (negative during the delay before it), or null while it's still waiting.
  */
-function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, aspect: number, arrival: number | null) {
+function poseInShip(
+  astronaut: THREE.Object3D,
+  camera: THREE.PerspectiveCamera,
+  aspect: number,
+  arrival: number | null,
+) {
   const t = space.time;
   const wide = aspect > 1.1;
   const progress = arrival === null ? 0 : clamp01(arrival / SHIP_ARRIVAL_SECONDS);
@@ -151,7 +167,12 @@ function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, 
  * uploads their textures. Otherwise all of that happens on the first visible frame, which froze the drop-in
  * partway through when /about was opened directly (the body had never been drawn yet).
  */
-async function prepareToDraw(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, astronaut: THREE.Object3D) {
+async function prepareToDraw(
+  gl: THREE.WebGLRenderer,
+  scene: THREE.Scene,
+  camera: THREE.Camera,
+  astronaut: THREE.Object3D,
+) {
   uploadTextures(gl, astronaut);
   const target = await compileForComposer(gl, scene, camera);
   const previous = gl.getRenderTarget();
@@ -183,7 +204,10 @@ function frameBoots(astronaut: THREE.Object3D, scale: number) {
   up.set(0, 1, 0).transformDirection(astronaut.matrixWorld);
   forward.set(0, 0, 1).transformDirection(astronaut.matrixWorld);
   const size = ASTRONAUT_HEIGHT * scale;
-  cameraGoal.copy(feetWorld).addScaledVector(up, size * CAMERA_ABOVE_FEET).addScaledVector(forward, size * CAMERA_AHEAD_OF_FEET);
+  cameraGoal
+    .copy(feetWorld)
+    .addScaledVector(up, size * CAMERA_ABOVE_FEET)
+    .addScaledVector(forward, size * CAMERA_AHEAD_OF_FEET);
   lookGoal.copy(feetWorld).addScaledVector(forward, size * LOOK_AHEAD_OF_FEET);
   // toes point up the screen, so the legs come in from the bottom edge, like looking down at your own feet
   rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(cameraGoal, lookGoal, forward));
@@ -317,7 +341,10 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         // The moon then sits exactly behind the feet for the whole fall, and just grows.
         const moon = t.moon;
         t.startAstronautRotation.copy(astronaut.quaternion);
-        const towardBoots = up.set(0, -CAMERA_ABOVE_FEET, -CAMERA_AHEAD_OF_FEET).normalize().applyQuaternion(astronaut.quaternion);
+        const towardBoots = up
+          .set(0, -CAMERA_ABOVE_FEET, -CAMERA_AHEAD_OF_FEET)
+          .normalize()
+          .applyQuaternion(astronaut.quaternion);
         const towardMoon = scratch.copy(moon.position).sub(astronaut.position).normalize();
         t.alignedRotation.setFromUnitVectors(towardBoots, towardMoon).multiply(astronaut.quaternion);
 
@@ -426,7 +453,8 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         handleIn.copy(t.lineUp).addScaledVector(runIn, -legLength / 3);
         const along = e * (legLength + runLength);
         if (along < legLength) {
-          const b = along / legLength, a = 1 - b;
+          const b = along / legLength,
+            a = 1 - b;
           perspective.position
             .set(0, 0, 0)
             .addScaledVector(t.startCamera, a * a * a)
@@ -443,9 +471,16 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
           .normalize();
         rotationGoal.setFromRotationMatrix(lookMatrix.lookAt(perspective.position, shipHatchState.light, up));
         perspective.quaternion.copy(rotationGoal);
-        shipHatchState.open = THREE.MathUtils.smoothstep(k, shipApproach.hatchOpensAt, Math.max(shipApproach.hatchOpenBy, shipApproach.hatchOpensAt + 0.01));
+        shipHatchState.open = THREE.MathUtils.smoothstep(
+          k,
+          shipApproach.hatchOpensAt,
+          Math.max(shipApproach.hatchOpenBy, shipApproach.hatchOpensAt + 0.01),
+        );
         lens(POV_FOV, 0.01);
-        if (space.blackout) space.blackout.style.opacity = String(clamp01((k - shipApproach.fadeStart) / Math.max(1 - shipApproach.fadeStart, 0.01)));
+        if (space.blackout)
+          space.blackout.style.opacity = String(
+            clamp01((k - shipApproach.fadeStart) / Math.max(1 - shipApproach.fadeStart, 0.01)),
+          );
         if (k >= 1) {
           if (space.visor) space.visor.style.opacity = "0";
           shipHatchState.open = 0;
@@ -472,8 +507,7 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
             const moon = MOONS.find(({ id }) => id === wanted.current);
             if (moon && moon.id !== t.moon.id) standOn(moon);
             t.phase = "landed";
-          }
-          else begin("leave");
+          } else begin("leave");
         }
         return;
       }

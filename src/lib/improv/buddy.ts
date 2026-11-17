@@ -41,7 +41,7 @@ const within = (midi: number) => {
   while (note > HIGH) note -= 12;
   return note;
 };
-const pick = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
+const pick = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
 export class Buddy {
   readonly beat = new BeatTracker();
@@ -129,7 +129,8 @@ export class Buddy {
         else if (!this.beat.locked) this.padUnderChord(current, now);
       }
     }
-    if (current?.kind === "chord" && this.beat.period && !this.voice.hasPlanned("lead")) this.lineOverChord(current, now);
+    if (current?.kind === "chord" && this.beat.period && !this.voice.hasPlanned("lead"))
+      this.lineOverChord(current, now);
 
     if (!current && !this.answered && this.phrase.length >= MIN_PHRASE_NOTES) {
       const gap = this.beat.period ? Math.max(MIN_ANSWER_GAP, this.beat.period / 2) : ANSWER_GAP;
@@ -175,11 +176,15 @@ export class Buddy {
     if (!options.length) options.push(midi - 7);
     const previous = this.lastHarmony ?? midi - 4;
     // favor a third below; otherwise the smallest move from its last harmony note, so its line moves smoothly
-    const choice = options.reduce((best, option) => {
-      const moved = within(option);
-      const cost = Math.abs(moved - previous) + (option - midi >= -4 && option < midi ? -2 : 0) + (moved === midi ? 50 : 0);
-      return cost < best.cost ? { midi: moved, cost } : best;
-    }, { midi: within(options[0]), cost: Infinity }).midi;
+    const choice = options.reduce(
+      (best, option) => {
+        const moved = within(option);
+        const cost =
+          Math.abs(moved - previous) + (option - midi >= -4 && option < midi ? -2 : 0) + (moved === midi ? 50 : 0);
+        return cost < best.cost ? { midi: moved, cost } : best;
+      },
+      { midi: within(options[0]), cost: Infinity },
+    ).midi;
     this.harmony = this.voice.hold(choice, now + 0.01, "harmony", 0.3 + Math.min(0.3, played.loudness * 3));
     this.harmonyFor = played.id;
     this.lastHarmony = choice;
@@ -201,7 +206,8 @@ export class Buddy {
     const colors = [...chord.pcs, (chord.root + 2) % 12];
     const from = this.chordLine ?? 74;
     const candidates: number[] = [];
-    for (let midi = from - 5; midi <= from + 5; midi++) if (midi !== from && colors.includes(pitchClass(midi))) candidates.push(midi);
+    for (let midi = from - 5; midi <= from + 5; midi++)
+      if (midi !== from && colors.includes(pitchClass(midi))) candidates.push(midi);
     const next = within(pick(candidates.length ? candidates : [from]));
     this.chordLine = next;
     this.voice.plan(next, this.beat.next(now + 0.03), period * 0.9, "lead", 0.3);
@@ -226,7 +232,11 @@ export class Buddy {
   }
 
   private play(phrase: Played[], start: number, role: "answer" | "lead") {
-    const call = phrase.map((played) => ({ pitch: Math.max(...played.pitches), start: played.start, end: played.end ?? played.start + 0.3 }));
+    const call = phrase.map((played) => ({
+      pitch: Math.max(...played.pitches),
+      start: played.start,
+      end: played.end ?? played.start + 0.3,
+    }));
     for (const note of composeAnswer(call, this.key, this.beat.period)) {
       this.voice.plan(within(note.midi), start + note.offset, note.duration, role, note.accent ? 0.5 : 0.4);
     }

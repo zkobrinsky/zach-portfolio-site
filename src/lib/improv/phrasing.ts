@@ -77,10 +77,15 @@ export function composeAnswer(call: CallNote[], key: Key | null, period: number 
   }
 
   // the final note lands on a beat and rings to the end of the phrase
-  const finalOffset = period ? Math.max(offsets[count - 2] ?? 0, Math.ceil(offsets[count - 1] / period - 0.01) * period) : offsets[count - 1];
-  if (count > 1 && finalOffset <= offsets[count - 2]) offsets[count - 1] = offsets[count - 2] + (period ? period / 2 : 0.2);
+  const finalOffset = period
+    ? Math.max(offsets[count - 2] ?? 0, Math.ceil(offsets[count - 1] / period - 0.01) * period)
+    : offsets[count - 1];
+  if (count > 1 && finalOffset <= offsets[count - 2])
+    offsets[count - 1] = offsets[count - 2] + (period ? period / 2 : 0.2);
   else offsets[count - 1] = finalOffset;
-  const finalLength = period ? Math.max(period, span - offsets[count - 1]) : Math.max(FINAL_SECONDS, (ends[count - 1] - offsets[count - 1]) * 1.5);
+  const finalLength = period
+    ? Math.max(period, span - offsets[count - 1])
+    : Math.max(FINAL_SECONDS, (ends[count - 1] - offsets[count - 1]) * 1.5);
 
   return melody.map((midi, i) => {
     const last = i === count - 1;

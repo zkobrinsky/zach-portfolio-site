@@ -16,6 +16,12 @@ export const ASSETS = {
  * fetched with fetch(), as an anonymous CORS request.
  */
 export function preloadScene({ withHead }: { withHead: boolean }) {
-  const files = [ASSETS.astronaut, ASSETS.spaceship, ...(withHead ? [ASSETS.bust] : []), ASSETS.moonColor, ASSETS.moonHeight];
+  const files = [
+    ASSETS.astronaut,
+    ASSETS.spaceship,
+    ...(withHead ? [ASSETS.bust] : []),
+    ASSETS.moonColor,
+    ASSETS.moonHeight,
+  ];
   for (const href of files) preload(href, { as: "fetch", crossOrigin: "anonymous", fetchPriority: "high" });
 }

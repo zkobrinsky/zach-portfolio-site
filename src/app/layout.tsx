@@ -4,7 +4,12 @@ import { HOME_TITLE, PAGES, PERSON_SCHEMA, SITE_NAME, SITE_URL } from "@/lib/seo
 import "./globals.css";
 
 // Next has no sizing data for Big Shoulders, so a named fallback avoids its "font override values" warning
-const display = Big_Shoulders({ variable: "--font-display", subsets: ["latin"], weight: "900", fallback: ["Impact", "sans-serif"] });
+const display = Big_Shoulders({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "900",
+  fallback: ["Impact", "sans-serif"],
+});
 const mono = IBM_Plex_Mono({ variable: "--font-mono", subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {

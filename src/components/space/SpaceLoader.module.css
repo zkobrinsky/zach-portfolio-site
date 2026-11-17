@@ -9,7 +9,9 @@
   gap: 28px;
   padding: 16px;
   background: radial-gradient(circle at 50% 46%, #15130f, #000 62%);
-  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+  transition:
+    opacity 0.9s ease,
+    visibility 0s linear 0.9s;
 }
 
 .loader[data-done="true"] {

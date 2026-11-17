@@ -20,8 +20,10 @@ export function uploadTextures(gl: THREE.WebGLRenderer, root: THREE.Object3D) {
   root.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
     for (const material of [object.material].flat() as THREE.Material[]) {
-      const uniforms = material instanceof THREE.ShaderMaterial ? Object.values(material.uniforms).map(({ value }) => value) : [];
-      for (const value of [...Object.values(material), ...uniforms]) if (value instanceof THREE.Texture) gl.initTexture(value);
+      const uniforms =
+        material instanceof THREE.ShaderMaterial ? Object.values(material.uniforms).map(({ value }) => value) : [];
+      for (const value of [...Object.values(material), ...uniforms])
+        if (value instanceof THREE.Texture) gl.initTexture(value);
     }
   });
 }

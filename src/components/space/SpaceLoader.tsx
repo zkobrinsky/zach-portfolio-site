@@ -17,7 +17,15 @@ export function SpaceLoader({ done }: { done: boolean }) {
     >
       <svg className={styles.emblem} viewBox="-100 -100 200 200" aria-hidden="true">
         {RAYS.map((angle) => (
-          <line key={angle} className={styles.ray} x1="0" y1="-62" x2="0" y2={angle % 30 === 0 ? -98 : -84} transform={`rotate(${angle})`} />
+          <line
+            key={angle}
+            className={styles.ray}
+            x1="0"
+            y1="-62"
+            x2="0"
+            y2={angle % 30 === 0 ? -98 : -84}
+            transform={`rotate(${angle})`}
+          />
         ))}
         <circle className={styles.track} r="54" />
         <circle className={styles.progress} r="54" pathLength="1" transform="rotate(-90)" />

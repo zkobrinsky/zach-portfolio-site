@@ -9,9 +9,9 @@ export default function FishmongeringPage() {
     <div className={styles.story}>
       <h2>Fishmongering</h2>
       <p>
-        My first job when I moved to New York was as a fishmonger for Blue Moon Fish, the only fisherman who brought his catch
-        straight to the greenmarkets. It was the best fish in New York City, and we supplied a lot of Michelin-rated
-        restaurants and chefs.
+        My first job when I moved to New York was as a fishmonger for Blue Moon Fish, the only fisherman who brought his
+        catch straight to the greenmarkets. It was the best fish in New York City, and we supplied a lot of
+        Michelin-rated restaurants and chefs.
       </p>
       <div className={styles.photos}>
         <figure>
@@ -23,7 +23,10 @@ export default function FishmongeringPage() {
             sizes="(max-width: 800px) 100vw, 28rem"
             loading="eager"
           />
-          <figcaption>Me and my friend Douglas Bradford having a sit after a long day selling fish at Grand Army Plaza. He’s a QA engineer now!</figcaption>
+          <figcaption>
+            Me and my friend Douglas Bradford having a sit after a long day selling fish at Grand Army Plaza. He’s a QA
+            engineer now!
+          </figcaption>
         </figure>
         <figure>
           <Image
@@ -34,7 +37,10 @@ export default function FishmongeringPage() {
             sizes="(max-width: 800px) 100vw, 20rem"
             loading="eager"
           />
-          <figcaption>Alex Villani, the proprietor of Blue Moon Fish and the kindest man I ever worked for, at the Tribeca Greenmarket.</figcaption>
+          <figcaption>
+            Alex Villani, the proprietor of Blue Moon Fish and the kindest man I ever worked for, at the Tribeca
+            Greenmarket.
+          </figcaption>
         </figure>
         <figure>
           <Image

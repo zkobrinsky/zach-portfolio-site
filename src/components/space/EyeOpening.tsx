@@ -28,7 +28,8 @@ function opennessAt(seconds: number) {
 /** A black screen with an eye-shaped opening cut out of it. The shape is two curves meeting at pointed corners. */
 function eyePath(width: number, height: number, openness: number) {
   const margin = 200;
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const half = width * (0.34 + 0.75 * openness);
   const lid = height * openness;
   return (

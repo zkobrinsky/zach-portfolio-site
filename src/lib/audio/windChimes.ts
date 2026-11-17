@@ -90,10 +90,13 @@ export function createWindChimes() {
   const repeat = (play: () => void, low: number, high: number) => {
     const tick = () => {
       if (context.state === "running") play();
-      const timer = setTimeout(() => {
-        timers.delete(timer);
-        tick();
-      }, randomBetween(low, high) * 1000);
+      const timer = setTimeout(
+        () => {
+          timers.delete(timer);
+          tick();
+        },
+        randomBetween(low, high) * 1000,
+      );
       timers.add(timer);
     };
     tick();
@@ -143,10 +146,13 @@ export function createWindChimes() {
       muted = silent;
       if (silent) void context.suspend();
       else {
-        void context.resume().then(() => {
-          startLoops();
-          if (unmuting) comeBack();
-        }, () => {});
+        void context.resume().then(
+          () => {
+            startLoops();
+            if (unmuting) comeBack();
+          },
+          () => {},
+        );
       }
     },
     stop() {

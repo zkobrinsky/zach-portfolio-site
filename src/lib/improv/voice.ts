@@ -92,13 +92,17 @@ export class Voice {
   }
 
   isSounding(role: Role, now: number) {
-    return this.notes.some((note) => note.role === role && !note.planned && note.start <= now && (note.end === null || note.end > now));
+    return this.notes.some(
+      (note) => note.role === role && !note.planned && note.start <= now && (note.end === null || note.end > now),
+    );
   }
 
   /** Pitch classes ringing now, including a moment of tail, so the listener can ignore them. */
   pitchClassesAt(now: number) {
     const pcs = new Set<number>();
-    for (const note of this.notes) if (!note.planned && note.start <= now && (note.end === null || note.end + 0.6 > now)) pcs.add(pitchClass(note.midi));
+    for (const note of this.notes)
+      if (!note.planned && note.start <= now && (note.end === null || note.end + 0.6 > now))
+        pcs.add(pitchClass(note.midi));
     return pcs;
   }
 

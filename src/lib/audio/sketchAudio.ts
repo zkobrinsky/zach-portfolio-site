@@ -31,7 +31,10 @@ export function createSketchAudio() {
       context.suspend().catch(() => {});
       return;
     }
-    context.resume().then(() => waiting.splice(0).forEach((run) => run()), () => {});
+    context.resume().then(
+      () => waiting.splice(0).forEach((run) => run()),
+      () => {},
+    );
   };
 
   const sine = (midi: number, volume: GainNode) => {

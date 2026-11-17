@@ -25,7 +25,17 @@ type Props = {
 };
 
 /** The name, the main nav with its dropdowns, the phone menu, and the sound button. */
-export function Header({ pageId, inOrbit, landed, muted, onToggleMute, onGoTo, onSwitchPage, onGoHome, onHeightChange }: Props) {
+export function Header({
+  pageId,
+  inOrbit,
+  landed,
+  muted,
+  onToggleMute,
+  onGoTo,
+  onSwitchPage,
+  onGoHome,
+  onHeightChange,
+}: Props) {
   const header = useRef<HTMLElement>(null);
   const nav = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);

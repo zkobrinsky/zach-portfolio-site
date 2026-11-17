@@ -17,12 +17,19 @@ const SHIP_LENGTH = 0.5;
  * Lit like the moons: hard sunlight, near-black shadow. The astronaut's soft fill light is removed from this
  * material, leaving only a trace of light reflected from the planet.
  */
-const lightUniforms = { uShipFill: { value: 0 }, uShipSide: { value: 0 }, uShipSideDirection: { value: new THREE.Vector3() } };
+const lightUniforms = {
+  uShipFill: { value: 0 },
+  uShipSide: { value: 0 },
+  uShipSideDirection: { value: new THREE.Vector3() },
+};
 
 function hardLighting(shader: { fragmentShader: string; uniforms: Record<string, { value: unknown }> }) {
   Object.assign(shader.uniforms, lightUniforms);
   shader.fragmentShader = shader.fragmentShader
-    .replace("#include <common>", "#include <common>\nuniform float uShipFill;\nuniform float uShipSide;\nuniform vec3 uShipSideDirection;")
+    .replace(
+      "#include <common>",
+      "#include <common>\nuniform float uShipFill;\nuniform float uShipSide;\nuniform vec3 uShipSideDirection;",
+    )
     .replace(
       "#include <lights_fragment_begin>",
       THREE.ShaderChunk.lights_fragment_begin.replace(
@@ -76,8 +83,14 @@ function hullParts(model: THREE.Object3D): HullPart[] {
       const position = geometry.attributes.position;
       const points = new Float32Array(position.count * 3);
       const point = new THREE.Vector3();
-      for (let i = 0; i < position.count; i++) point.fromBufferAttribute(position, i).applyMatrix4(relative).toArray(points, i * 3);
-      const triangles = geometry.index ? Array.from(geometry.index.array) : Array.from({ length: position.count }, (_, i) => i);
+      for (let i = 0; i < position.count; i++)
+        point
+          .fromBufferAttribute(position, i)
+          .applyMatrix4(relative)
+          .toArray(points, i * 3);
+      const triangles = geometry.index
+        ? Array.from(geometry.index.array)
+        : Array.from({ length: position.count }, (_, i) => i);
       parts.push({ mesh: object, relative, points, triangles });
     });
     return parts;
@@ -96,7 +109,10 @@ function cutRamp(parts: HullPart[], ramp: THREE.Object3D) {
       let inside = true;
       for (let j = 0; j < 3 && inside; j++) {
         const v = triangles[i + j] * 3;
-        inside = Math.abs(points[v] - x) <= length / 2 && Math.abs(points[v + 2] - z) <= width / 2 && points[v + 1] <= y + depth;
+        inside =
+          Math.abs(points[v] - x) <= length / 2 &&
+          Math.abs(points[v + 2] - z) <= width / 2 &&
+          points[v + 1] <= y + depth;
       }
       (inside ? cut : keep).push(triangles[i], triangles[i + 1], triangles[i + 2]);
     }
@@ -114,12 +130,19 @@ function cutRamp(parts: HullPart[], ramp: THREE.Object3D) {
     ramp.add(piece);
   }
 }
-const glowMaterial = new THREE.MeshBasicMaterial({ color: "#ffffff", toneMapped: false, transparent: true, side: THREE.DoubleSide });
+const glowMaterial = new THREE.MeshBasicMaterial({
+  color: "#ffffff",
+  toneMapped: false,
+  transparent: true,
+  side: THREE.DoubleSide,
+});
 /** A soft shaft of light out of the opening, brightest at the ship and fading with distance. */
 const beamMaterial = new THREE.ShaderMaterial({
   uniforms: { uStrength: { value: 0 } },
-  vertexShader: "varying float vAlong; void main() { vAlong = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
-  fragmentShader: "uniform float uStrength; varying float vAlong; void main() { gl_FragColor = vec4(vec3(1.0, 0.97, 0.9) * uStrength * pow(vAlong, 2.0), 1.0); }",
+  vertexShader:
+    "varying float vAlong; void main() { vAlong = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+  fragmentShader:
+    "uniform float uStrength; varying float vAlong; void main() { gl_FragColor = vec4(vec3(1.0, 0.97, 0.9) * uStrength * pow(vAlong, 2.0), 1.0); }",
   transparent: true,
   depthWrite: false,
   blending: THREE.AdditiveBlending,
@@ -228,7 +251,14 @@ export function Spaceship() {
                   {/* uv.y runs bottom to top, so the beam is brightest at the ship */}
                   <cylinderGeometry args={[0.5, 0.5 * BEAM_SPREAD, 1, 4, 1, true]} />
                 </mesh>
-                <pointLight ref={light} position={[0, -1.2, 0]} color="#fff6e8" intensity={0} distance={0.6} decay={2} />
+                <pointLight
+                  ref={light}
+                  position={[0, -1.2, 0]}
+                  color="#fff6e8"
+                  intensity={0}
+                  distance={0.6}
+                  decay={2}
+                />
               </group>
             </group>
           </group>

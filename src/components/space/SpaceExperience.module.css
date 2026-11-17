@@ -21,12 +21,7 @@
   pointer-events: none;
   opacity: 0;
   background:
-    radial-gradient(
-      ellipse 75% 70% at 50% 48%,
-      rgb(0 0 0 / 0) 55%,
-      rgb(12 9 4 / 0.55) 80%,
-      rgb(6 4 2 / 0.96) 100%
-    ),
+    radial-gradient(ellipse 75% 70% at 50% 48%, rgb(0 0 0 / 0) 55%, rgb(12 9 4 / 0.55) 80%, rgb(6 4 2 / 0.96) 100%),
     linear-gradient(rgb(201 161 74 / 0.07), rgb(201 161 74 / 0.07));
 }
 

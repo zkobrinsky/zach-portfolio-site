@@ -48,9 +48,13 @@ export function ShipGui() {
       hatch.add(shipHatch, "light", 0, 0.2, 0.001).name("light on hull");
       const copy = {
         "copy values": () => {
-          const values = Object.entries({ ...shipPlacement, ...shipLight, ...shipApproach, ...shipHatch, ...shipHatchPath }).map(
-            ([key, value]) => `${key}: ${typeof value === "number" ? value.toFixed(2) : value}`,
-          );
+          const values = Object.entries({
+            ...shipPlacement,
+            ...shipLight,
+            ...shipApproach,
+            ...shipHatch,
+            ...shipHatchPath,
+          }).map(([key, value]) => `${key}: ${typeof value === "number" ? value.toFixed(2) : value}`);
           void navigator.clipboard.writeText(`ship placement: ${values.join(", ")}`);
         },
       };

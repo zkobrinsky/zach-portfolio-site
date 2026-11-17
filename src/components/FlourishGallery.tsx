@@ -55,7 +55,9 @@ export function FlourishGallery() {
             </div>
           )}
           {kind === "video" && (
-            <p className={styles.sectionNote}>Color matching is display-only. Video flourishes always use their default colors.</p>
+            <p className={styles.sectionNote}>
+              Color matching is display-only. Video flourishes always use their default colors.
+            </p>
           )}
           <ul className={styles.grid}>
             {FLOURISHES.filter((flourish) => flourish.kind === kind).map((flourish) => {

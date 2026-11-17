@@ -1,16 +1,7 @@
 import * as THREE from "three";
 import { orbitSeconds, PLANET_TILT, VIEW_BACK, VIEW_RIGHT, VIEW_UP } from "./constants";
 
-export const MOON_WORLDS = [
-  "rock",
-  "ice",
-  "sulfur",
-  "rust",
-  "twoTone",
-  "basalt",
-  "haze",
-  "ocean",
-] as const;
+export const MOON_WORLDS = ["rock", "ice", "sulfur", "rust", "twoTone", "basalt", "haze", "ocean"] as const;
 export type MoonWorld = (typeof MOON_WORLDS)[number];
 
 export type MoonSpec = {
@@ -35,10 +26,7 @@ export type MoonSpec = {
 
 /** Placed by where they start in the opening view: x right, y up, z away from the camera. Their distance from the planet (0, 0, 0) sets their orbit. */
 const at = (x: number, y: number, z: number) =>
-  new THREE.Vector3()
-    .addScaledVector(VIEW_RIGHT, x)
-    .addScaledVector(VIEW_UP, y)
-    .addScaledVector(VIEW_BACK, z);
+  new THREE.Vector3().addScaledVector(VIEW_RIGHT, x).addScaledVector(VIEW_UP, y).addScaledVector(VIEW_BACK, z);
 
 /** One moon per page. Nav items that only open a dropdown don't get one. */
 export const MOONS: MoonSpec[] = [
@@ -255,9 +243,12 @@ export const NAV: NavItem[] = [
   },
   {
     label: "Previous Life",
-    items: ["previous-life/photography", "previous-life/video", "previous-life/newspaper-editor", "previous-life/fishmongering"].map(
-      moon,
-    ),
+    items: [
+      "previous-life/photography",
+      "previous-life/video",
+      "previous-life/newspaper-editor",
+      "previous-life/fishmongering",
+    ].map(moon),
   },
   moon("publications"),
   moon("resume"),

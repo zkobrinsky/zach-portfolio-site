@@ -114,15 +114,18 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
     setShowHud(debugParams().hud);
   }, []);
 
-  const goTo = useCallback((id: string) => {
-    if (sceneFailed) return router.push(`/${id}`, { scroll: false });
-    thud.current ??= new Audio(`/sounds/impact-${debugParams().impactSound}.mp3`);
-    gasp.current ??= new Audio("/sounds/gasp.mp3");
-    thud.current.muted = gasp.current.muted = silent;
-    setPov(false);
-    setDestination(id);
-    setStage("travel");
-  }, [silent, sceneFailed, router]);
+  const goTo = useCallback(
+    (id: string) => {
+      if (sceneFailed) return router.push(`/${id}`, { scroll: false });
+      thud.current ??= new Audio(`/sounds/impact-${debugParams().impactSound}.mp3`);
+      gasp.current ??= new Audio("/sounds/gasp.mp3");
+      thud.current.muted = gasp.current.muted = silent;
+      setPov(false);
+      setDestination(id);
+      setStage("travel");
+    },
+    [silent, sceneFailed, router],
+  );
 
   const goHome = useCallback(() => {
     if (sceneFailed) return router.push("/", { scroll: false });
@@ -159,20 +162,23 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
     }, PAGE_SWITCH_MS);
   }, []);
 
-  const switchPage = useCallback((id: string) => {
-    const screen = space.blackout;
-    if (!screen) return router.push(`/${id}`, { scroll: false });
-    screen.style.transition = `opacity ${PAGE_SWITCH_MS}ms`;
-    screen.style.opacity = "1";
-    switchingTo.current = `/${id}`;
-    setTimeout(() => {
-      router.push(`/${id}`, { scroll: false });
-      // never leave the screen black if the navigation goes nowhere
+  const switchPage = useCallback(
+    (id: string) => {
+      const screen = space.blackout;
+      if (!screen) return router.push(`/${id}`, { scroll: false });
+      screen.style.transition = `opacity ${PAGE_SWITCH_MS}ms`;
+      screen.style.opacity = "1";
+      switchingTo.current = `/${id}`;
       setTimeout(() => {
-        if (switchingTo.current === `/${id}`) revealPage();
-      }, SWITCH_GIVE_UP_MS);
-    }, PAGE_SWITCH_MS);
-  }, [router, revealPage]);
+        router.push(`/${id}`, { scroll: false });
+        // never leave the screen black if the navigation goes nowhere
+        setTimeout(() => {
+          if (switchingTo.current === `/${id}`) revealPage();
+        }, SWITCH_GIVE_UP_MS);
+      }, PAGE_SWITCH_MS);
+    },
+    [router, revealPage],
+  );
 
   useEffect(() => {
     if (switchingTo.current !== pathname) return;
@@ -186,22 +192,27 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
   const onImpact = useCallback(() => {
     thud.current?.play().catch(() => {});
   }, []);
-  const onCovered = useCallback((id: string | null) => {
-    router.push(id ? `/${id}` : "/", { scroll: false });
-    if (!id) return;
-    if (MOONS.find((moon) => moon.id === id)?.ship) return setStage("boarding");
-    setStage("blackout");
-    setTimeout(() => {
-      gasp.current?.play().catch(() => {});
-      setStage("waking");
-    }, BLACKOUT_MS);
-  }, [router]);
+  const onCovered = useCallback(
+    (id: string | null) => {
+      router.push(id ? `/${id}` : "/", { scroll: false });
+      if (!id) return;
+      if (MOONS.find((moon) => moon.id === id)?.ship) return setStage("boarding");
+      setStage("blackout");
+      setTimeout(() => {
+        gasp.current?.play().catch(() => {});
+        setStage("waking");
+      }, BLACKOUT_MS);
+    },
+    [router],
+  );
   const onEyesOpen = useCallback(() => setStage("landed"), []);
   const onBackInOrbit = useCallback(() => setStage("orbit"), []);
 
   return (
     <>
-      <div className={`${styles.canvas} ${showPage ? styles.overPage : ""} ${onPage && !shipPage ? styles.parked : ""}`}>
+      <div
+        className={`${styles.canvas} ${showPage ? styles.overPage : ""} ${onPage && !shipPage ? styles.parked : ""}`}
+      >
         {/* the outer boundary catches the scene's code itself failing to download */}
         {!sceneFailed && (
           <SceneErrorBoundary onError={onSceneFailed}>
@@ -222,11 +233,23 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
           </SceneErrorBoundary>
         )}
       </div>
-      <div ref={(element) => { space.visor = element; }} className={styles.visor} aria-hidden="true" />
+      <div
+        ref={(element) => {
+          space.visor = element;
+        }}
+        className={styles.visor}
+        aria-hidden="true"
+      />
 
-      {showPage && <div className={styles.navBackground} style={{ height: navHeight, zIndex: shipPage ? 2 : undefined }} />}
+      {showPage && (
+        <div className={styles.navBackground} style={{ height: navHeight, zIndex: shipPage ? 2 : undefined }} />
+      )}
       {/* always rendered, because the route's content has to exist even while it's hidden */}
-      <article className={`${styles.page} ${shipPage ? styles.shipPage : ""}`} style={{ top: navHeight }} hidden={!showPage}>
+      <article
+        className={`${styles.page} ${shipPage ? styles.shipPage : ""}`}
+        style={{ top: navHeight }}
+        hidden={!showPage}
+      >
         <SilentContext value={silent || !showPage}>{children}</SilentContext>
       </article>
 
@@ -242,7 +265,13 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
         onHeightChange={setNavHeight}
       />
 
-      <div ref={(element) => { space.blackout = element; }} className={styles.blackout} aria-hidden="true" />
+      <div
+        ref={(element) => {
+          space.blackout = element;
+        }}
+        className={styles.blackout}
+        aria-hidden="true"
+      />
       {stage === "waking" && <EyeOpening onOpen={onEyesOpen} />}
       {/* plain pages are ordinary web pages, so they don't wait for the 3D scene */}
       <SpaceLoader done={sceneReady || sceneFailed || (onPage && !shipPage)} />
@@ -255,7 +284,14 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      {showHud && <div ref={(element) => { space.hud = element; }} className={styles.hud} />}
+      {showHud && (
+        <div
+          ref={(element) => {
+            space.hud = element;
+          }}
+          className={styles.hud}
+        />
+      )}
       {stage === "landed" && (
         <div className={styles.controls}>
           <button type="button" className={styles.button} onClick={goHome}>

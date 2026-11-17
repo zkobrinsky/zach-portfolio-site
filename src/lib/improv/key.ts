@@ -15,8 +15,12 @@ import { type Key, pitchClass } from "./theory";
 */
 const KK_MAJOR = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88];
 const KK_MINOR = [6.33, 2.68, 3.52, 5.38, 2.6, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
-const AE_MAJOR = [17.7661, 0.145624, 14.9265, 0.160186, 19.8049, 11.3587, 0.291248, 22.062, 0.145624, 8.15494, 0.232998, 4.95122];
-const AE_MINOR = [18.2648, 0.737619, 14.0499, 16.8599, 0.702494, 14.4362, 0.702494, 18.6161, 4.56621, 1.93186, 7.37619, 1.75623];
+const AE_MAJOR = [
+  17.7661, 0.145624, 14.9265, 0.160186, 19.8049, 11.3587, 0.291248, 22.062, 0.145624, 8.15494, 0.232998, 4.95122,
+];
+const AE_MINOR = [
+  18.2648, 0.737619, 14.0499, 16.8599, 0.702494, 14.4362, 0.702494, 18.6161, 4.56621, 1.93186, 7.37619, 1.75623,
+];
 
 /** Old evidence fades by half over this many seconds. */
 const HALF_LIFE = 30;
@@ -33,8 +37,11 @@ const CHORD_WEIGHT = 0.7;
 
 function correlation(a: number[], b: number[]) {
   const mean = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
-  const ma = mean(a), mb = mean(b);
-  let top = 0, da = 0, db = 0;
+  const ma = mean(a),
+    mb = mean(b);
+  let top = 0,
+    da = 0,
+    db = 0;
   for (let i = 0; i < 12; i++) {
     top += (a[i] - ma) * (b[i] - mb);
     da += (a[i] - ma) ** 2;
@@ -48,8 +55,16 @@ export function rankKeys(weights: number[]): Key[] {
   const keys: Key[] = [];
   for (let tonic = 0; tonic < 12; tonic++) {
     const rotated = weights.map((_, degree) => weights[(degree + tonic) % 12]);
-    keys.push({ tonic, minor: false, confidence: (correlation(rotated, KK_MAJOR) + correlation(rotated, AE_MAJOR)) / 2 });
-    keys.push({ tonic, minor: true, confidence: (correlation(rotated, KK_MINOR) + correlation(rotated, AE_MINOR)) / 2 });
+    keys.push({
+      tonic,
+      minor: false,
+      confidence: (correlation(rotated, KK_MAJOR) + correlation(rotated, AE_MAJOR)) / 2,
+    });
+    keys.push({
+      tonic,
+      minor: true,
+      confidence: (correlation(rotated, KK_MINOR) + correlation(rotated, AE_MINOR)) / 2,
+    });
   }
   return keys.sort((a, b) => b.confidence - a.confidence);
 }

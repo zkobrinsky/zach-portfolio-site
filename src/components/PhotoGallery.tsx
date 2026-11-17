@@ -18,12 +18,14 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
   const swiped = useRef(false);
   const photo = open === null ? null : photos[open];
 
-  const step = (by: number) => setOpen((index) => (index === null ? null : (index + by + photos.length) % photos.length));
+  const step = (by: number) =>
+    setOpen((index) => (index === null ? null : (index + by + photos.length) % photos.length));
 
   const beginSwipe = (event: PointerEvent) => {
     swiped.current = false;
     // a second finger means a pinch, not a swipe
-    swipeStart.current = event.pointerType === "touch" && event.isPrimary ? { x: event.clientX, y: event.clientY } : null;
+    swipeStart.current =
+      event.pointerType === "touch" && event.isPrimary ? { x: event.clientX, y: event.clientY } : null;
   };
 
   const endSwipe = (event: PointerEvent) => {
@@ -49,7 +51,12 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         {photos.map((item, index) => (
           <li key={item.src}>
             <button type="button" onClick={() => setOpen(index)} aria-label={`View ${item.alt}`}>
-              <Image src={item.src} alt={item.alt} fill sizes="(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 25vw" />
+              <Image
+                src={item.src}
+                alt={item.alt}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 25vw"
+              />
             </button>
           </li>
         ))}

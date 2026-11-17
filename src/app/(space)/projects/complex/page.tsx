@@ -5,8 +5,7 @@ import styles from "./page.module.css";
 
 export const metadata = pageMetadata("/projects/complex");
 
-const STORY_URL =
-  "https://www.complex.com/music/a/eric-skelton/kanye-west-changed-music";
+const STORY_URL = "https://www.complex.com/music/a/eric-skelton/kanye-west-changed-music";
 
 // desktopOnly: blocks the link on touch devices and shows a "desktop only" tooltip instead
 const MORE_WORK: {
@@ -41,8 +40,7 @@ const MORE_WORK: {
   },
   {
     title: "See You Next Year",
-    detail:
-      "The Pigeons & Planes x Big. Ass. Kids album site, including the cool flying animation using sprites.",
+    detail: "The Pigeons & Planes x Big. Ass. Kids album site, including the cool flying animation using sprites.",
     url: "https://www.seeunextyear.com/",
     image: "/projects/complex/see-you-next-year.jpg",
   },
@@ -60,8 +58,7 @@ const MORE_WORK: {
   },
   {
     title: "Alienware x Bodega",
-    detail:
-      "I made a lot of these sweepstakes pages in the olden days with PHP.",
+    detail: "I made a lot of these sweepstakes pages in the olden days with PHP.",
     url: "https://partner.complex.com/alienware",
     image: "/projects/complex/alienware.jpg",
   },
@@ -73,30 +70,26 @@ const MORE_WORK: {
   },
   {
     title: "Swagger on Apple TV+",
-    detail:
-      "A jumbotron ad with a built-in photo gallery and video player that you can switch between.",
+    detail: "A jumbotron ad with a built-in photo gallery and video player that you can switch between.",
     url: "/archive/complex-ads/?demo=swagger",
     image: "/projects/complex/swagger.jpg",
     desktopOnly: true,
   },
   {
     title: "Dell Alienware",
-    detail:
-      "A banner with a product carousel and scrolling marquee, promoting the Alienware x Bodega sweepstakes.",
+    detail: "A banner with a product carousel and scrolling marquee, promoting the Alienware x Bodega sweepstakes.",
     url: "/archive/complex-ads/?demo=dell",
     image: "/projects/complex/dell-alienware.jpg",
   },
   {
     title: "Timberland",
-    detail:
-      "An animated banner with sound for Timbs Trails, with six themed panels.",
+    detail: "An animated banner with sound for Timbs Trails, with six themed panels.",
     url: "/archive/complex-ads/?demo=timberland",
     image: "/projects/complex/timberland.jpg",
   },
   {
     title: "Banana Republic",
-    detail:
-      "A banner with a smooth-scrolling lookbook of the fall collection.",
+    detail: "A banner with a smooth-scrolling lookbook of the fall collection.",
     url: "/archive/complex-ads/?demo=banana-republic",
     image: "/projects/complex/banana-republic.jpg",
     desktopOnly: true,
@@ -111,24 +104,11 @@ const MORE_WORK: {
 
 const MARTIN_URL = "https://partner.complex.com/bet-martin-reunion";
 
-function Card({
-  title,
-  detail,
-  image,
-}: {
-  title: string;
-  detail: string;
-  image: string;
-}) {
+function Card({ title, detail, image }: { title: string; detail: string; image: string }) {
   return (
     <>
       <span className={styles.preview}>
-        <Image
-          src={image}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 100vw, 21rem"
-        />
+        <Image src={image} alt="" fill sizes="(max-width: 640px) 100vw, 21rem" />
       </span>
       <strong>{title}</strong>
       <span>{detail}</span>
@@ -145,11 +125,7 @@ function CardGrid({ items }: { items: typeof MORE_WORK }) {
       {items.map(({ title, detail, url, image, desktopOnly }) => (
         <li key={title}>
           {url && desktopOnly ? (
-            <DesktopOnlyLink
-              href={url}
-              className={styles.desktopOnly}
-              tooltipClassName={styles.tooltip}
-            >
+            <DesktopOnlyLink href={url} className={styles.desktopOnly} tooltipClassName={styles.tooltip}>
               <Card title={title} detail={detail} image={image} />
             </DesktopOnlyLink>
           ) : url ? (
@@ -180,16 +156,8 @@ export default function ComplexPage() {
           unoptimized
         />
       </h2>
-      <p>
-        I created “How Ye Changed Music” for Complex’s 20th Anniversary cover
-        story.
-      </p>
-      <a
-        href={STORY_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.story}
-      >
+      <p>I created “How Ye Changed Music” for Complex’s 20th Anniversary cover story.</p>
+      <a href={STORY_URL} target="_blank" rel="noopener noreferrer" className={styles.story}>
         <Image
           src="/projects/complex-how-ye-changed-music.jpg"
           alt="How Ye Changed Music, from Complex’s 20th Anniversary cover story"
@@ -199,31 +167,17 @@ export default function ComplexPage() {
         />
       </a>
       <p className={styles.note}>
-        <strong>An important note:</strong> this was all riiiiiight before he
-        totally lost it and became a vocal antisemite. So, regrettably, this did
-        not age well.
+        <strong>An important note:</strong> this was all riiiiiight before he totally lost it and became a vocal
+        antisemite. So, regrettably, this did not age well.
       </p>
-      <a
-        href={STORY_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.button}
-      >
+      <a href={STORY_URL} target="_blank" rel="noopener noreferrer" className={styles.button}>
         See the story
       </a>
       <h3>More from Complex</h3>
       <CardGrid items={MORE_WORK.slice(0, HALFWAY)} />
       <h3>Choose Your Martin Character</h3>
-      <p>
-        A funny little mobile ad I made for the Martin reunion. Tap through to
-        find your Martin match.
-      </p>
-      <iframe
-        className={styles.phone}
-        src={MARTIN_URL}
-        title="Choose Your Martin Character"
-        loading="lazy"
-      />
+      <p>A funny little mobile ad I made for the Martin reunion. Tap through to find your Martin match.</p>
+      <iframe className={styles.phone} src={MARTIN_URL} title="Choose Your Martin Character" loading="lazy" />
       <CardGrid items={MORE_WORK.slice(HALFWAY)} />
     </div>
   );

@@ -107,7 +107,11 @@ export class Listener {
       if (this.current && ++this.quietFrames >= RELEASE_FRAMES) this.finish(now);
     } else {
       this.quietFrames = 0;
-      const reattack = this.current && heard.key === this.current.label && loudness > this.lastLoudness * REATTACK_RATIO && loudness > gate * 2;
+      const reattack =
+        this.current &&
+        heard.key === this.current.label &&
+        loudness > this.lastLoudness * REATTACK_RATIO &&
+        loudness > gate * 2;
       if (heard.key !== this.current?.label || reattack) this.consider(heard, now, Boolean(reattack));
       else this.pending = null;
       if (this.current) this.current.loudness = Math.max(this.current.loudness, loudness);
@@ -170,7 +174,9 @@ export class Listener {
     if (this.current) this.finish(now);
     // a chord is drawn as its notes stacked up from its root, in the octave below middle C
     const pitches =
-      heard.kind === "note" ? [heard.midi!] : heard.chord!.pcs.map((pc) => 48 + heard.chord!.root + ((pc - heard.chord!.root + 12) % 12));
+      heard.kind === "note"
+        ? [heard.midi!]
+        : heard.chord!.pcs.map((pc) => 48 + heard.chord!.root + ((pc - heard.chord!.root + 12) % 12));
     this.current = {
       id: this.nextId++,
       kind: heard.kind,

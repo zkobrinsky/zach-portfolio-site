@@ -17,8 +17,12 @@ function hash(x: number, y: number, z: number) {
 }
 
 function noise(x: number, y: number, z: number) {
-  const ix = Math.floor(x), iy = Math.floor(y), iz = Math.floor(z);
-  let fx = x - ix, fy = y - iy, fz = z - iz;
+  const ix = Math.floor(x),
+    iy = Math.floor(y),
+    iz = Math.floor(z);
+  let fx = x - ix,
+    fy = y - iy,
+    fz = z - iz;
   fx = fx * fx * (3 - 2 * fx);
   fy = fy * fy * (3 - 2 * fy);
   fz = fz * fz * (3 - 2 * fz);
@@ -31,7 +35,8 @@ function noise(x: number, y: number, z: number) {
 }
 
 function fbm(x: number, y: number, z: number) {
-  let a = 0.5, s = 0;
+  let a = 0.5,
+    s = 0;
   for (let i = 0; i < 6; i++) {
     s += a * noise(x, y, z);
     x = x * 2.03 + 17.1;
@@ -77,7 +82,10 @@ export function sunVisibility(camera: THREE.Camera, sunPosition: THREE.Vector3) 
   for (let i = 0; i < SAMPLES; i++) {
     const r = Math.sqrt((i + 0.5) / SAMPLES) * SUN_RADIUS * SUN_SCALE;
     const a = i * 2.39996323;
-    point.copy(sunPosition).addScaledVector(camRight, Math.cos(a) * r).addScaledVector(camUp, Math.sin(a) * r);
+    point
+      .copy(sunPosition)
+      .addScaledVector(camRight, Math.cos(a) * r)
+      .addScaledVector(camUp, Math.sin(a) * r);
     dir.copy(point).sub(camera.position);
     const length = dir.length();
     dir.divideScalar(length);

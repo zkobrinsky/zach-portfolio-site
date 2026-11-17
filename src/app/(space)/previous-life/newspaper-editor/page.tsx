@@ -15,8 +15,8 @@ export default function NewspaperEditorPage() {
         .
       </p>
       <p>
-        It was the early days of the internet, so nothing digital really survived. To see the work, you’ll have to go to my
-        brother’s garage in North Dakota and dig up my old print archives.
+        It was the early days of the internet, so nothing digital really survived. To see the work, you’ll have to go to
+        my brother’s garage in North Dakota and dig up my old print archives.
       </p>
     </div>
   );

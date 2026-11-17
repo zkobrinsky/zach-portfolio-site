@@ -33,7 +33,8 @@ const SECTIONS: { heading: string; items: Item[] }[] = [
       },
       {
         title: "“Ruby and Me”",
-        detail: "Retouching for Ursula K. Le Guin (2010). Removed bystanders from the background of her portrait with Ruby the turkey vulture, published on her blog",
+        detail:
+          "Retouching for Ursula K. Le Guin (2010). Removed bystanders from the background of her portrait with Ruby the turkey vulture, published on her blog",
         url: "https://www.ursulakleguin.com/blog/105-ruby-and-me",
       },
     ],
@@ -43,7 +44,8 @@ const SECTIONS: { heading: string; items: Item[] }[] = [
     items: [
       {
         title: "Octopus, Seahorse, Jellyfish",
-        detail: "By David Liittschwager, National Geographic (2022). Several of the octopus photos, credited in the acknowledgments",
+        detail:
+          "By David Liittschwager, National Geographic (2022). Several of the octopus photos, credited in the acknowledgments",
         url: "https://www.amazon.com/dp/1426221797",
       },
     ],
@@ -110,13 +112,7 @@ export default function PublicationsPage() {
                 {detail}
                 {photo && (
                   <figure>
-                    <Image
-                      src={photo.src}
-                      alt={photo.alt}
-                      width={photo.width}
-                      height={photo.height}
-                      sizes="20rem"
-                    />
+                    <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="20rem" />
                     <figcaption>{photo.caption}</figcaption>
                   </figure>
                 )}
