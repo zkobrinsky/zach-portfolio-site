@@ -2,11 +2,11 @@ import * as Tone from "tone";
 import { midiToHz, pitchClass } from "./theory";
 
 /*
-  The buddy's sound: soft, glassy FM pads with slow swells, through a slow chorus, an echo that locks to the
-  beat, and a long reverb, so it floats like the rest of the site. Notes go on a short queue rather than
+  The buddy's sound: soft, glassy FM pads through a gentle chorus, a light echo that locks to the beat, and a
+  short reverb: clear enough that the rhythm comes through. Notes go on a short queue rather than
   straight to Tone, so planned notes can still be dropped when the player comes back in.
 */
-export type Role = "harmony" | "answer" | "lead";
+export type Role = "harmony" | "answer" | "lead" | "groove";
 
 export type BuddyNote = {
   midi: number;
@@ -25,10 +25,10 @@ const LOOKAHEAD = 0.08;
 export class Voice {
   readonly notes: BuddyNote[] = [];
   private synth: Tone.PolySynth<Tone.FMSynth>;
-  private delay = new Tone.FeedbackDelay({ delayTime: 0.375, feedback: 0.32, wet: 0.2 });
-  private reverb = new Tone.Reverb({ decay: 9, preDelay: 0.04, wet: 0.55 });
-  private chorus = new Tone.Chorus({ frequency: 0.25, delayTime: 4, depth: 0.6, wet: 0.45 }).start();
-  private output = new Tone.Volume(-6).toDestination();
+  private delay = new Tone.FeedbackDelay({ delayTime: 0.375, feedback: 0.2, wet: 0.08 });
+  private reverb = new Tone.Reverb({ decay: 3, preDelay: 0.02, wet: 0.2 });
+  private chorus = new Tone.Chorus({ frequency: 0.25, delayTime: 4, depth: 0.5, wet: 0.25 }).start();
+  private output = new Tone.Volume(0).toDestination();
 
   constructor() {
     this.synth = new Tone.PolySynth(Tone.FMSynth, {
@@ -36,9 +36,9 @@ export class Voice {
       modulationIndex: 1.4,
       oscillator: { type: "sine" },
       modulation: { type: "triangle" },
-      envelope: { attack: 0.09, decay: 0.8, sustain: 0.55, release: 3.2 },
-      modulationEnvelope: { attack: 0.4, decay: 0.6, sustain: 0.3, release: 2 },
-      volume: -10,
+      envelope: { attack: 0.06, decay: 0.8, sustain: 0.55, release: 1 },
+      modulationEnvelope: { attack: 0.3, decay: 0.6, sustain: 0.3, release: 0.8 },
+      volume: -2,
     });
     this.synth.maxPolyphony = 16;
     this.synth.chain(this.chorus, this.delay, this.reverb, this.output);
@@ -47,6 +47,15 @@ export class Voice {
   set muted(value: boolean) {
     this.output.mute = value;
   }
+
+  /** Plays in your tuning, not A440, so it sits with you. In semitones. */
+  tuneTo(semitones: number) {
+    const cents = Math.round(semitones * 100);
+    if (Math.abs(cents - this.cents) < 2) return;
+    this.cents = cents;
+    this.synth.set({ detune: cents });
+  }
+  private cents = 0;
 
   /** The echo lands on the off-beat, a dotted eighth after each note. */
   syncEcho(beatSeconds: number) {
@@ -76,15 +85,27 @@ export class Voice {
 
   /** Drops queued notes of a role, and lets any of them that are sounding fade out now. */
   cancel(role: Role, now: number) {
+    let dropped = 0;
+    let cut = 0;
     for (let i = this.notes.length - 1; i >= 0; i--) {
       const note = this.notes[i];
       if (note.role !== role) continue;
-      if (note.planned) this.notes.splice(i, 1);
-      else if (note.end === null || note.end > now) {
+      if (note.planned) {
+        this.notes.splice(i, 1);
+        dropped++;
+      } else if (note.end === null || note.end > now) {
         note.end = now;
         this.synth.triggerRelease(midiToHz(note.midi), now);
+        cut++;
       }
     }
+    return { dropped, cut };
+  }
+
+  /** Drops queued notes of a role that haven't started, leaving any that are sounding to finish. */
+  drop(role: Role) {
+    for (let i = this.notes.length - 1; i >= 0; i--)
+      if (this.notes[i].planned && this.notes[i].role === role) this.notes.splice(i, 1);
   }
 
   hasPlanned(role?: Role) {

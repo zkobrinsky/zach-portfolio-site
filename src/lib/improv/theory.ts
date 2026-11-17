@@ -19,11 +19,16 @@ export const scaleOf = (key: Key) => (key.minor ? MINOR_SCALE : MAJOR_SCALE).map
 /** The key's home chord, which phrases like to end on. */
 export const tonicTriad = (key: Key) => [0, key.minor ? 3 : 4, 7].map((step) => (step + key.tonic) % 12);
 
-/** Moves a pitch onto the nearest note of the key, preferring to go the given way on a tie. */
-export function snapToScale(midi: number, key: Key | null, prefer: 1 | -1 = 1) {
+/**
+ * The notes the buddy moves among: its pitch classes, and which one is home. Built from what you've been
+ * playing rather than from a textbook key, so it fits modes, blues, pentatonic, anything.
+ */
+export type Palette = { tonic: number; pcs: number[] };
+
+/** Moves a pitch onto the nearest note of the scale, preferring to go the given way on a tie. */
+export function snapToScale(midi: number, scale: number[] | null, prefer: 1 | -1 = 1) {
   const rounded = Math.round(midi);
-  if (!key) return rounded;
-  const scale = scaleOf(key);
+  if (!scale?.length) return rounded;
   for (let distance = 0; distance < 12; distance++) {
     for (const direction of [prefer, -prefer]) {
       const candidate = rounded + direction * distance;
@@ -33,22 +38,20 @@ export function snapToScale(midi: number, key: Key | null, prefer: 1 | -1 = 1) {
   return rounded;
 }
 
-/** How many scale steps from one note to another (both snapped to the key): C to E in C major is +2. */
-export function stepsBetween(from: number, to: number, key: Key | null) {
-  if (!key) return Math.round((to - from) / 2);
-  const scale = scaleOf(key);
-  const a = snapToScale(from, key),
-    b = snapToScale(to, key);
+/** How many scale steps from one note to another (both snapped to the scale): C to E in C major is +2. */
+export function stepsBetween(from: number, to: number, scale: number[] | null) {
+  if (!scale?.length) return Math.round((to - from) / 2);
+  const a = snapToScale(from, scale),
+    b = snapToScale(to, scale);
   let steps = 0;
   for (let note = Math.min(a, b) + 1; note <= Math.max(a, b); note++) if (scale.includes(pitchClass(note))) steps++;
   return b >= a ? steps : -steps;
 }
 
-/** Steps along the key's scale: +2 from a scale note is a third above it. */
-export function scaleStep(midi: number, steps: number, key: Key | null) {
-  if (!key) return Math.round(midi) + steps * 2;
-  const scale = scaleOf(key);
-  let note = snapToScale(midi, key);
+/** Steps along the scale: +2 from a scale note is a third above it, in a seven-note scale. */
+export function scaleStep(midi: number, steps: number, scale: number[] | null) {
+  if (!scale?.length) return Math.round(midi) + steps * 2;
+  let note = snapToScale(midi, scale);
   const direction = Math.sign(steps);
   for (let taken = 0; taken < Math.abs(steps);) {
     note += direction;
