@@ -15,13 +15,13 @@ export const ASSETS = {
  * The hints have to match how three.js requests each file, or the browser downloads it twice: everything is
  * fetched with fetch(), as an anonymous CORS request.
  */
-export function preloadScene({ withHead }: { withHead: boolean }) {
-  const files = [
-    ASSETS.astronaut,
-    ASSETS.spaceship,
-    ...(withHead ? [ASSETS.bust] : []),
-    ASSETS.moonColor,
-    ASSETS.moonHeight,
-  ];
-  for (const href of files) preload(href, { as: "fetch", crossOrigin: "anonymous", fetchPriority: "high" });
+export function preloadScene() {
+  for (const href of [ASSETS.astronaut, ASSETS.spaceship, ASSETS.moonColor, ASSETS.moonHeight]) hint(href);
 }
+
+/** The head model, which only About needs from the start. */
+export function preloadHead() {
+  hint(ASSETS.bust);
+}
+
+const hint = (href: string) => preload(href, { as: "fetch", crossOrigin: "anonymous", fetchPriority: "high" });

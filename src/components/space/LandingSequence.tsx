@@ -523,6 +523,9 @@ export function LandingSequence({ destination, startedOnPage, onImpact, onCovere
         return;
 
       case "leave": {
+        // On a plain page the world is hidden, so an astronaut left visible (Astronaut's own setup can show it
+        // again, as Strict Mode's second run does) would float alone over the page while it fades to black.
+        if (!t.moon.ship) astronaut.visible = false;
         if (space.blackout) space.blackout.style.background = "";
         const k = clamp01(seconds / FADE_TO_BLACK_SECONDS);
         if (space.blackout) space.blackout.style.opacity = String(k);

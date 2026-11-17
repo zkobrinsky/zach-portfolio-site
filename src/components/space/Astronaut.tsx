@@ -5,7 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { HOME_CAMERA, VIEW_BACK, VIEW_RIGHT, VIEW_UP } from "@/lib/space/constants";
-import { ASSETS } from "@/lib/space/assets";
+import { ASSETS, preloadHead as hintHead } from "@/lib/space/assets";
 import { debugParams, space } from "@/lib/space/state";
 
 const MODEL_URL = ASSETS.astronaut;
@@ -267,9 +267,12 @@ export function Astronaut({ helmetOff, preloadHead }: { helmetOff: boolean; prel
   const bones = useRef<FlailBone[]>([]);
   const [wornBones, setWornBones] = useState<FlailBone[] | null>(null);
 
-  // start downloading the head as soon as a trip to the ship begins
+  // Start downloading the head as soon as a trip to the ship begins. The hint goes in first, the same one About
+  // sends, so React skips About's when the page arrives instead of the browser fetching the file again.
   useEffect(() => {
-    if (preloadHead) useGLTF.preload(BUST_URL);
+    if (!preloadHead) return;
+    hintHead();
+    useGLTF.preload(BUST_URL);
   }, [preloadHead]);
 
   // Layout effect, so it runs before any frame can draw: the raw model is over four times too big.
