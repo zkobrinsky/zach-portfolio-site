@@ -5,8 +5,8 @@ export const ASSETS = {
   astronaut: "/models/astronaut-parts.glb",
   bust: "/models/zach-bust.glb",
   spaceship: "/models/spaceship.glb",
-  moonColor: "/textures/moon-color.jpg",
-  moonHeight: "/textures/moon-height.jpg",
+  moonColor: "/textures/moon-color-4k.jpg",
+  moonHeight: "/textures/moon-height-3k.jpg",
 } as const;
 
 /**
