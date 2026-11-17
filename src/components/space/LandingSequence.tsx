@@ -7,6 +7,7 @@ import { BASE_FOV, ORBIT_NEAR, POV_FOV, POV_NEAR, VIEW_UP } from "@/lib/space/co
 import { MOONS, type MoonSpec } from "@/lib/space/moons";
 import { APPROACH_EASES, shipApproach, shipHatchState, shipPosition } from "@/lib/space/ship";
 import { space } from "@/lib/space/state";
+import { compileForComposer, uploadTextures } from "@/lib/space/warmUp";
 import { ASTRONAUT_HEIGHT } from "./Astronaut";
 
 /*
@@ -151,22 +152,9 @@ function poseInShip(astronaut: THREE.Object3D, camera: THREE.PerspectiveCamera, 
  * partway through when /about was opened directly (the body had never been drawn yet).
  */
 async function prepareToDraw(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, astronaut: THREE.Object3D) {
-  astronaut.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return;
-    for (const material of [object.material].flat() as THREE.MeshStandardMaterial[])
-      for (const map of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap, material.aoMap, material.emissiveMap])
-        if (map) gl.initTexture(map);
-  });
-  // The scene is really drawn into the EffectComposer's render target, and three.js builds a different shader
-  // for a render target (linear output) than for the canvas (sRGB). Compiling with no target set built the
-  // canvas versions, so the real ones still compiled on the first visible frame. Compile against a target.
-  const target = new THREE.WebGLRenderTarget(1, 1);
+  uploadTextures(gl, astronaut);
+  const target = await compileForComposer(gl, scene, camera);
   const previous = gl.getRenderTarget();
-  gl.setRenderTarget(target);
-  const compiled = gl.compileAsync(scene, camera); // the compile itself happens right here; only the wait is async
-  gl.setRenderTarget(previous);
-  // resolves once the shaders have really finished building, not just started
-  await compiled;
   // Then draw it once off-screen. Compiling doesn't upload vertex buffers or the skeleton's bone texture, and
   // catches nothing it guessed wrong; one real draw does all of that before anyone can see it.
   // The drop-in starts with the astronaut above the frame, so culling would skip the head here and leave its

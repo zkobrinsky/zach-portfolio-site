@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { space } from "@/lib/space/state";
 
@@ -24,13 +24,20 @@ export function ShipInterior() {
   const cabin = useRef<THREE.Group>(null);
   // the cabin only ever shows on About, whatever state the trip is in
   const onAbout = usePathname() === "/about";
+  const get = useThree((state) => state.get);
+
+  // The fog stays on and is just pushed out of reach in space, so nothing has to recompile. It has to exist
+  // before the scene's shaders are first built, since fog changes which shaders three.js builds.
+  useLayoutEffect(() => {
+    const { scene } = get();
+    scene.fog ??= new THREE.Fog("#000000", 1e6, 2e6);
+  }, [get]);
 
   useFrame(({ scene }) => {
     const aboard = space.inShip && onAbout;
     if (cabin.current) cabin.current.visible = aboard;
-    // the fog stays on and is just pushed out of reach in space, so nothing has to recompile
-    scene.fog ??= new THREE.Fog("#000000");
-    const fog = scene.fog as THREE.Fog;
+    const fog = scene.fog as THREE.Fog | null;
+    if (!fog) return;
     fog.near = aboard ? FADE_START : 1e6;
     fog.far = aboard ? FADE_END : 2e6;
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, Suspense, useEffect, useRef } from "react";
+import { type ReactNode, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useProgress } from "@react-three/drei";
 import { Bloom, EffectComposer, ToneMapping } from "@react-three/postprocessing";
@@ -10,6 +10,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { BASE_FOV, HOME_CAMERA } from "@/lib/space/constants";
 import { space } from "@/lib/space/state";
 import { FIRST_ECLIPSE_AT, SUN_PERIOD } from "@/lib/space/sun";
+import { compileForComposer, uploadTextures } from "@/lib/space/warmUp";
 import { Astronaut } from "./Astronaut";
 import { CameraRig } from "./CameraRig";
 import { LandingSequence, type LandingEvents } from "./LandingSequence";
@@ -72,6 +73,28 @@ function SceneReady({ waitForHead, onReady }: { waitForHead: boolean; onReady: (
   return null;
 }
 
+/**
+ * Holds back the first frame until every shader is built and every texture is on the GPU. Drawing straight
+ * away built each shader on the spot, freezing the page for seconds; built ahead of time, the shaders compile
+ * in parallel, off the main thread. Mounted last, so the fog and the reflections are in place first.
+ */
+function WarmUp({ onWarm }: { onWarm: () => void }) {
+  const get = useThree((state) => state.get);
+  useEffect(() => {
+    const { gl, scene, camera } = get();
+    let cancelled = false;
+    uploadTextures(gl, scene);
+    compileForComposer(gl, scene, camera).then((target) => {
+      target.dispose();
+      if (!cancelled) onWarm();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [get, onWarm]);
+  return null;
+}
+
 function DebugHud() {
   useFrame((_, delta) => {
     if (!space.hud) return;
@@ -95,10 +118,16 @@ type Props = LandingEvents & {
 };
 
 export default function SpaceCanvas({ pov, steer, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
+  const [warm, setWarm] = useState(false);
+  const onWarm = useCallback(() => setWarm(true), []);
   return (
     <Canvas
       flat
-      frameloop={paused ? "demand" : "always"}
+      frameloop={!warm ? "never" : paused ? "demand" : "always"}
+      onCreated={({ gl }) => {
+        // Checking each shader for errors makes the first draw with it wait until it's fully built.
+        gl.debug.checkShaderErrors = process.env.NODE_ENV !== "production";
+      }}
       shadows="percentage"
       dpr={[1, 2]}
       gl={{ antialias: false, powerPreference: "high-performance" }}
@@ -139,6 +168,7 @@ export default function SpaceCanvas({ pov, steer, resetCount, destination, start
         />
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       </EffectComposer>
+      <WarmUp onWarm={onWarm} />
       </Suspense>
     </Canvas>
   );
