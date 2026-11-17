@@ -1,0 +1,9 @@
+# build output
+.next
+.open-next
+.wrangler
+# static files, served as-is
+public
+# AGENTS.md is rewritten by `next dev`; docs are hand-wrapped
+*.md
+package-lock.json
