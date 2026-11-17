@@ -6,9 +6,10 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { PLANET_TILT } from "@/lib/space/constants";
 import { shipHatch, shipHatchPath, shipHatchState, shipLight, shipOrbitAngle, shipPlacement } from "@/lib/space/ship";
+import { ASSETS } from "@/lib/space/assets";
 import { space } from "@/lib/space/state";
 
-const MODEL_URL = "/models/spaceship.glb";
+const MODEL_URL = ASSETS.spaceship;
 const MODEL_LENGTH = 17.5;
 /** The ship's length in scene units. */
 const SHIP_LENGTH = 0.5;

@@ -1,9 +1,12 @@
 import { pageMetadata } from "@/lib/seo";
+import { preloadScene } from "@/lib/space/assets";
 import styles from "./page.module.css";
 
 export const metadata = pageMetadata("/about");
 
 export default function AboutPage() {
+  // opens aboard the ship, so the head is needed from the start
+  preloadScene({ withHead: true });
   return (
     <div className={styles.text}>
       <h2>About</h2>

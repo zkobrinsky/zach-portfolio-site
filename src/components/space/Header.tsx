@@ -69,6 +69,8 @@ export function Header({ pageId, inOrbit, landed, muted, onToggleMute, onGoTo, o
     <Link
       key={moon.id}
       href={`/${moon.id}`}
+      // a prefetched ship page brings its preload hints along, which would download the 5MB head on every page
+      prefetch={moon.ship ? false : undefined}
       aria-disabled={!navEnabled}
       aria-current={pageId === moon.id ? "page" : undefined}
       onClick={(event) => {

@@ -10,9 +10,10 @@ import {
   VIEW_RIGHT,
   VIEW_UP,
 } from "@/lib/space/constants";
+import { ASSETS } from "@/lib/space/assets";
 import { debugParams, space } from "@/lib/space/state";
 
-const MODEL_URL = "/models/astronaut-parts.glb";
+const MODEL_URL = ASSETS.astronaut;
 /** The model comes in parts. Hiding this one takes the helmet off, leaving a closed body with a smooth neck opening. */
 const HELMET_PART = "helmet";
 export const ASTRONAUT_HEIGHT = 0.45;
@@ -145,7 +146,7 @@ function prepare(model: THREE.Object3D, maxAnisotropy: number): FlailBone[] {
   return bones;
 }
 
-const BUST_URL = "/models/zach-bust.glb";
+const BUST_URL = ASSETS.bust;
 /** Where the bust goes, in the astronaut model's own units (it's 1.9 tall, facing +Z). */
 const BUST_SCALE = 0.285;
 const BUST_POSITION = new THREE.Vector3(0, 1.648, -0.05);
