@@ -8,6 +8,7 @@ import { debugParams, space } from "@/lib/space/state";
 import { EyeOpening } from "./EyeOpening";
 import { Header } from "./Header";
 import { Joystick } from "./Joystick";
+import { SceneErrorBoundary } from "./SceneErrorBoundary";
 import { ShipGui } from "./ShipGui";
 import { SpaceLoader } from "./SpaceLoader";
 import { SilentContext } from "@/lib/audio/SilentContext";
@@ -50,6 +51,14 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
   const [navHeight, setNavHeight] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
   const onReady = useCallback(() => setSceneReady(true), []);
+  // the 3D scene couldn't load: the site carries on as plain pages, and the URL alone decides what shows
+  const [sceneFailed, setSceneFailed] = useState(false);
+  const onSceneFailed = useCallback(() => {
+    setSceneFailed(true);
+    // whatever the scene was in the middle of, nothing will finish it now, so uncover the screen
+    if (space.blackout) Object.assign(space.blackout.style, { opacity: "0", background: "", transition: "" });
+    if (space.visor) space.visor.style.opacity = "0";
+  }, []);
   const inOrbit = stage === "orbit";
   const onPage = stage === "boarding" || stage === "blackout" || stage === "waking" || stage === "landed";
   const showPage = pageId !== null && (onPage || stage === "leaving");
@@ -106,28 +115,36 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
   }, []);
 
   const goTo = useCallback((id: string) => {
+    if (sceneFailed) return router.push(`/${id}`, { scroll: false });
     thud.current ??= new Audio(`/sounds/impact-${debugParams().impactSound}.mp3`);
     gasp.current ??= new Audio("/sounds/gasp.mp3");
     thud.current.muted = gasp.current.muted = silent;
     setPov(false);
     setDestination(id);
     setStage("travel");
-  }, [silent]);
+  }, [silent, sceneFailed, router]);
 
   const goHome = useCallback(() => {
+    if (sceneFailed) return router.push("/", { scroll: false });
     setDestination(null);
     setStage("leaving");
-  }, []);
+  }, [sceneFailed, router]);
 
   // the browser's back and forward buttons run the same trips
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- the URL is the outside system being synced to */
+    if (sceneFailed) {
+      // no trips without the scene: straight to wherever the URL says, even from partway through one
+      setDestination(pageId);
+      setStage(pageId ? "landed" : "orbit");
+      return;
+    }
     if (stage === "boarding" && pageId) setStage("landed");
     else if (stage === "landed" && !pageId) goHome();
     else if (stage === "landed" && pageId) setDestination(pageId);
     else if (stage === "orbit" && pageId) goTo(pageId);
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [pageId, stage, goHome, goTo]);
+  }, [pageId, stage, goHome, goTo, sceneFailed]);
 
   // Switching pages fades through black. The fade back only starts once the new page has really arrived:
   // a slow route used to fade back early and flash the old page, like the ship interior behind About.
@@ -185,19 +202,25 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
   return (
     <>
       <div className={`${styles.canvas} ${showPage ? styles.overPage : ""} ${onPage && !shipPage ? styles.parked : ""}`}>
-        <SpaceCanvas
-          pov={pov || !inOrbit}
-          steer={pov && inOrbit}
-          resetCount={resetCount}
-          destination={destination}
-          startedOnPage={startedOnPage}
-          paused={onPage && !shipPage}
-          helmetOff={shipPage && showPage}
-          onReady={onReady}
-          onImpact={onImpact}
-          onCovered={onCovered}
-          onBackInOrbit={onBackInOrbit}
-        />
+        {/* the outer boundary catches the scene's code itself failing to download */}
+        {!sceneFailed && (
+          <SceneErrorBoundary onError={onSceneFailed}>
+            <SpaceCanvas
+              pov={pov || !inOrbit}
+              steer={pov && inOrbit}
+              resetCount={resetCount}
+              destination={destination}
+              startedOnPage={startedOnPage}
+              paused={onPage && !shipPage}
+              helmetOff={shipPage && showPage}
+              onReady={onReady}
+              onImpact={onImpact}
+              onCovered={onCovered}
+              onBackInOrbit={onBackInOrbit}
+              onFailed={onSceneFailed}
+            />
+          </SceneErrorBoundary>
+        )}
       </div>
       <div ref={(element) => { space.visor = element; }} className={styles.visor} aria-hidden="true" />
 
@@ -222,7 +245,15 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
       <div ref={(element) => { space.blackout = element; }} className={styles.blackout} aria-hidden="true" />
       {stage === "waking" && <EyeOpening onOpen={onEyesOpen} />}
       {/* plain pages are ordinary web pages, so they don't wait for the 3D scene */}
-      <SpaceLoader done={sceneReady || (onPage && !shipPage)} />
+      <SpaceLoader done={sceneReady || sceneFailed || (onPage && !shipPage)} />
+      {sceneFailed && inOrbit && (
+        <div className={styles.sceneFailed} role="status">
+          <p>Space didn&apos;t load this time. The pages above all still work.</p>
+          <button type="button" className={styles.button} onClick={() => window.location.reload()}>
+            Try again
+          </button>
+        </div>
+      )}
 
       {showHud && <div ref={(element) => { space.hud = element; }} className={styles.hud} />}
       {stage === "landed" && (
@@ -240,7 +271,7 @@ export function SpaceExperience({ children }: { children: ReactNode }) {
         </>
       )}
       {inOrbit && pov && <p className={styles.keysHint}>Mouse to look · W A S D to fly · Esc for cursor</p>}
-      {inOrbit && (
+      {inOrbit && !sceneFailed && (
         <div className={styles.controls}>
           <button
             type="button"

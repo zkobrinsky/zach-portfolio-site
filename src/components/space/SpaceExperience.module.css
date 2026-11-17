@@ -438,3 +438,28 @@
     opacity: 0.8;
   }
 }
+
+/* shown on home when the 3D scene couldn't load */
+.sceneFailed {
+  position: fixed;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 20px;
+  padding: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.sceneFailed p {
+  margin: 0;
+  max-width: 34ch;
+  font: 15px/1.6 var(--font-mono);
+  color: var(--cream);
+}
+
+.sceneFailed button {
+  pointer-events: auto;
+}

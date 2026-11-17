@@ -255,6 +255,11 @@ class FlippedBitmapLoader extends THREE.Loader<ImageBitmap> {
   }
 }
 
+/** Drops the moon maps from the loader's cache, so loading the scene again downloads them again. */
+export function forgetMoonMaps() {
+  useLoader.clear(FlippedBitmapLoader, [ASSETS.moonColor, ASSETS.moonHeight]);
+}
+
 /** How long the moons have been moving. It only runs in orbit: during a trip a moon holds still, so the landing hits it exactly. */
 const motion = { seconds: 0 };
 

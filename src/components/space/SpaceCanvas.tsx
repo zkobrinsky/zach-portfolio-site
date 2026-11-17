@@ -2,11 +2,12 @@
 
 import { type ReactNode, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useProgress } from "@react-three/drei";
+import { useGLTF, useProgress } from "@react-three/drei";
 import { Bloom, EffectComposer, ToneMapping } from "@react-three/postprocessing";
 import { BlendFunction, ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { ASSETS } from "@/lib/space/assets";
 import { BASE_FOV, HOME_CAMERA } from "@/lib/space/constants";
 import { space } from "@/lib/space/state";
 import { FIRST_ECLIPSE_AT, SUN_PERIOD } from "@/lib/space/sun";
@@ -14,7 +15,8 @@ import { compileForComposer, uploadTextures } from "@/lib/space/warmUp";
 import { Astronaut } from "./Astronaut";
 import { CameraRig } from "./CameraRig";
 import { LandingSequence, type LandingEvents } from "./LandingSequence";
-import { Moons } from "./Moons";
+import { forgetMoonMaps, Moons } from "./Moons";
+import { SceneErrorBoundary } from "./SceneErrorBoundary";
 import { ShipInterior } from "./ShipInterior";
 import { Planet } from "./Planet";
 import { Spaceship } from "./Spaceship";
@@ -117,7 +119,27 @@ type Props = LandingEvents & {
   onReady: () => void;
 };
 
-export default function SpaceCanvas({ pov, steer, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
+/**
+ * If any of the scene's files fails to download, tries the whole scene once more from scratch. A second
+ * failure gives up and tells the page, which carries on without the 3D.
+ */
+export default function SpaceCanvas({ onFailed, ...props }: Props & { onFailed: () => void }) {
+  const [attempt, setAttempt] = useState(0);
+  const onError = useCallback(() => {
+    if (attempt > 0) return onFailed();
+    // a failed load stays cached, so the retry would just get the same failure back without this
+    for (const url of [ASSETS.astronaut, ASSETS.bust, ASSETS.spaceship]) useGLTF.clear(url);
+    forgetMoonMaps();
+    setAttempt(attempt + 1);
+  }, [attempt, onFailed]);
+  return (
+    <SceneErrorBoundary key={attempt} onError={onError}>
+      <Scene {...props} />
+    </SceneErrorBoundary>
+  );
+}
+
+function Scene({ pov, steer, resetCount, destination, startedOnPage, paused, helmetOff, onReady, onImpact, onCovered, onBackInOrbit }: Props) {
   const [warm, setWarm] = useState(false);
   const onWarm = useCallback(() => setWarm(true), []);
   return (
