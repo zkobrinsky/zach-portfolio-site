@@ -36,6 +36,40 @@ export const PHOTOS: Photo[] = [
       "Epitokes — An evolutionary trick to avoid predation where marine worms’ sex organs grow heads and eyes and swim to the surface to copulate while the original worm stays safely down below. 7mm. From a plankton sample in Battery Park, NY.",
   },
   {
+    src: "/photos/57.jpg",
+    width: 2000,
+    height: 2500,
+    alt: "Pill bug curling up against purple",
+    title: "Pill Bug",
+    caption: "Armadillidium vulgare, the common pill woodlouse, mid-roll. 8mm.",
+  },
+  {
+    src: "/photos/58.jpg",
+    width: 1440,
+    height: 1799,
+    alt: "Transparent crustacean zoea larva with long spines against purple",
+    title: "Zoea",
+    caption:
+      "A crustacean larva, too young to tell what it'll grow into. 3mm. From a plankton sample at Brighton Beach.",
+  },
+  {
+    src: "/photos/59.jpg",
+    width: 1440,
+    height: 1802,
+    alt: "Fuzzy drain fly with wings spread against yellow",
+    title: "Drain Fly",
+    caption: "Part poodle, part moth, part fly. 7mm. Collected by my wife in our apartment.",
+  },
+  {
+    src: "/photos/60.jpg",
+    width: 1440,
+    height: 1800,
+    alt: "Hydra with outstretched tentacles in a drop of water",
+    title: "Hydra",
+    caption:
+      "A freshwater cnidarian, like a tiny anemone. About the size of a grain of rice. Found in my home aquarium, photographed in a single drop of water.",
+  },
+  {
     src: "/photos/03.jpg",
     width: 2000,
     height: 1334,
@@ -157,40 +191,6 @@ export const PHOTOS: Photo[] = [
     alt: "Blue and black speckled sharpshooter leafhopper on a yellow leaf",
     title: "Broad-headed Sharpshooter",
     caption: "Oncometopia orbona, 1.5cm. A cicada relative, found on fallen leaves on the hood of my car in New York.",
-  },
-  {
-    src: "/photos/57.jpg",
-    width: 2000,
-    height: 2500,
-    alt: "Pill bug curling up against purple",
-    title: "Pill Bug",
-    caption: "Armadillidium vulgare, the common pill woodlouse, mid-roll. 8mm.",
-  },
-  {
-    src: "/photos/58.jpg",
-    width: 1440,
-    height: 1799,
-    alt: "Transparent crustacean zoea larva with long spines against purple",
-    title: "Zoea",
-    caption:
-      "A crustacean larva, too young to tell what it'll grow into. 3mm. From a plankton sample at Brighton Beach.",
-  },
-  {
-    src: "/photos/59.jpg",
-    width: 1440,
-    height: 1802,
-    alt: "Fuzzy drain fly with wings spread against yellow",
-    title: "Drain Fly",
-    caption: "Part poodle, part moth, part fly. 7mm. Collected by my wife in our apartment.",
-  },
-  {
-    src: "/photos/60.jpg",
-    width: 1440,
-    height: 1800,
-    alt: "Hydra with outstretched tentacles in a drop of water",
-    title: "Hydra",
-    caption:
-      "A freshwater cnidarian, like a tiny anemone. About the size of a grain of rice. Found in my home aquarium, photographed in a single drop of water.",
   },
   {
     src: "/photos/61.jpg",
