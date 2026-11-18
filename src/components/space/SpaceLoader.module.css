@@ -1,5 +1,9 @@
 .loader {
-  --progress: 0;
+  --fill-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* each step between progress updates: long and even, so the ring keeps moving instead of lunging */
+  --step-time: 2s;
+  --step-ease: cubic-bezier(0.37, 0, 0.3, 1);
+  --emblem-size: min(56vw, 260px);
   position: fixed;
   z-index: 5;
   inset: 0;
@@ -14,15 +18,96 @@
     visibility 0s linear 0.9s;
 }
 
+/* once loaded, the ring closes as the screen fades */
 .loader[data-done="true"] {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
+.emblem,
+.label {
+  /* backwards, not both: a held end state would sit above the exit transition and freeze it */
+  animation: appear 0.7s ease-out backwards;
+  transition:
+    transform 1.2s var(--fill-ease),
+    opacity 0.6s ease;
+}
+
+.label {
+  animation-delay: 0.15s;
+}
+
+/* the emblem drifts toward the viewer as it fades, like the scene is coming up through it */
+.loader[data-done="true"] .emblem {
+  transform: scale(1.12);
+}
+
+.loader[data-done="true"] .label {
+  opacity: 0;
+}
+
 .emblem {
-  width: min(56vw, 260px);
+  position: relative;
+  width: var(--emblem-size);
+  aspect-ratio: 1;
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
+}
+
+/* the gold ring, sized to match the track: radius 54 of the art's 200-unit box, 2 units thick */
+.fill {
+  position: absolute;
+  inset: 22.5%;
+}
+
+.half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+}
+
+.rightHalf {
+  right: 0;
+}
+
+.leftHalf {
+  left: 0;
+}
+
+/* a full circle with only its top and right borders drawn: half a ring, turned into view by SpaceLoader */
+.arc {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  box-sizing: border-box;
+  border: calc(var(--emblem-size) / 100) solid transparent;
+  border-top-color: var(--gold);
+  border-right-color: var(--gold);
+  border-radius: 50%;
+  /* hidden while parked; see SpaceLoader */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* both start turned out of their halves (empty), so the first paint, before any script runs, shows no fill */
+.rightHalf .arc {
+  right: 0;
+  transform: rotate(-135deg);
+}
+
+.leftHalf .arc {
+  left: 0;
+  transform: rotate(45deg);
 }
 
 .ray {
@@ -35,16 +120,6 @@
   fill: none;
   stroke: rgb(201 161 74 / 0.2);
   stroke-width: 1;
-}
-
-.progress {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 2;
-  /* the dash runs 1% past the full circle, so a full ring closes over its start with no hairline gap */
-  stroke-dasharray: 1.01 1;
-  stroke-dashoffset: calc(1.01 * (1 - var(--progress)));
-  transition: stroke-dashoffset 0.35s ease;
 }
 
 .orbit {
@@ -79,8 +154,21 @@
   }
 }
 
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .orbit {
+  .orbit,
+  .emblem,
+  .label {
     animation: none;
+  }
+
+  .loader[data-done="true"] .emblem {
+    transform: none;
   }
 }

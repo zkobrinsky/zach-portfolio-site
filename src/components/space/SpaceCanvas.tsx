@@ -50,15 +50,14 @@ function World({ children }: { children: ReactNode }) {
   return <group ref={group}>{children}</group>;
 }
 
-/** Feeds download progress to the loading screen. It only ever moves forward, even as new files join the queue. */
+/**
+ * Feeds download progress to the loading screen, which animates the ring toward it. It only ever moves forward,
+ * even as new files join the queue.
+ */
 function LoadProgress() {
   const { progress } = useProgress();
-  const highest = useRef(0);
   useEffect(() => {
-    highest.current = Math.max(highest.current, progress);
-    space.loader?.style.setProperty("--progress", String(highest.current / 100));
-    const percent = space.loader?.querySelector("[data-percent]");
-    if (percent) percent.textContent = String(Math.round(highest.current));
+    space.loadProgress = Math.max(space.loadProgress, progress / 100);
   }, [progress]);
   return null;
 }

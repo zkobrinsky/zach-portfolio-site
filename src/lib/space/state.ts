@@ -32,6 +32,8 @@ export const space = {
   visor: null as HTMLElement | null,
   /** The loading screen, so progress can update it without re-rendering the page. */
   loader: null as HTMLElement | null,
+  /** Download progress, 0 to 1. The loading screen animates its ring toward it. */
+  loadProgress: 0,
   /** The black screen after a hard landing. */
   blackout: null as HTMLElement | null,
   hud: null as HTMLElement | null,
