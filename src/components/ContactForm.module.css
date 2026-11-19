@@ -56,3 +56,15 @@
   position: absolute;
   left: -10000px;
 }
+
+.sent h3 {
+  margin: 0 0 16px;
+  font: 900 clamp(32px, 5vw, 52px)/1.1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sent p {
+  font-size: clamp(15px, 1.6vw, 18px);
+}

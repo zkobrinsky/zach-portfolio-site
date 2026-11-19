@@ -25,37 +25,46 @@ export function ContactForm() {
     setStatus("failed");
   };
 
-  if (status === "sent") return <p role="status">Message received. Thanks for reaching out.</p>;
+  if (status === "sent")
+    return (
+      <div role="status" className={styles.sent}>
+        <h3>Transmission received.</h3>
+        <p>Thank you for making first contact.</p>
+      </div>
+    );
 
   return (
-    <form
-      className={styles.form}
-      onSubmit={submit}
-      onFocus={() => {
-        startedAt.current ||= Date.now();
-      }}
-    >
-      <label>
-        Name
-        <input name="name" required maxLength={100} autoComplete="name" />
-      </label>
-      <label>
-        Email
-        <input name="email" type="email" required maxLength={200} autoComplete="email" />
-      </label>
-      <label>
-        Message
-        <textarea name="message" required maxLength={5000} rows={6} />
-      </label>
-      {/* hidden from people; bots fill it in */}
-      <label className={styles.trap} aria-hidden="true">
-        Website
-        <input name="website" tabIndex={-1} autoComplete="off" />
-      </label>
-      {status === "failed" && <p role="alert">{error}</p>}
-      <button type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Sending" : "Send"}
-      </button>
-    </form>
+    <>
+      <h2>Contact</h2>
+      <form
+        className={styles.form}
+        onSubmit={submit}
+        onFocus={() => {
+          startedAt.current ||= Date.now();
+        }}
+      >
+        <label>
+          Name
+          <input name="name" required maxLength={100} autoComplete="name" />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" required maxLength={200} autoComplete="email" />
+        </label>
+        <label>
+          Message
+          <textarea name="message" required maxLength={5000} rows={6} />
+        </label>
+        {/* hidden from people; bots fill it in */}
+        <label className={styles.trap} aria-hidden="true">
+          Website
+          <input name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+        {status === "failed" && <p role="alert">{error}</p>}
+        <button type="submit" disabled={status === "sending"}>
+          {status === "sending" ? "Sending" : "Send"}
+        </button>
+      </form>
+    </>
   );
 }
