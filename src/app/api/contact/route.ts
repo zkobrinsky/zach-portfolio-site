@@ -8,6 +8,37 @@ const MAX_MESSAGE = 5000;
 const MIN_FILL_MS = 2000;
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
+const escape = (text: string) =>
+  text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+/** Email clients ignore stylesheets and web fonts, so this is table layout with inline styles in the site's colors. */
+function emailHtml(name: string, email: string, message: string) {
+  const mono = "font-family:'Courier New',Courier,monospace";
+  const sent = new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  return `<!doctype html>
+<html><body style="margin:0;padding:0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td align="center" style="padding:16px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:720px;border:1px solid #c9a14a;background:#0b0d14;">
+<tr><td style="padding:40px 40px 10px;${mono};font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#c9a14a;">Incoming transmission</td></tr>
+<tr><td style="padding:0 40px 24px;font-family:Georgia,'Times New Roman',serif;font-size:36px;line-height:1.2;color:#efe6d2;">${escape(name)}</td></tr>
+<tr><td style="padding:0 40px 28px;${mono};font-size:15px;line-height:1.6;color:#efe6d2;">
+<a href="mailto:${escape(email)}" style="color:#c9a14a;text-decoration:none;">${escape(email)}</a><br>
+<span style="color:#8a8578;">${escape(sent)}</span>
+</td></tr>
+<tr><td style="padding:0 40px;"><div style="border-top:1px solid #3a3226;"></div></td></tr>
+<tr><td style="padding:28px 40px 44px;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.7;color:#efe6d2;white-space:pre-wrap;">${escape(message)}</td></tr>
+</table>
+<p style="margin:16px 0 0;${mono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8a8578;">Sent from the contact form on zachkobrinsky.com &middot; Reply goes to the sender</p>
+</td></tr>
+</table>
+</body></html>`;
+}
+
 const reply = (status: number, error?: string) => Response.json({ ok: !error, error }, { status });
 
 export async function POST(request: Request) {
@@ -37,6 +68,7 @@ export async function POST(request: Request) {
       reply_to: email,
       subject: `Portfolio message from ${name.replace(/[\r\n]+/g, " ")}`,
       text: `${name} <${email}>\n\n${message}`,
+      html: emailHtml(name, email, message),
     }),
   }).catch(() => null);
 
