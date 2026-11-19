@@ -15,7 +15,7 @@ const SKILLS = [
   ],
   [
     "Tools & Infrastructure",
-    "Docker · Webpack · Vite · Node.js · AWS · S3 · PostgreSQL · WebSockets · WebRTC · Jest · Playwright",
+    "LLM APIs · Python · Docker · Webpack · Vite · Node.js · AWS · S3 · PostgreSQL · Jest · Playwright",
   ],
 ];
 
@@ -31,10 +31,7 @@ const JOBS: { company: string; role: string; dates: string; bullets: Bullet[] }[
         text: "Built reusable creative templates for “Karlo,” an AI-powered advertising platform, supporting resizing and versioning across placements, reusable JavaScript animations, and scalable CSS recreations of static creative assets",
       },
       {
-        text: "Worked across dozens of repositories spanning advertising products, publisher integrations, internal tools, and creative platforms, adapting quickly to different frameworks and codebases",
-      },
-      {
-        text: "Investigated production issues across publisher pages using browser DevTools, network inspection, DOM analysis, and internal tools",
+        text: "Built AI-assisted engineering workflows across dozens of repositories using reusable Claude Code skills, MCP integrations, shared CLAUDE.md context, and specialized agents for implementation, review, and testing",
       },
       {
         text: "Tech Lead on “Flourishes,” interactive elements added to open-web and PMP banner ads to increase engagement, driving CTR lifts of up to 160%",
@@ -59,7 +56,7 @@ const JOBS: { company: string; role: string; dates: string; bullets: Bullet[] }[
         ],
       },
       {
-        text: "Prototyped a Voice AI agent service, leveraging LLMs to create dynamic, conversational user experiences",
+        text: "Prototyped a Voice AI agent service, integrating LLM APIs and conversational workflows to deliver dynamic, voice-driven user experiences",
       },
     ],
   },
@@ -96,7 +93,7 @@ export default function ResumePage() {
     <div className={styles.resume}>
       <h2>Zach Kobrinsky</h2>
       <nav className={styles.links} aria-label="Get in touch">
-        <span>Brooklyn, NY</span>
+        <span>Brooklyn, NY—open to relocate</span>
         <Link href="/contact">Contact</Link>
         <a href="https://www.linkedin.com/in/zkobrinsky" target="_blank" rel="noopener noreferrer">
           LinkedIn
@@ -104,7 +101,8 @@ export default function ResumePage() {
       </nav>
       <p>
         Senior Frontend Engineer with 8+ years of experience building interactive 2D and 3D applications, complex UI
-        systems, and visually rich web experiences. Two decades of experience in photography, visual storytelling,
+        systems, and visually rich web experiences. Experienced in building AI-assisted development workflows and
+        prototyping LLM-powered applications. Two decades of experience in photography, visual storytelling,
         editorial production, and creative media, bringing a distinctive visual sensibility to frontend engineering and
         digital product development. Former National Geographic contributing photographer. Former newspaper editor.
         Former fishmonger.
